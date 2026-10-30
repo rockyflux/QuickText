@@ -37,9 +37,9 @@ public class UpdateCheckTests
     }
 
     [Theory]
-    [InlineData("v1.4.2", "1.4.2")]
-    [InlineData("V1.4.2", "1.4.2")]
-    [InlineData("1.4.2", "1.4.2")]
+    [InlineData("v1.0.0", "1.0.0")]
+    [InlineData("V1.0.0", "1.0.0")]
+    [InlineData("1.0.0", "1.0.0")]
     [InlineData("", "")]
     public void Normalize_version_drops_the_leading_v(string tag, string expected)
         => Assert.Equal(expected, UpdateCheck.NormalizeVersion(tag));
@@ -51,12 +51,12 @@ public class UpdateCheckTests
         // to a user as "just run this" would give them an exe that refuses to start.
         string[] assets =
         [
-            "QuickText-v1.4.2-win-x64-needs-dotnet10.zip",
-            "QuickText-v1.4.2-win-x64.zip",
+            "QuickText-v1.0.0-win-x64-needs-dotnet10.zip",
+            "QuickText-v1.0.0-win-x64.zip",
             "QuickText.exe",
             "SHA256SUMS.txt",
         ];
-        Assert.Equal("QuickText-v1.4.2-win-x64.zip", UpdateCheck.SelectSelfContainedAsset(assets));
+        Assert.Equal("QuickText-v1.0.0-win-x64.zip", UpdateCheck.SelectSelfContainedAsset(assets));
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public class UpdateCheckTests
     {
         string[] onlyFrameworkDependent =
         [
-            "QuickText-v1.4.2-win-x64-needs-dotnet10.zip",
+            "QuickText-v1.0.0-win-x64-needs-dotnet10.zip",
             "QuickText.exe",
             "SHA256SUMS.txt",
         ];
@@ -77,13 +77,13 @@ public class UpdateCheckTests
     {
         // The format sha256sum writes: digest, whitespace, name. The '*' marks binary mode.
         string text =
-            "a388a698d2fbf5b303bb3bd39a46d95311e3731d34f7790c06460581ae9923b9  QuickText-v1.4.2-win-x64-needs-dotnet10.zip\r\n"
-          + "cb0216f8f5ccb03681c4cf3ddaa39bf8ece16319c9f860cf7b0d5c277297e0ce *QuickText-v1.4.2-win-x64.zip\r\n"
+            "a388a698d2fbf5b303bb3bd39a46d95311e3731d34f7790c06460581ae9923b9  QuickText-v1.0.0-win-x64-needs-dotnet10.zip\r\n"
+          + "cb0216f8f5ccb03681c4cf3ddaa39bf8ece16319c9f860cf7b0d5c277297e0ce *QuickText-v1.0.0-win-x64.zip\r\n"
           + "8cade4ee4ed3de5b0197d11b8d2f2e57ada0304376f1a381451d0d9e7c3b5154  QuickText.exe\r\n";
         var sums = UpdateCheck.ParseChecksums(text);
         Assert.Equal(3, sums.Count);
         Assert.Equal("cb0216f8f5ccb03681c4cf3ddaa39bf8ece16319c9f860cf7b0d5c277297e0ce",
-                     sums["QuickText-v1.4.2-win-x64.zip"]);
+                     sums["QuickText-v1.0.0-win-x64.zip"]);
         Assert.Equal("8cade4ee4ed3de5b0197d11b8d2f2e57ada0304376f1a381451d0d9e7c3b5154",
                      sums["QuickText.exe"]);
     }

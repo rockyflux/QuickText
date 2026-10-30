@@ -2,233 +2,231 @@
   <img src="assets/branding/quicktext-256.png" width="72" alt="QuickText">
 </p>
 
+**简体中文** · [English](README.en.md)
+
 # QuickText
 
-> A tray snippet manager and text expander for Windows
-
-**English** · [简体中文](README.zh.md) · [繁體中文](docs/i18n/README.zh-Hant.md) · [日本語](docs/i18n/README.ja.md) · [한국어](docs/i18n/README.ko.md) · [Español](docs/i18n/README.es.md) · [Português](docs/i18n/README.pt.md) · [Français](docs/i18n/README.fr.md) · [Deutsch](docs/i18n/README.de.md) · [Italiano](docs/i18n/README.it.md) · [Русский](docs/i18n/README.ru.md) · [Tiếng Việt](docs/i18n/README.vi.md) · [ไทย](docs/i18n/README.th.md) · [Bahasa Indonesia](docs/i18n/README.id.md) · [हिन्दी](docs/i18n/README.hi.md) · [বাংলা](docs/i18n/README.bn.md) · [العربية](docs/i18n/README.ar.md) · [Türkçe](docs/i18n/README.tr.md)
+> Windows 托盘速贴，常用文本 / 图片几键即达光标
 
 
+![在任意窗口上呼出面板，敲几个字母，片段直接落在光标处](docs/images/quicktext-demo.webp)
 
-![Summon the panel over any window, type a few letters, and the snippet lands at your cursor](docs/images/quicktext-demo.webp)
+**同样的话，别再打第二遍。** QuickText 常驻 Windows 托盘，把你反复要输入的东西（邮箱、地址、签名、模板、常用回复、图片……）存一次，之后在**任意输入框**里敲几个拼音、或打一个缩写，就贴到光标处。多行、特殊字符、emoji 逐字符无损。
 
-**Stop typing the same thing twice.** QuickText lives in the Windows tray: store the text you reach for again and again — email, addresses, signatures, templates, canned replies, images — once, then in **any input box** type a few keystrokes or an abbreviation and it lands right at your cursor. Multi-line, special characters and emoji preserved character-for-character.
+> 存好常用文本，在任意输入框敲几个拼音，一键贴到光标处。
 
-> Your reusable text, a few keystrokes away — dropped straight at the cursor.
+- 单文件绿色版，**无账号、默认不联网**——仅可选的「检查更新」会访问 GitLab。
+- 数据是你自己文件夹里的**本地 JSON**，可放进坚果云 / OneDrive / NAS 同步。
+- 深色 / 浅色主题（也可跟随系统），**18 种界面语言**（阿拉伯语 RTL 镜像），设置即时生效。
 
-- A single portable exe — **no account, offline by default**; only the optional update check ever contacts GitLab.
-- Data is **local JSON** in your own folder — put it in Dropbox / OneDrive / a NAS to sync.
-- Dark and light themes (or follow Windows), **18 UI languages** (with right-to-left mirroring for Arabic), settings apply instantly.
+## 下载
 
-## Download
+**[⬇ 下载最新版](http://172.16.68.178:8090/vb-coding/quicktext/-/releases)** —— Windows x64。
 
-**[⬇ Get the latest release](http://172.16.68.178:8090/vb-coding/quicktext/-/releases)** — Windows x64.
+两种构建，三个下载，都是免安装的绿色版、无需注册。
 
-Two builds, three downloads — portable either way. No installer, no account.
-
-| File | Needs | Good for |
+| 文件 | 前提 | 适合 |
 | --- | --- | --- |
-| `QuickText-<version>-win-x64.zip` | nothing | **take this one if unsure.** Air-gapped or intranet machines, a USB stick you carry between PCs, a work PC where you can't install anything |
-| `QuickText-<version>-win-x64-needs-dotnet10.zip` | [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0) installed | your own online PC: install the runtime once, and every update after that is a small download |
-| `QuickText.exe` | same as above | the same build with no zip around it: click and run, or drop it over your existing copy to update |
+| `QuickText-<版本>-win-x64.zip` | 无 | **拿不准就下这个。** 内网机、离线机、U 盘随身带着到处插、不让装东西的公司电脑 |
+| `QuickText-<版本>-win-x64-needs-dotnet10.zip` | 已装 [.NET 10 桌面运行时](https://dotnet.microsoft.com/download/dotnet/10.0) | 自己那台能联网的电脑：运行时装一次，以后每次更新都只下一个很小的包 |
+| `QuickText.exe` | 同上 | 同一个版本没套 zip：点开即用，也可以直接盖掉现有的那份完成更新 |
 
-Every one of them is (or unpacks to) the same single-file `QuickText.exe`. The only difference between the two builds is **where the runtime comes from** — the first bundles .NET into the exe, which is why it is so much larger; the second uses the copy already on the machine. The release page lists each asset's exact size. Same features, same data; switch between them any time.
+三个拿到手都是同一个单文件 `QuickText.exe`。两种构建的区别只在**运行时从哪来**：第一个把 .NET 运行时打进了 exe，体积因此大出一大截；第二个用系统里已有的那份。各个包的确切大小，发布页上有。功能、数据完全一致，随时可以换着下。
 
-The exe isn't code-signed, so Windows SmartScreen warns on first run: click **More info → Run anyway**.
-
----
-
-## Where you'd use it
-
-Wherever you **type the same thing over and over on Windows**. It lives in the tray and works in every input box (chat windows, browser forms, editors, mail clients — not tied to one app). It's a **snippet manager and text expander in one**, plus pinyin search, variable templates, and images.
-
-| Who                       | What they store                                                                                     |
-| ------------------------- | --------------------------------------------------------------------------------------------------- |
-| **Support / e-commerce**  | Canned replies, standard answers, promo blurbs, QR codes or product shots                           |
-| **Sales / business**      | Email templates, openers, quotes, sign-offs                                                         |
-| **Developers / ops**      | Commands, config, JSON, boilerplate (`{...}` emitted verbatim, never parsed)                        |
-| **Office / form-filling** | Email, address, phone, ID numbers, meeting-note templates (prompt you, remember the last value)     |
-| **HR / admin / legal**    | Onboarding notices, standard notifications, disclaimers — stays local, nothing uploaded             |
-
-> **On storing anything sensitive.** Snippets are saved as **plain JSON** — nothing is encrypted, by design, so you can read, diff, and edit the file yourself. That's fine for templates and boilerplate on a machine only you use. It also means an ID number or a password put in there is readable by anything that can read the file — including whatever else runs under your account, and the sync provider if you put the folder in Dropbox / OneDrive. For genuinely secret values, use a password manager and leave QuickText for the text you'd be comfortable having on your desktop.
-
-## See it in 30 seconds
-
-In **any place you can type** — say you need your email in a chat box:
-
-1. **Summon** — press `Ctrl+Shift+8`; the panel appears over the active window.
-2. **Search** — type a few letters; matches are highlighted. It matches the name, pinyin (full + initials), abbreviation, and body.
-3. **Enter** — the email is pasted **right where your cursor was**. Done.
-
-> Type nothing to browse by category, with `Recent` / `Favorites` pinned on top; the ones you use most **float to the top** automatically.
-> `↑↓` move · `←→` switch category · `Alt+1–9` quick-pick · double-click to send · `Esc` to close.
-
-## Three ways to reach it — pick what fits
-
-Same library, three ways to pull from it; mix them freely:
-
-| Way                        | How to trigger                                            | Best for                                         |
-| -------------------------- | --------------------------------------------------------- | ------------------------------------------------ |
-| 🔍 **Panel search**        | `Ctrl+Shift+8` → type → Enter                             | Many snippets, occasional use, browsing to pick  |
-| ⌨️ **Inline abbreviation** | Just type `;sig` then Space / Tab / Enter                 | High-frequency fixed phrases, no panel needed    |
-| 🧩 **Variable template**   | Pull a snippet with `{variables}` via either of the above | Email / forms: one template, a few words changed |
-
-- **Images too**: add from clipboard or file, pasted as an image on send; images can have abbreviations, so type the abbr and get the picture (QR codes, logo signatures).
-- **Per-snippet output**: chat phrases auto-send after paste, code snippets never do — they don't interfere.
-
-Full detail on abbreviations and variables is in **In detail** below — the **Placeholders** and **Abbreviations** sections.
+程序没有代码签名，首次运行 Windows SmartScreen 会拦一下：点**更多信息 → 仍要运行**。
 
 ---
 
-**In detail.** Everything above is what most people need. What follows is the full reference.
+## 用在哪里
 
-## Works out of the box
+只要你**在 Windows 上反复敲同样的内容**，它就派得上用场 —— 常驻托盘、在所有输入框里通用（聊天窗、浏览器表单、编辑器、邮件客户端…都行，不绑定某个软件）。本质是「**代码片段管理器 + 文本扩展器（text expander）**」二合一，再叠加拼音搜索、变量模板与图片。
 
-Double-click **`QuickText.exe`**; it lives in the **system tray** (no taskbar button) and shows a **draggable floating ball** (position remembered; left-click toggles search; right-click matches the tray menu and can hide the ball for this session — restore it from the tray). On **first run** it:
+| 谁                   | 存什么                                                           |
+| -------------------- | ---------------------------------------------------------------- |
+| **客服 / 电商**      | 常见问题的标准回复、话术、优惠说明、二维码或产品图               |
+| **销售 / 商务**      | 邮件模板、开场白、报价、签名落款                                 |
+| **程序员 / 运维**    | 命令、配置、JSON、样板代码（`{...}` 原样输出、不被误解析）       |
+| **办公 / 填表**      | 邮箱、地址、电话、证件号、会议纪要模板（弹窗填、记住上次值）     |
+| **HR / 行政 / 法务** | 入职通知、标准告知、免责声明 —— 全程本地、不联网上传 |
 
-- drops in a small **starter library** (two categories, in your **UI language**) so you can try it immediately;
-- shows a balloon with the summon hotkey — default **`Ctrl+Shift+8`**.
+> **关于存敏感内容。** 片段保存为**明文 JSON**，刻意不加密——这样你能自己读、自己 diff、自己改。存模板和套话、且机器只有你在用，这没问题。但也意味着写进去的身份证号或密码，任何能读到该文件的东西都能读到——包括以你账户运行的其它程序，以及你把目录放进 Dropbox / OneDrive 后的同步服务商。真正的机密请交给密码管理器，QuickText 留给那些「摆在桌面上你也不介意」的文本。
 
-> The panel's top-right icons: **＋ New** · **Manager** (open the editor) · **Settings** · **📌 Pin** (keep the panel open after a send, to fire several in a row). Jump straight to the Manager / Settings without going back to the tray.
+## 30 秒看它怎么用
 
-## Add / edit your text
+在**任意能打字的地方** —— 比如聊天框里要发邮箱：
 
-![Manager: categories and snippets on the left, the editor on the right](docs/images/quicktext-manager.webp)
+1. **呼出** —— 按 `Ctrl+Shift+8`，面板出现在当前窗口上方。
+2. **搜** —— 打 `yx`（「邮箱」的拼音首字母），命中高亮。名称、拼音全拼 / 首字母、缩写、正文都能搜。
+3. **回车** —— 邮箱立刻**贴到你刚才的光标处**。完成。
 
-- **Tray → Open Manager** — the full editor: categories and snippets on the left, the editor on the right. Add/rename/delete categories (with a **7-color** tag), edit snippets (name, abbreviation, body, image). Drag to reorder or move between categories; `Ctrl+Z` undoes a delete.
-- **Tray → New from clipboard** — create a new snippet from the current clipboard and open it in the Manager to finish (press **Save** to write it to disk; nothing is written until you do, and anything unsaved is confirmed before it can be lost — on closing the Manager, on closing the enlarged editor, and on switching to another snippet).
-- **Create in the panel** — type the text in the search box and press `Ctrl+N` to save it as a new snippet (that text becomes the body; `@category …` files it in that category) and jump to the Manager to finish (`Ctrl+E` edits the selected one).
+> 不打字则按分类浏览，`最近常用` / `收藏` 置顶，常用的会**自动往前排**（按你实际发送的次数）。
+> `↑↓` 移动 · `←→` 切分类 · `Alt+1~9` 数字快选 · 双击也可发送 · `Esc` 关闭。
 
-> **Long text / code**: the `⤢ Enlarge` button above the body opens it in a near-full-screen editor (or press `Ctrl+Shift+Enter` in the body); `Esc` or "Done" ends the session; if you changed anything it asks whether to save or discard first. With "enable {variable} placeholders" checked, tokens are **tinted by kind** — variables cyan, auto tokens like `{date}` amber, `{snippet:x}` purple, `{cursor}` cyan dashed — while a misspelled snippet name, an invalid date format or an unclosed brace gets a **red squiggle** you can hover for the reason. All of those paste **verbatim** at send time, which used to be discoverable only after pasting the wrong thing. Hovering a date token also previews its resolved value. For code, leave the checkbox off: highlighting is fully disabled so a body full of `{}` stays quiet, and the status bar just notes how many tokens will be output as-is. Also included: **Enter keeps indentation** and **`Tab` indents a whole multi-line selection**.
+## 三种取用方式，挑顺手的
+
+同一批文本，三种取法，可以混用：
+
+| 方式            | 怎么触发                           | 最适合                        |
+| --------------- | ---------------------------------- | ----------------------------- |
+| 🔍 **面板搜索** | `Ctrl+Shift+8` → 打拼音 → 回车     | 条目多、偶尔用、想浏览着挑    |
+| ⌨️ **内联缩写** | 直接打 `;qm` 再按空格 / Tab / 回车 | 高频固定短语，懒得呼面板      |
+| 🧩 **变量模板** | 用上面两种取一条含 `{变量}` 的模板 | 邮件 / 表单：同一模板改几个字 |
+
+- **图片也能存**：剪贴板或文件添加，发送时粘贴图片；图片同样能设缩写，打缩写直接贴图（二维码、带 logo 的签名图）。
+- **每条可单独设输出方式**：聊天短语粘贴后自动回车、代码片段永不回车，互不干扰。
+
+缩写与变量的完整细节见下方「详细说明」里的**变量占位符**、**缩写扩展**两节。
+
+---
+
+**详细说明。** 上面的内容对多数人已经够用，下面是完整参考。
+
+## 装完即用
+
+双击 **`QuickText.exe`**，程序常驻在右下角**托盘**（不占任务栏），并显示可拖动的**悬浮球**（记住位置；左键切换搜索面板；右键菜单与托盘一致，可本次隐藏，再从托盘「显示悬浮球」找回）。**首次运行**会：
+
+- 自动放一份**示例文本库**（「常用 / 模板」两个分类，按你的**界面语言**给出），无需任何配置就能试；
+- 弹一个气泡提示你呼出热键 —— 默认 **`Ctrl+Shift+8`**。
+
+> 面板右上角一排图标：**＋ 新建** · **管理**（开管理器）· **设置** · **📌 固定**（开启后发一条不关面板，可连发多条）。想去管理 / 设置不必回托盘，从面板直接进。
+
+## 添加 / 修改你的文本
+
+![管理器：左侧分类与条目、右侧编辑器](docs/images/quicktext-manager.webp)
+
+- **托盘右键 → 打开管理**：完整管理器。左侧分类与条目、右侧编辑器。可新建/改名/删除分类（选 **7 色**标记）、增删改条目（名称、缩写、正文、图片）。拖拽可排序或移到别的分类；`Ctrl+Z` 撤销删除。
+- **托盘右键 → 从剪贴板新增**：把当前剪贴板内容新建成一条，在管理器里打开补全（点**保存**才写盘，不点就不落盘；未保存的改动在丢失前一律会问你 —— 关管理器时问、关放大窗时问、切到别的条目时也问）。
+- **面板里现场建**：在搜索框输入内容，按 `Ctrl+N` 存成新条目（这段文字即正文；`@分类 …` 会归入该分类）并跳到管理器补全（选中某条按 `Ctrl+E` 编辑）。
+
+> **写长文本 / 代码**：正文框上方的 `⤢ 放大编辑` 会把正文放进一个近全屏的大窗编辑（也可在正文里按 `Ctrl+Shift+Enter`），`Esc` 或「完成」结束编辑；有改动时会先问你保存还是丢弃。勾选「启用 {变量} 占位符」后，正文里的记号会**按类型着色**：变量青色、`{日期}` 等自动记号琥珀色、`{片段:x}` 紫色、`{光标}` 青色虚线；而拼错的片段名、无效的日期格式、没闭合的花括号会画**红色波浪线**并可悬停看原因 —— 这些写法发送时是**原样贴出**的，以前只能等贴错了才发现。日期记号悬停还会显示算好的实际值。存代码时不勾选该开关即可：高亮完全关闭，满屏的 `{}` 不会被打扰，只在底部状态栏提示有多少处会原样输出。另有**回车保持缩进**、**多行 `Tab` 整块缩进**。
 >
-> The enlarged window **always shows line numbers**, and its footer offers a **code format** picker — JSON, YAML, XML, HTML, Markdown, SQL, Python, JavaScript/TypeScript, C#, Java, PowerShell, Shell and INI, 13 in all — which syntax-highlights the body and is remembered per snippet. **The stored text stays plain and what gets pasted is unchanged.** Placeholder highlighting paints the background while syntax highlighting tints the glyphs, so the two never fight: a JSON body with `{variables}` in it shows both its structure and its variables at once.
+> 大窗**恒开行号**，底部还能选**代码格式** —— JSON、YAML、XML、HTML、Markdown、SQL、Python、JavaScript/TypeScript、C#、Java、PowerShell、Shell、INI 共 13 种，选了就按语法着色，格式记在这一条上。**存的仍然是纯文本，发送出去一字不变**。占位符高亮画的是背景、语法高亮染的是字色，两条通道互不打架，所以一段带 `{变量}` 的 JSON 能同时看清结构和变量。
 
-## Placeholders (one template, many situations) · opt-in per snippet
+## 变量占位符（一条模板套多种场景）· 每条手动启用
 
-Placeholders are a **per-snippet switch**: tick "**Enable {variable} placeholders**" in the Manager editor and the tokens below are resolved on send; **left unticked (the default), the body is sent verbatim** — code, scripts and JSON full of literal `{...}` are never misparsed or prompted on.
+占位符是**按条目开关**的：在管理器编辑区勾选「**启用 {变量} 占位符**」后，发送时才会处理下表记号；**不勾选（默认）则正文原样输出** —— 存代码、脚本、JSON 这类满是字面 `{...}` 的内容不会被误解析或弹窗。
 
-> Upgrading: placeholders used to be always-on. The first launch after upgrading automatically ticks the switch for **existing snippets** whose body contains `{...}`, so nothing changes behavior; untick it in the Manager for the ones that are actually code.
+> 升级提示：旧版本占位符是全局生效的。升级后首次启动会自动给正文含 `{...}` 的**已有条目**勾上开关，行为保持不变；其中属于代码的，去管理器取消勾选即可。
 
-When enabled, these placeholders are resolved on send:
+勾选后，正文里的这些占位符发送时自动处理：
 
-| Placeholder                    | What it does                                                                                                                                                                                                                                                                                                                                                                           |
-| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `{name}` (any label)           | **Prompts you to fill it in** before pasting; **remembers your last value** so repeats don’t re-ask                                                                                                                                                                                                                                                                                    |
-| `{name:John}`                  | Variable with a **default**, prefilled in the prompt                                                                                                                                                                                                                                                                                                                                   |
-| `{env\|dev\|test\|prod}`       | Variable with **options** — the prompt shows a dropdown (first option doubles as the default; free typing still allowed)                                                                                                                                                                                                                                                               |
-| `{clipboard}`                  | Inserts the current clipboard contents                                                                                                                                                                                                                                                                                                                                                 |
-| `{cursor}`                     | Leaves the caret at this spot after pasting (also suppresses auto-Enter)                                                                                                                                                                                                                                                                                                               |
-| `{date}` `{time}` `{datetime}` | Inserts the current date/time; supports offsets like `{date+7}` (7 days out) and custom formats like `{date=MMM d, yyyy}` / `{time=HH:mm:ss}`, combinable with offsets: `{date+7=MM-dd}`. Formats are WYSIWYG (`:` `/` output verbatim, always Gregorian), and `{date=dddd}` names the weekday in the interface language. Chinese aliases `{日期}` / `{时间}` / `{日期时间}` also work |
-| `{uuid}` `{random}`            | Random values: a UUID / 6 digits, fresh per occurrence                                                                                                                                                                                                                                                                                                                                 |
-| `{snippet:name}`               | **Inlines another snippet's body** (3 levels deep, cycle-safe) — keep shared signatures in one place                                                                                                                                                                                                                                                                                   |
+| 占位符                         | 作用                                                                                                                                                                                                                                                                             |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `{姓名}`（任意名字）           | 发送时**弹窗让你填**，填完再贴；**记住你上次填的值**，重复用不必重打                                                                                                                                                                                                             |
+| `{姓名:张三}`                  | 变量带**默认值**，弹窗预填                                                                                                                                                                                                                                                       |
+| `{环境\|dev\|test\|prod}`      | 变量带**选项**，弹窗变下拉（第一项兼作默认值，也可手输）                                                                                                                                                                                                                         |
+| `{剪贴板}`                     | 插入当前剪贴板内容                                                                                                                                                                                                                                                               |
+| `{光标}`                       | 贴完把光标停在这个位置（含此记号时不会自动回车）                                                                                                                                                                                                                                 |
+| `{日期}` `{时间}` `{日期时间}` | 插入当前日期/时间；支持偏移，如 `{日期+7}`（七天后）；支持自定义格式，如 `{日期=yyyy年M月d日}`、`{时间=HH:mm:ss}`，可与偏移组合 `{日期+7=M月d日}`。格式所见即所得（`:` `/` 原样输出，始终公历），`{日期=dddd}` 的星期名跟随界面语言。英文别名 `{date}` / `{time}` / `{datetime}` |
+| `{uuid}` `{随机数}`            | 随机值：UUID / 6 位数字，每处独立生成                                                                                                                                                                                                                                            |
+| `{片段:名称}`                  | **嵌入另一条目的正文**（最多 3 层，循环安全）—— 公共签名、落款只维护一处                                                                                                                                                                                                         |
 
-Example: a signature `Best regards,\n{name}` (with placeholders enabled) → asks for the name on send → pastes the finished signature.
+例：签名模板 `此致\n敬礼\n{姓名}`（勾选启用占位符）→ 发送时问你姓名 → 贴出完整签名。
 
-## Abbreviations (expand as you type, no panel) · optional
+## 缩写扩展（边打字边触发）· 可选
 
-Give a snippet an **abbreviation** to expand it directly in any input box. The **trigger prefix** is set once in Settings (default `;`):
+给某条设一个**缩写**，就能在任意输入框直接展开，不用呼面板。**触发前缀**在设置里统一配置（默认 `;`）：
 
-1. In the Manager, type just the **abbreviation itself** — e.g. `sig` for your signature. The prefix is added automatically (don't retype it); the field shows the current prefix `;` in front.
-2. In any input box type **`;sig`** (= prefix + abbreviation) then **Space / Tab / Enter** → it deletes `;sig` and expands the body (a `{placeholder}` prompts first when that snippet has placeholders enabled).
-3. **Mistyped?** Press **Backspace right after** the expansion to revert it back to `;sig` (same window, within 5 s).
+1. 在管理器给条目填缩写 —— **只填缩写本身**，如「签名」填 `qm`（前缀是自动加的，别再重复输入；缩写框前面会显示当前前缀 `;`）。
+2. 在任意输入框打 **`;qm`**（= 前缀 + 缩写）再按**空格 / Tab / 回车** → 自动删掉 `;qm`，展开成正文（该条勾选了占位符且含 `{变量}` 时会先弹窗填）。
+3. **打错了？** 展开后**紧接着按一次退格**，立刻还原成你敲的 `;qm`（同窗口、5 秒内有效）。
 
-Details: matching is **case-insensitive** (`;SIG` fires with CapsLock on); a typo corrected with Backspace still expands; two snippets sharing an abbreviation get an **inline warning** in the Manager; and the tray menu has a one-click **“Pause expansion”** toggle (for demos/games).
+细节：缩写**不区分大小写**（大写锁定下 `;QM` 照样触发）；缩写打错一个字母，退格修正后仍可展开；两条条目撞了同一个缩写，管理器会**当场标红提示**；**托盘右键可一键「暂停缩写展开」**（演示 / 游戏时用，再点恢复）。
 
-> **About the prefix:** the prefix (default `;`) keeps ordinary typing / pinyin from false-triggering a bare abbreviation. Change it under **Settings → Abbreviations → Trigger prefix** (to `,`, `:`, …) or **leave it empty**. A prefixed abbreviation is self-delimiting and fires even glued to the preceding text (e.g. `thx;sig`); with no prefix it only fires as its own word (never as the tail of a longer one like `graf`). You can also disable abbreviations per app (a blacklist, e.g. `cmd.exe; putty.exe`) or turn them off entirely.
+> **关于前缀**：前缀（默认 `;`）能避免正常打字 / 拼音误触发裸缩写。可在**设置 → 缩写 → 触发前缀**改成 `,`、`:` 等，或**留空取消**。带前缀的缩写自带边界、紧贴前面的字也能触发（如 `多谢;qm`）；不加前缀时缩写只在独立成词时才触发（不会被 `graf` 这类长词结尾误撞）。也可按进程停用缩写（黑名单，如 `cmd.exe; putty.exe`），或整体关掉。
 
-## Output & common settings (Tray → Settings)
+## 输出方式与常用设置（托盘右键 → 设置）
 
-- **Output** — default “paste into the active app”; or “copy to clipboard only” (you paste with `Ctrl+V`). Optional: press Enter after pasting, single-click to send, “Keep my clipboard intact” (off by default — apps that read the clipboard slowly can end up pasting the old content instead). **Each snippet can override this** (Manager → Output: follow global / paste / paste + Enter / copy only) — chat phrases auto-send, code snippets never do.
-- **Panel position** — follow the active window (default) / follow the text caret / remember last position.
-- **Summon method (pick one)** — ① **key combo**: click the box and press a new one (ordinary keys need `Ctrl`/`Alt`/`Shift`/`Win`; function keys **`F1`–`F24` work on their own**); or ② **tap a modifier**: **single- or double-tap one modifier** (e.g. right `Ctrl`, right `Shift`) to summon (a lone modifier can't be a normal hotkey, so it's detected by tap). Choosing tap disables the combo — the two are mutually exclusive, so it's always clear which one is live.
-- **Capture hotkey** — optional second combo that **silently saves the clipboard as a new snippet** (balloon feedback, no window).
-- **Data folder** — point it at a sync drive ([the snippets stay plain JSON](#where-youd-use-it), so the sync provider can read them); **export / import backup** (zip, validated with an overwrite confirm); daily **auto-backup** to this machine (newest 10 kept, one-click folder access).
-- **Language** — **18 languages**: English · 简体中文 · 繁體中文 · 日本語 · 한국어 · Español · Português · Français · Deutsch · Italiano · Русский · Tiếng Việt · ไทย · Bahasa Indonesia · हिन्दी · বাংলা · العربية (RTL) · Türkçe, switched instantly. **Start with Windows** optional.
-- **Theme** — dark (default) / light / follow Windows, applied the moment you pick it, no restart.
-- **Check for updates** — off by default; when on, the app contacts GitLab at startup to check for and download a newer build to local disk. It never replaces the running program; this is the app's only network access. "Check now" runs it on demand.
+- **输出方式**：默认「直接粘贴到当前位置」；也可切「仅复制到剪贴板」（自己去 `Ctrl+V`）。可选「粘贴后自动回车」「单击即发送」「保留原剪贴板内容」（默认关闭 —— 少数程序读剪贴板较慢，还原可能赶在它读取之前，导致贴出旧内容）。**每条条目还能单独覆盖**（管理器 → 输出方式：跟随全局 / 直接粘贴 / 粘贴并回车 / 仅复制）—— 聊天短语自动回车、代码片段永不回车，互不干扰。
+- **快速采集热键**：设置一个组合键后，按下即把当前剪贴板文本**静默存为新条目**（气泡提示，不弹窗口）。
+- **面板位置**：跟随活动窗口（默认）/ 跟随文字光标 / 记住上次位置。
+- **呼出方式（二选一）**：① **组合键** —— 点输入框按下新组合即改（普通键需配 `Ctrl`/`Alt`/`Shift`/`Win`，功能键 **`F1`–`F24` 可单独用**）；② **连按修饰键** —— **单击或双击一个修饰键**（如右 `Ctrl`、右 `Shift`）即呼出（单个修饰键做不了普通热键，故用连按检测）。选了连按就自动停用组合键，界面上互斥、一眼可辨当前生效的是哪种。
+- **数据夹**：可指向同步盘（[片段是明文 JSON](#用在哪里)，同步服务商读得到）；**导出 / 导入备份**（zip，导入前校验并确认覆盖）；本机**每日自动备份**（保留最新 10 份，一键打开备份目录）。
+- **界面语言**：**18 种** —— 简体 · 繁體 · English · 日本語 · 한국어 · Español · Português · Français · Deutsch · Italiano · Русский · Tiếng Việt · ไทย · Bahasa Indonesia · हिन्दी · বাংলা · العربية（RTL）· Türkçe，即时切换。**开机自启**可选。
+- **主题**：深色（默认）/ 浅色 / 跟随系统 —— 点选即时生效，不用重启。
+- **检查更新**：默认关闭；开启后仅在启动时联网访问 GitLab 检查并下载新版本到本地，不会自动替换程序（应用唯一的联网操作）。也可点「立即检查」按需触发。
 
-## Keyboard cheat-sheet
+## 键位速查
 
-| Action                                | Keys                                                    |
-| ------------------------------------- | ------------------------------------------------------- |
-| Summon / close panel                  | `Ctrl+Shift+8` (configurable) / `Esc`                   |
-| Select / switch category / quick-pick | `↑↓` / `←→` / `Alt+1–9`                                 |
-| Send                                  | `Enter` or double-click (single-click optional)         |
-| Favorite / unfavorite                 | `Ctrl+D`                                                |
-| Create / edit in panel                | `Ctrl+N` / `Ctrl+E`                                     |
-| Preview: expand / collapse            | `Ctrl+Space` (when a preview shows)                     |
-| Undo delete (Manager)                 | `Ctrl+Z`                                                |
-| Abbreviation: trigger / undo          | type abbr + Space·Tab·Enter / Backspace after expanding |
+| 场景                     | 键                                    |
+| ------------------------ | ------------------------------------- |
+| 呼出 / 关闭面板          | `Ctrl+Shift+8`（可改） / `Esc`        |
+| 选择条目 / 切分类 / 快选 | `↑↓` / `←→` / `Alt+1~9`               |
+| 发送                     | `Enter` 或双击（可设为单击）          |
+| 收藏 / 取消              | `Ctrl+D`                              |
+| 面板里新建 / 编辑        | `Ctrl+N` / `Ctrl+E`                   |
+| 预览：展开 / 收起        | `Ctrl+Space`（有预览时）              |
+| 管理器撤销删除           | `Ctrl+Z`                              |
+| 缩写：触发 / 撤销        | 打缩写 + 空格·Tab·回车 / 展开后按退格 |
 
 ---
 
-## Features at a glance
+## 功能一览
 
-- **Summon**: global hotkey — a **key combo** (function keys work as a single key) or **single/double-tap a modifier** (e.g. right Ctrl), **pick one**; panel follows active window / text caret / remembered position; top-row buttons jump to **New / Manager / Settings**; pin it to send several in a row; drag & resize with remembered size.
-- **Search**: name / pinyin / initials / abbreviation / body. The **matched characters are accented** — including for a pinyin hit, where the query appears nowhere in the name — and when the abbreviation is what matched, its key lights up instead, so no result is ever unexplained; **ties broken by usage frequency (frecency)**; `@category keywords` scopes the search to one category (bare `@category` browses it).
-- **Content**: plain text (multi-line, special chars, emoji lossless), placeholders (defaults / option dropdowns / snippet nesting / custom date formats / uuid / random — **opt-in per snippet**), **images** (from clipboard or file, pasted as an image on send; **images can have abbreviations too** — type the abbr, get the image).
-- **Abbreviations**: terminator-triggered, variable prompt, one-press undo, Backspace typo-correction, case-insensitive, click breaks the token, duplicate warning, per-app blacklist, **one-click tray pause**.
-- **Output**: paste directly / copy only; optional auto-Enter, “Keep my clipboard intact”, single-click send; **per-snippet output override**; capture hotkey (clipboard → snippet in one press).
-- **Manager**: **roomy body editor** (`⤢ Enlarge` opens it in its own window; unsaved changes are always confirmed — on closing it, and on switching to another snippet), **placeholder highlighting** (tinted by kind; dead snippet refs / invalid date formats / unclosed braces are squiggled red with a reason on hover; nothing is highlighted when placeholders are off — the status bar says so instead), **code-friendly** (the enlarged window always shows line numbers and offers 13 code formats for syntax highlighting; Enter keeps indentation, `Tab` indents a multi-line selection, no-wrap mode), 7 category colors, drag reorder / move, **multi-select batch move / delete** (Ctrl / Shift select, then right-click), undo delete, **trash (30-day restore, with body preview)**, duplicate-abbr warning, usage stats, save feedback.
-- **Data**: local JSON, hot-reload (auto-merges external edits / sync), sync-conflict notice, export / import backup, **daily auto-backup (10 kept)**, start with Windows.
-- **Localization**: **18 UI languages** (Simplified / Traditional Chinese, English, 日本語, 한국어, Español, Français, Deutsch, Русский, العربية …) with **right-to-left mirroring for Arabic**, switched live in Settings. Dark and light themes (or follow Windows), switched live too.
-- **Robustness**: single instance (a second launch summons the search panel instead of double-installing hooks); CI runs tests plus a window smoke-check on every push and publishes both single-file builds on `v*` tags.
+- **呼出**：全局热键，**组合键**（功能键可单键）或**单击 / 双击一个修饰键**（如右 Ctrl）**二选一**；面板可跟随活动窗口 / 文字光标 / 记忆位置；顶部一排按钮直达**新建 / 管理 / 设置**；图钉可**固定连发**多条；可拖动、缩放并记忆尺寸。
+- **搜索**：名称 / 拼音全拼 / 首字母 / 缩写 / 正文。**命中的那几个字会高亮** —— 拼音命中也标得出来（查询词根本不在名称里），若是缩写命中则点亮缩写键帽，不会有"这条为什么在这"的疑惑；**同分档按使用频次排序（frecency）**；`@分类 关键词` 限定在某分类内搜（`@分类` 单独输入即浏览该分类）。
+- **内容**：纯文本（多行、特殊字符、emoji 无损）、变量占位符（默认值 / 选项下拉 / 片段嵌套 / 日期自定义格式 / uuid / 随机数，**按条目启用**）、**图片**（剪贴板或文件添加，发送时粘贴图片；**图片也能设缩写**，打缩写直接贴图）。
+- **缩写扩展**：终端键触发、变量弹窗、误展开一键撤销、退格改错、大小写不敏感、点击断词、冲突提示、进程黑名单、**托盘一键暂停**。
+- **输出**：直接粘贴 / 仅复制；可选自动回车、保留原剪贴板内容、单击发送；**按条目覆盖输出方式**；快速采集热键（剪贴板一键入库）。
+- **管理器**：**大正文编辑区**（`⤢ 放大编辑` 开独立大窗；有未保存的改动一律先问你 —— 关窗时问，切到别的条目时也问）、**占位符高亮**（按类型着色，找不到的片段 / 写错的日期格式 / 未闭合花括号标红并说明原因；未启用占位符时不高亮，只在状态栏提示）、**代码友好**（放大窗恒开行号并可选 13 种代码格式做语法高亮、回车保持缩进、多行 `Tab` 整块缩进、不换行模式）、分类 7 色、拖拽排序 / 移动、**多选批量移动 / 删除**（Ctrl / Shift 选中后右键）、撤销删除、**回收站（30 天可恢复，带正文预览）**、缩写冲突提示、使用次数统计、保存反馈。
+- **数据**：本地 JSON、热加载（外部编辑 / 同步后自动合并重载）、同步冲突提示、导出 / 导入备份、**每日自动备份（保留 10 份）**、开机自启。
+- **本地化**：**18 种界面语言**（简体 / 繁體 / English / 日本語 / 한국어 / Español / Français / Deutsch / Русский / العربية…），**阿拉伯语右到左镜像**，设置里即时切换。深色 / 浅色主题（也可跟随系统），同样即时切换。
+- **稳健**：单实例（重复启动会唤出搜索面板而不是跑出第二份钩子）；CI 每次提交跑测试与窗口冒烟检查，打 `v*` 标签自动发布两种单文件构建。
 
-## Data & sync
+## 数据与同步
 
-Data folder (default `Documents\QuickText`, changeable in Settings, can point at a sync drive):
+数据文件夹（默认「我的文档 / QuickText」，设置里可改，可指向同步盘）：
 
 ```text
-<data folder>/
-  ├─ index.json        # category order + each category's file name and color
-  ├─ <category>.json   # the snippets in that category (Snippet[])
-  ├─ trash.json        # soft-deleted snippets (auto-purged after 30 days)
-  └─ images/           # image files for image snippets
+<数据文件夹>/
+  ├─ index.json        # 分类顺序 + 每个分类的文件名与颜色
+  ├─ <分类>.json       # 该分类下的条目数组（Snippet[]）
+  ├─ trash.json        # 回收站（软删除条目，30 天后自动清除）
+  └─ images/           # 图片条目的图片文件
 ```
 
-- `Snippet`: `{ id, name, abbr, body, useVariables, outputMode, imagePath?, codeFormat?, updatedAt }`.
-- **Atomic writes** (`*.tmp` → `File.Replace`) so a sync never reads a half-written file; `FileSystemWatcher` hot-reload (coalesced), with a self-write guard.
-- Machine-local state stays **out of the sync folder**: settings in `%APPDATA%\QuickText\settings.json`, usage counts / favorites in `%APPDATA%\QuickText\usage.stats` (they change on every send and would conflict across machines), daily auto-backups in `%APPDATA%\QuickText\backups\`.
-- **Portable mode** (trace-free / USB): turn it on under **Settings → Data → Portable mode** — it drops a `QuickText.portable` marker next to `QuickText.exe` and **applies on the next restart** (the first portable start carries your settings and usage across, so you don't reconfigure). Settings, usage, backups, downloaded updates and the default library then live under `<exe folder>\Data\` instead of `%APPDATA%` / Documents, and "start with Windows" uses a Startup-folder shortcut rather than the registry — so the whole tool travels on a stick and leaves nothing on the host. The app must sit in a writable location (a USB stick, not `Program Files`); the **text library moves via Export / Import backup**. Start-with-Windows is tracked per mode, so re-tick it in the new mode after switching if you want it. Leave it off for the installed layout above (the right choice when the data folder is a sync drive).<br>_(It has to be a marker file, not a plain setting — it decides where `settings.json` itself lives; the switch only takes effect next start, never disturbing the current session.)_
+- `Snippet`：`{ id, name, abbr, body, useVariables, outputMode, imagePath?, codeFormat?, updatedAt }`。
+- **原子写**（`*.tmp` → `File.Replace`）避免同步读到半包；`FileSystemWatcher` 热加载（合并突发写入），自写标记忽略自身写入。
+- 机器级状态**不进同步夹**：设置存 `%APPDATA%\QuickText\settings.json`，使用次数 / 收藏存 `%APPDATA%\QuickText\usage.stats`（每次发送都变，跨机器会冲突，故与文本库分开），每日自动备份存 `%APPDATA%\QuickText\backups\`。
+- **便携模式（绿色 / U 盘无痕）**：**设置 → 数据 → 便携模式** 勾选即可开启 —— 它在 `QuickText.exe` 旁建一个标记文件 `QuickText.portable`，**重启后生效**（首次以便携方式启动时，会把你的设置和使用记录一并带过去，不会从头配置）。之后设置、使用次数、每日备份、下载的更新包和默认文本库都改放到 **`<exe 所在目录>\Data\`**（不再写 `%APPDATA%` / 我的文档），「开机自启」也改用**启动文件夹快捷方式**而非注册表 —— 整套工具随 U 盘走，宿主机上零残留。需把程序放在可写位置（U 盘等，非 `Program Files`）；**文本库用「导出 / 导入备份」搬到新位置**。开机自启按模式各自记录，切换模式后如要自启请在新模式下重新勾一次。不开启则用安装式布局（数据夹是同步盘时应选这种）。<br>_（这个开关必须靠标记文件实现，不能只是个普通设置项——因为它决定了 `settings.json` 本身存在哪；切换只在下次启动生效，不会扰动当前会话。）_
 
-## Brand
+## 品牌
 
-Assets live in `assets/branding/`: `quicktext-mark.svg` (primary), `quicktext-mark-mono.svg` (monochrome), `quicktext.ico` (16–256, app / tray icon), `quicktext-256.png`, `quicktext-social.png` (1200×630 og:image), `quicktext-social-2x.png` (2400×1260 @2x), `brand.html` (brand sheet). The mark is a **text I-beam caret** on a mint tile beside an amber block of just-landed text — “text▮”, i.e. putting your text at the cursor. Palette “terminal dusk”: mint (the app accent `#3DC2A0`) + amber `#F2B457` on teal-biased ink; a sans wordmark paired with Cascadia Code mono.
+`assets/branding/` 下有标识资源：`quicktext-mark.svg`（青色主标）、`quicktext-mark-mono.svg`（单色）、`quicktext.ico`（16–256 多尺寸，程序 / 托盘图标）、`quicktext-256.png`、`quicktext-social.png`（1200×630 分享卡片 / og:image）、`quicktext-social-2x.png`（2400×1260 高清 2×）、`brand.html`（品牌手册）。标志是青色方片上的一个**文字插入光标 I**，旁边一段刚落定的琥珀色文字 —— “text▮”，正是把文字放到光标上。配色「薄暮终端」：青（应用主色 `#3DC2A0`）+ 琥珀 `#F2B457`，落在偏青的墨底上；字体为无衬线字标 × Cascadia 等宽。
 
-## Architecture
+## 架构
 
-Pure Core (no Win32, unit-testable) kept separate from Win32/UI.
+Core 纯逻辑（无 Win32，可单测）与 Win32/UI 隔离。
 
-**`src/QuickText.Core`** — everything testable without a window:
+**`src/QuickText.Core`** —— 不需要窗口就能测的那部分：
 
-- `Models`, `Persistence` (`Store`, `UsageStore`, `JsonConfig`)
-- `Search` (`SearchIndex`), `Abbr` (`AbbrMatcher`), `Pinyin`
-- `Snippets` (`Placeholders`, `PlaceholderScanner`, `CodeLanguages`)
-- `Settings`, `Localization` (.resx, 18 languages)
+- `Models`、`Persistence`（`Store`、`UsageStore`、`JsonConfig`）
+- `Search`（`SearchIndex`）、`Abbr`（`AbbrMatcher`）、`Pinyin`
+- `Snippets`（`Placeholders`、`PlaceholderScanner`、`CodeLanguages`）
+- `Settings`、`Localization`（.resx，18 种语言）
 
-**`src/QuickText.App`** — the WPF layer:
+**`src/QuickText.App`** —— WPF 界面层：
 
-- Windows: `SearchPanel` / `ManagerWindow` / `SettingsWindow` / `BodyEditorWindow` / `AppDialog` / `VariablesDialog`
-- Body editors: `BodyEditor` (native TextBox with the custom-drawn `PlaceholderLayer` and `LineNumberGutter`) and `CodeEditor` (AvalonEdit)
-- `Ui/Syntax` (bundled YAML/INI/Shell highlighting plus the dark and light token palettes), `Ui/Theme.xaml` + `Ui/Theme.Light.xaml`
-- `Interop`: `GlobalHotkey`, `KeyboardHook`, `PasteEngine`, `Autostart`, `NativeMethods`
+- 窗口：`SearchPanel` / `ManagerWindow` / `SettingsWindow` / `BodyEditorWindow` / `AppDialog` / `VariablesDialog`
+- 正文编辑器：`BodyEditor`（原生 TextBox + 自绘的 `PlaceholderLayer`、`LineNumberGutter`）与 `CodeEditor`（基于 AvalonEdit）
+- `Ui/Syntax`（自带 YAML/INI/Shell 高亮定义与深/浅两套配色）、`Ui/Theme.xaml` + `Ui/Theme.Light.xaml`
+- `Interop`：`GlobalHotkey`、`KeyboardHook`、`PasteEngine`、`Autostart`、`NativeMethods`
 
-**`tests/QuickText.Core.Tests`** — Core unit tests (xUnit).
+**`tests/QuickText.Core.Tests`** —— Core 单元测试（xUnit）。
 
-## Build & run
+## 构建与运行
 
 ```bash
 dotnet build QuickText.sln -c Debug
 dotnet test  tests/QuickText.Core.Tests/QuickText.Core.Tests.csproj
-dotnet run  --project src/QuickText.App        # or run QuickText.exe under bin
+dotnet run  --project src/QuickText.App        # 或运行 bin 下的 QuickText.exe
 ```
 
-Publish a single-file portable build (win-x64), with or without the .NET runtime bundled:
+发布单文件绿色版（win-x64），含 / 不含 .NET 运行时：
 
 ```bash
-dotnet publish src/QuickText.App -c Release -p:PublishProfile=win-x64                 # standalone, no runtime needed
-dotnet publish src/QuickText.App -c Release -p:PublishProfile=win-x64-needs-dotnet10  # much smaller, needs the .NET 10 desktop runtime
+dotnet publish src/QuickText.App -c Release -p:PublishProfile=win-x64                 # 绿色版，不需要额外运行时
+dotnet publish src/QuickText.App -c Release -p:PublishProfile=win-x64-needs-dotnet10  # 体积小得多，需要已装 .NET 10 桌面运行时
 ```
 
-Requires the .NET 10 SDK. Windows only (Win32 global hotkey / keyboard hook / clipboard).
-
+需要 .NET 10 SDK。仅 Windows（依赖 Win32 全局热键 / 键盘钩子 / 剪贴板）。

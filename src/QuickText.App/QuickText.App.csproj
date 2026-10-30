@@ -43,13 +43,13 @@
     <!-- Fallback only. A source build takes the version from the newest git tag (target below),
          and CI passes -p:Version= from the tag it is building; this literal is what's left when
          neither applies — a .zip of the sources with no .git in it. -->
-    <VersionFallback>1.4.2</VersionFallback>
+    <VersionFallback>1.0.0</VersionFallback>
     <Version>$(VersionFallback)</Version>
     <Product>QuickText</Product>
-    <Authors>rockbenben</Authors>
-    <Company>rockbenben</Company>
+    <Authors>Rocky</Authors>
+    <Company>Rocky</Company>
     <Description>Tray-resident Windows snippet manager and text expander — recall stored text or images by a few pinyin keystrokes or an abbreviation, pasted at the cursor.</Description>
-    <Copyright>Copyright © 2026 rockbenben</Copyright>
+    <Copyright>Copyright © 2026 Rocky</Copyright>
     <PackageProjectUrl>http://172.16.68.178:8090/vb-coding/quicktext</PackageProjectUrl>
     <RepositoryUrl>http://172.16.68.178:8090/vb-coding/quicktext</RepositoryUrl>
   </PropertyGroup>

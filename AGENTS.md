@@ -2,11 +2,11 @@
 
 This is the repository-level working agreement for AI coding agents. Read it before changing code. If your tool has its own instruction file, treat it as a pointer to this file, not as a second source of rules.
 
-QuickText is a **Windows-only WPF / .NET 10** tray application: a snippet manager and text expander. It is distributed as a portable executable. There is no web stack and no plugin system. User-facing documentation is `README.md`, `README.zh.md` and the translations under `docs/i18n/`; release notes live under `docs/release-notes/`. Build instructions are in the README’s **Build & run** section.
+QuickText is a **Windows-only WPF / .NET 10** tray application: a snippet manager and text expander. It is distributed as a portable executable. There is no web stack and no plugin system. User-facing documentation is `README.md` (Simplified Chinese, default) and `README.en.md` (English); release notes live under `docs/release-notes/`. Build instructions are in the README’s **Build & run** section.
 
 ## 1. Read before changing
 
-- **`README.md` / `README.zh.md` / `docs/i18n/`** — what the app promises and what each screen does.
+- **`README.md` / `README.en.md`** — what the app promises and what each screen does.
 - **`docs/release-notes/`** — historical release content. Do not rewrite a published release note; add a new version’s note only when cutting that release.
 - **`.github/workflows/ci.yml`** — the real test, smoke, publish, checksum and release gates. Do not infer a release guarantee from a green local build.
 - **The WPF-specific skill**, if available (`wpf-desktop`) — especially its pitfalls and dev-switch references. Read the matching section before touching layout, DPI, activation, tray behavior or the test harness.
@@ -51,8 +51,8 @@ QuickText.exe --shots <directory>
 ## 4. Localization and documentation
 
 - The neutral `src/QuickText.Core/Localization/Strings.resx` is the Simplified Chinese source. Every UI key also exists in the satellite resx files. Add a new key to **all** satellite files; never leave a raw key or an empty translation.
-- Keep the localized READMEs structurally aligned with the root READMEs. `README.zh.md` and every `docs/i18n/README.*.md` use the same section set as `README.md` (the Download heading included); translations should not drift into old sections or omit current ones.
-- User-visible behavior changes land with their documentation in the same change. Update the English and Chinese READMEs, then the translations when the change belongs in the user-facing documentation.
+- Keep `README.en.md` structurally aligned with `README.md` (the Download heading included); the two should not drift into different section sets.
+- User-visible behavior changes land with their documentation in the same change. Update both the Chinese and English READMEs when the change belongs in the user-facing documentation.
 - Code comments explain **why**, not what. Do not write drifting line numbers, test counts, release versions or “this round” notes into comments or docs. Historical references to removed code are allowed when the surrounding text says so.
 - Do not rewrite historical planning/report files under `.superpowers/sdd/` or local preview notes; they are records, not current product documentation. Do not commit build outputs, screenshots, temporary configs, local settings or `.qoder-credits/`.
 
@@ -83,6 +83,6 @@ Before reporting a change as complete:
 
 1. Build and the relevant tests pass.
 2. `--smoke` passes; `--shots` passes when UI or layout changed, plus a screen-level check where the harness has a blind spot.
-3. Localization keys exist in every satellite resx file; the README section structure remains aligned across languages.
+3. Localization keys exist in every satellite resx file; `README.md` and `README.en.md` stay structurally aligned.
 4. Documentation and comments describe the current behavior, with no stale line numbers, counts or version notes.
 5. `git diff --check` passes and the report states what was verified, what was not, and whether anything was pushed or released. Never claim a visual or release check that was not actually run.

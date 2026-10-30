@@ -124,38 +124,30 @@ jobs:
           $tag = "${{ github.ref_name }}"
           $notesPath = "docs/release-notes/$tag.md"
           if (-not (Test-Path $notesPath)) {
-            Write-Error "No release notes at $notesPath - write the 'What's new' bullets for $tag before tagging."
+            Write-Error "缺少发版说明 $notesPath，打 tag 前先写好该版本的更新要点。"
             exit 1
           }
-          # -Raw, not a line array: the bullets have to land in the body exactly as they were
-          # written. -Encoding utf8 because the notes carry CJK, and a PowerShell that guesses
-          # the encoding turns them into mojibake.
+          # -Raw：整份说明原样进正文。-Encoding utf8：中文说明不能靠系统猜编码，否则会变成乱码。
           $notes = (Get-Content $notesPath -Raw -Encoding utf8).TrimEnd()
-          # Single-quoted here-string, so PowerShell interpolates nothing: the markdown is full of
-          # backticks (the code fence), and the tag expression is expanded by Actions before the
-          # shell ever sees this script.
+          # 单引号 here-string：正文里有反引号，且 tag 已由 Actions 展开，不能再让 PowerShell 插值。
           $tail = @'
-          **Which package? / 下载哪个？**
+          **下载哪个**
 
-          - `QuickText-${{ github.ref_name }}-win-x64.zip` — .NET runtime included; unzip and run on any Windows 10/11 x64. Take this if you're unsure. / 内含 .NET 运行时，解压即用；拿不准、内网机、离线机、U 盘随身带就选它。
-          - `QuickText-${{ github.ref_name }}-win-x64-needs-dotnet10.zip` — same app without the bundled runtime; needs the [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0) installed. / 同一个程序，只是不带运行时；需要电脑上已装 [.NET 10 桌面运行时](https://dotnet.microsoft.com/download/dotnet/10.0)。
-          - `QuickText.exe` — the same build as the zip above, unzipped: click, run, or drop it over your existing QuickText.exe to update. Windows will offer the runtime download if it is missing. / 就是上面那个不含运行时的版本，只是没打包：点开即用，也可直接覆盖现有的 QuickText.exe 完成更新。缺运行时时 Windows 会自己提示下载。
+          - `QuickText-${{ github.ref_name }}-win-x64.zip` — 内含 .NET 运行时，解压即用；拿不准、内网机、离线机、U 盘随身带就选它。
+          - `QuickText-${{ github.ref_name }}-win-x64-needs-dotnet10.zip` — 同一个程序，只是不带运行时；需要电脑上已装 [.NET 10 桌面运行时](https://dotnet.microsoft.com/download/dotnet/10.0)。
+          - `QuickText.exe` — 就是上面那个不含运行时的版本，只是没打包：点开即用，也可直接覆盖现有的 QuickText.exe 完成更新。缺运行时时 Windows 会自己提示下载。
 
-          **Verify your download / 校验下载** — the exe isn't code-signed. Two ways, pick either: / 程序没有代码签名，两种校验方式任选：
+          **校验下载** — 程序没有代码签名，两种校验方式任选：
 
           ```
-          gh attestation verify <file> -R "$GITHUB_REPOSITORY"   # proves it was built by this repo / 证明由本仓库构建
-          certutil -hashfile <file> SHA256                        # compare against SHA256SUMS.txt / 与 SHA256SUMS.txt 比对
+          gh attestation verify <file> -R "$GITHUB_REPOSITORY"   # 证明由本仓库构建
+          certutil -hashfile <file> SHA256                        # 与 SHA256SUMS.txt 比对
           ```
           '@
-          # utf8 is BOM-less in PowerShell 7; a BOM would land in the release body as a stray
-          # character in front of the first heading. The trailing newline is deliberate: GitHub
-          # appends its own blank line before the "**Full Changelog**" link, and a body that ends
-          # without one would lose a blank line the old hand-written bodies had.
-          # The CR strip is the other half of that: .gitattributes stores these files as LF, but a
-          # Windows checkout can hand back CRLF, and without this the body would mix CRLF (from the
-          # notes file) with the LF this script writes.
-          $body = "**What's new / 更新内容**`n`n" + $notes + "`n`n" + $tail + "`n"
+          # PowerShell 7 的 utf8 无 BOM；带 BOM 会在正文第一个标题前多一个怪字符。
+          # 末尾换行故意保留：GitHub 在「完整更新日志」链接前会再插空行。
+          # 去掉 CR：.gitattributes 按 LF 存，Windows 检出可能是 CRLF，不处理会混进正文。
+          $body = "**更新内容**`n`n" + $notes + "`n`n" + $tail + "`n"
           Set-Content -Path release-body.md -Value ($body -replace "`r`n", "`n") -Encoding utf8 -NoNewline
       - name: Release
         # Major-version tag on purpose: `v3` moves with each patch, which is how fixes arrive without
@@ -175,14 +167,9 @@ jobs:
             QuickText-${{ github.ref_name }}-win-x64-needs-dotnet10.zip
             src/QuickText.App/bin/Release/publish-needs-dotnet10/QuickText.exe
             SHA256SUMS.txt
-          # The body is composed by the step above: docs/release-notes/<tag>.md holds the
-          # "What's new" bullets, and the package-picking note rides along underneath them. A
-          # release cannot go out without its notes — the compose step fails if the file is
-          # missing, which is the only reason v1.4.0 and v1.4.2 shipped with none.
-          # Picking a package happens on the download page, not in the README, so the note has to
-          # ride along with the release. GitHub appends the generated changelog after this body.
-          # No sizes quoted here or in the READMEs: they move with every build and go stale silently,
-          # while the release page shows each asset's actual size right next to its download button.
+          # 正文由上一步拼好：docs/release-notes/<tag>.md 是更新要点，下面再跟「下载哪个」。
+          # 没有发版说明就不能发版（上一步会失败）。包怎么选写在发版页，不写进 README。
+          # 不在这里或 README 写文件大小：每次构建都会变，发版页本身会显示真实大小。
           body_path: release-body.md
           generate_release_notes: true
       # 把 release 发布出去，并显式把 `releases/latest` 指到它，然后自己确认一遍。
@@ -220,27 +207,22 @@ jobs:
           echo "release ${tag} 已发布，releases/latest 指向它"
 
       # --- winget ------------------------------------------------------------------------------
-      # **清单不归这个仓管** —— 它归 rockbenben/winget-manifests：那边的 apps.json 是唯一源，
-      # 巡检到新 release 就重生成 manifest、往 winget-pkgs 开 PR。这个仓只管把 release 发出去。
+      # 清单不归这个仓管，归 rockbenben/winget-manifests：那边的 apps.json 是唯一源，
+      # 巡检到新发版就重生成 manifest、往 winget-pkgs 开 PR。这个仓只管把发版发出去。
       #
-      # WARNING: **不要再在这里直接提交一份 manifest。** 两条路都往 winget-pkgs 开同一个包的 PR，
+      # 不要再在这里直接提交一份 manifest。两条路都往 winget-pkgs 开同一个包的 PR，
       # 第二个会被当重复拒掉，看起来就像「winget 坏了」。要改清单，改 apps.json 里那一项。
       # 原来的 wingetcreate update ... --submit 那段已经删掉了，原因就是这个。
       #
-      # WHICH ASSET: the SELF-CONTAINED zip, deliberately. winget picks an installer by
-      # architecture / installer type / scope / locale — "bundles the .NET runtime or not" is not
-      # one of those, so shipping both builds in one manifest gives the user no way to choose and
-      # the second entry is simply unreachable. Of the three assets it is also the only viable one:
-      # the bare QuickText.exe has no version in its name and winget requires a unique installer URL
-      # per version. Self-contained over framework-dependent because winget's whole promise is "one
-      # command and it runs", and its audience is exactly the "not sure which to pick" reader the
-      # self-contained build already exists for; a missing runtime would surface as "installs fine,
-      # won't start", which is far worse to diagnose than a larger download.
-      # To switch to the small build later (not a one-way door — users move over on their next
-      # winget upgrade): point the manifest at the -needs-dotnet10 zip and add to it
+      # 清单只挂自包含 zip。winget 按架构 / 安装器类型 / 范围 / 语言挑安装包，
+      # 「带不带 .NET 运行时」不在这些维度里；一份清单里塞两份构建，用户选不到第二份。
+      # 三个资产里也只有它合适：裸 QuickText.exe 文件名没有版本号，winget 要求每个版本
+      # 的安装包 URL 唯一。选自包含而不是依赖本机运行时，是因为 winget 的承诺就是
+      # 「一条命令就能跑」；缺运行时表现成「装上了却打不开」，比下载大一点更难查。
+      # 以后若要改成小包（可逆，用户下次 winget upgrade 就会跟上）：把清单指到
+      # -needs-dotnet10 的 zip，并加上
       #   Dependencies: { PackageDependencies: [ { PackageIdentifier: Microsoft.DotNet.DesktopRuntime.10 } ] }
-      # (verified present in the winget source; dependency handling is no longer an experimental
-      # winget feature, but old winget clients on user machines still vary).
+      # （源里已有该依赖；依赖处理已不是实验特性，但用户机上的旧 winget 仍可能不一样。）
       #
       # 首次收录也走流水线的 PR：上游还没有这个包的 manifest 时，它被当作「新包」，流水线会开
       # 那个 PR。但社区仓对新包有额外校验，第一次可能要人工跟一下。
