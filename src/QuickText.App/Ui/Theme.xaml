@@ -346,6 +346,25 @@
         <Setter Property="Margin" Value="2,0,0,6"/>
     </Style>
 
+    <!-- Settings cards: one fixed vertical gap between every top-level field. Children own only
+         label→control (4) and control→hint (4); never add a top margin on the next field. -->
+    <Style x:Key="SetField" TargetType="StackPanel">
+        <Setter Property="Margin" Value="0,0,0,10"/>
+    </Style>
+    <Style x:Key="SetFieldLabel" TargetType="TextBlock" BasedOn="{StaticResource FieldLabel}">
+        <Setter Property="Margin" Value="2,0,0,4"/>
+    </Style>
+    <Style x:Key="SetHint" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Font.Ui}"/>
+        <Setter Property="FontSize" Value="11.5"/>
+        <Setter Property="Foreground" Value="{DynamicResource Brush.TextFaint}"/>
+        <Setter Property="Margin" Value="2,4,0,0"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+    </Style>
+    <Style x:Key="SetHintIndent" TargetType="TextBlock" BasedOn="{StaticResource SetHint}">
+        <Setter Property="Margin" Value="24,4,0,0"/>
+    </Style>
+
     <Style x:Key="DarkTextBox" TargetType="TextBox">
         <Setter Property="Background" Value="{DynamicResource Brush.InputBg}"/>
         <Setter Property="Foreground" Value="{DynamicResource Brush.TextPrimary}"/>
@@ -522,7 +541,8 @@
         <Setter Property="FontFamily" Value="{StaticResource Font.Ui}"/>
         <Setter Property="FontSize" Value="12.5"/>
         <Setter Property="Cursor" Value="Hand"/>
-        <Setter Property="Margin" Value="0,0,8,8"/>
+        <!-- Horizontal only: vertical gap comes from the SetField wrapper, so chip rows match other fields. -->
+        <Setter Property="Margin" Value="0,0,8,0"/>
         <Setter Property="FocusVisualStyle" Value="{StaticResource AppFocusVisual}"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -928,6 +948,47 @@
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="b" Property="Background" Value="{DynamicResource Brush.RowSelected}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Settings left-nav: selected state keeps an amber bar even after focus leaves the list
+         (plain DarkListItem was too easy to miss once the content pane took focus). -->
+    <Style x:Key="SettingsNavItem" TargetType="ListBoxItem">
+        <Setter Property="Foreground" Value="{DynamicResource Brush.TextMuted}"/>
+        <Setter Property="FontFamily" Value="{StaticResource Font.Ui}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Margin" Value="0,2"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="FocusVisualStyle" Value="{StaticResource AppFocusVisual}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Border x:Name="bd" Background="Transparent" CornerRadius="7"
+                            Padding="10,9" SnapsToDevicePixels="True">
+                        <Grid>
+                            <Border x:Name="bar" Width="3" HorizontalAlignment="Left" CornerRadius="2"
+                                    Background="Transparent" Margin="-4,1,0,1"/>
+                            <ContentPresenter Margin="8,0,0,0" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="{DynamicResource Brush.RowHover}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource Brush.TextPrimary}"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="{DynamicResource Brush.RowSelected}"/>
+                            <Setter TargetName="bar" Property="Background" Value="{DynamicResource Brush.Amber}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource Brush.TextPrimary}"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.45"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

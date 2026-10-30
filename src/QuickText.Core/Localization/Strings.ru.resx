@@ -161,6 +161,11 @@
   <data name="Settings.SectionAbbr"><value>Сокращения</value></data>
   <data name="Settings.SectionData"><value>Данные</value></data>
   <data name="Settings.SectionGeneral"><value>Общие</value></data>
+  <data name="Settings.NavSummon"><value>Вызов и горячие клавиши</value></data>
+  <data name="Settings.NavAbbr"><value>Сокращения</value></data>
+  <data name="Settings.NavOutput"><value>Способ вывода</value></data>
+  <data name="Settings.NavData"><value>Данные и резервные копии</value></data>
+  <data name="Settings.NavGeneral"><value>Язык и тема</value></data>
   <data name="Manager.Color"><value>Цвет</value></data>
   <data name="Manager.DuplicateCategory"><value>Категория с таким названием уже существует</value></data>
   <data name="Manager.SaveFailed"><value>Не удалось сохранить: папка данных доступна только для чтения или занята другой программой. Освободите её или выберите другую папку в настройках.</value></data>

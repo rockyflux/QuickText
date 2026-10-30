@@ -161,6 +161,11 @@
   <data name="Settings.SectionAbbr"><value>Kısaltmalar</value></data>
   <data name="Settings.SectionData"><value>Veri</value></data>
   <data name="Settings.SectionGeneral"><value>Genel</value></data>
+  <data name="Settings.NavSummon"><value>Çağırma ve kısayollar</value></data>
+  <data name="Settings.NavAbbr"><value>Kısaltmalar</value></data>
+  <data name="Settings.NavOutput"><value>Çıktı yöntemi</value></data>
+  <data name="Settings.NavData"><value>Veri ve yedekler</value></data>
+  <data name="Settings.NavGeneral"><value>Dil ve tema</value></data>
   <data name="Manager.Color"><value>Renk</value></data>
   <data name="Manager.DuplicateCategory"><value>Bu ada sahip bir kategori zaten var</value></data>
   <data name="Manager.SaveFailed"><value>Kaydedilemedi: veri klasörü salt okunur ya da başka bir program tarafından kullanılıyor. Klasörü serbest bırakın veya Ayarlar’dan başka bir klasör seçin.</value></data>

@@ -161,6 +161,11 @@
   <data name="Settings.SectionAbbr"><value>संक्षिप्त रूप</value></data>
   <data name="Settings.SectionData"><value>डेटा</value></data>
   <data name="Settings.SectionGeneral"><value>सामान्य</value></data>
+  <data name="Settings.NavSummon"><value>बुलाना और हॉटकी</value></data>
+  <data name="Settings.NavAbbr"><value>संक्षिप्त रूप</value></data>
+  <data name="Settings.NavOutput"><value>आउटपुट तरीका</value></data>
+  <data name="Settings.NavData"><value>डेटा और बैकअप</value></data>
+  <data name="Settings.NavGeneral"><value>भाषा और थीम</value></data>
   <data name="Manager.Color"><value>रंग</value></data>
   <data name="Manager.DuplicateCategory"><value>इस नाम की श्रेणी पहले से मौजूद है</value></data>
   <data name="Manager.SaveFailed"><value>सहेजा नहीं जा सका: डेटा फ़ोल्डर केवल-पढ़ने योग्य है या कोई दूसरा प्रोग्राम उसे इस्तेमाल कर रहा है। उसे मुक्त करें, या सेटिंग्स में दूसरा फ़ोल्डर चुनें।</value></data>

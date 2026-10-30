@@ -161,6 +161,11 @@
   <data name="Settings.SectionAbbr"><value>সংক্ষিপ্ত রূপ</value></data>
   <data name="Settings.SectionData"><value>ডেটা</value></data>
   <data name="Settings.SectionGeneral"><value>সাধারণ</value></data>
+  <data name="Settings.NavSummon"><value>আহ্বান ও হটকি</value></data>
+  <data name="Settings.NavAbbr"><value>সংক্ষিপ্ত রূপ</value></data>
+  <data name="Settings.NavOutput"><value>আউটপুট পদ্ধতি</value></data>
+  <data name="Settings.NavData"><value>ডেটা ও ব্যাকআপ</value></data>
+  <data name="Settings.NavGeneral"><value>ভাষা ও থিম</value></data>
   <data name="Manager.Color"><value>রঙ</value></data>
   <data name="Manager.DuplicateCategory"><value>সেই নামের একটি বিভাগ ইতিমধ্যে আছে</value></data>
   <data name="Manager.SaveFailed"><value>সংরক্ষণ করা যায়নি: ডেটা ফোল্ডারটি শুধু-পঠনযোগ্য বা অন্য প্রোগ্রাম ব্যবহার করছে। সেটি মুক্ত করুন, অথবা সেটিংসে অন্য ফোল্ডার বেছে নিন।</value></data>

@@ -161,6 +161,11 @@
   <data name="Settings.SectionAbbr"><value>縮寫</value></data>
   <data name="Settings.SectionData"><value>資料</value></data>
   <data name="Settings.SectionGeneral"><value>一般</value></data>
+  <data name="Settings.NavSummon"><value>呼出與熱鍵</value></data>
+  <data name="Settings.NavAbbr"><value>縮寫擴展</value></data>
+  <data name="Settings.NavOutput"><value>輸出方式</value></data>
+  <data name="Settings.NavData"><value>資料與備份</value></data>
+  <data name="Settings.NavGeneral"><value>語言與主題</value></data>
   <data name="Manager.Color"><value>顏色</value></data>
   <data name="Manager.DuplicateCategory"><value>已存在同名分類</value></data>
   <data name="Manager.SaveFailed"><value>儲存失敗：資料夾唯讀，或正被其他程式占用。請解除占用，或在設定裡換一個資料夾。</value></data>

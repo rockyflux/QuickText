@@ -161,6 +161,11 @@
   <data name="Settings.SectionAbbr"><value>ตัวย่อ</value></data>
   <data name="Settings.SectionData"><value>ข้อมูล</value></data>
   <data name="Settings.SectionGeneral"><value>ทั่วไป</value></data>
+  <data name="Settings.NavSummon"><value>การเรียกแผงและคีย์ลัด</value></data>
+  <data name="Settings.NavAbbr"><value>ตัวย่อ</value></data>
+  <data name="Settings.NavOutput"><value>วิธีส่งออก</value></data>
+  <data name="Settings.NavData"><value>ข้อมูลและการสำรอง</value></data>
+  <data name="Settings.NavGeneral"><value>ภาษาและธีม</value></data>
   <data name="Manager.Color"><value>สี</value></data>
   <data name="Manager.DuplicateCategory"><value>มีหมวดหมู่ชื่อนี้อยู่แล้ว</value></data>
   <data name="Manager.SaveFailed"><value>บันทึกไม่ได้: โฟลเดอร์ข้อมูลเป็นแบบอ่านอย่างเดียวหรือถูกโปรแกรมอื่นใช้อยู่ ปลดการใช้งาน หรือเลือกโฟลเดอร์อื่นในการตั้งค่า</value></data>

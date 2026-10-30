@@ -161,6 +161,11 @@
   <data name="Settings.SectionAbbr"><value>Viết tắt</value></data>
   <data name="Settings.SectionData"><value>Dữ liệu</value></data>
   <data name="Settings.SectionGeneral"><value>Chung</value></data>
+  <data name="Settings.NavSummon"><value>Gọi bảng &amp; phím tắt</value></data>
+  <data name="Settings.NavAbbr"><value>Viết tắt</value></data>
+  <data name="Settings.NavOutput"><value>Cách xuất</value></data>
+  <data name="Settings.NavData"><value>Dữ liệu &amp; sao lưu</value></data>
+  <data name="Settings.NavGeneral"><value>Ngôn ngữ &amp; giao diện</value></data>
   <data name="Manager.Color"><value>Màu</value></data>
   <data name="Manager.DuplicateCategory"><value>Đã có danh mục trùng tên</value></data>
   <data name="Manager.SaveFailed"><value>Không lưu được: thư mục dữ liệu ở chế độ chỉ đọc hoặc đang bị chương trình khác chiếm. Hãy giải phóng nó, hoặc chọn thư mục khác trong Cài đặt.</value></data>

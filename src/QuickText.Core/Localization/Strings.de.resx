@@ -161,6 +161,11 @@
   <data name="Settings.SectionAbbr"><value>Kürzel</value></data>
   <data name="Settings.SectionData"><value>Daten</value></data>
   <data name="Settings.SectionGeneral"><value>Allgemein</value></data>
+  <data name="Settings.NavSummon"><value>Aufruf &amp; Tastenkürzel</value></data>
+  <data name="Settings.NavAbbr"><value>Kürzel-Erweiterung</value></data>
+  <data name="Settings.NavOutput"><value>Ausgabeart</value></data>
+  <data name="Settings.NavData"><value>Daten &amp; Backups</value></data>
+  <data name="Settings.NavGeneral"><value>Sprache &amp; Design</value></data>
   <data name="Manager.Color"><value>Farbe</value></data>
   <data name="Manager.DuplicateCategory"><value>Eine Kategorie mit diesem Namen existiert bereits</value></data>
   <data name="Manager.SaveFailed"><value>Speichern nicht möglich — der Datenordner ist schreibgeschützt oder von einem anderen Programm belegt. Gib ihn frei oder wähle in den Einstellungen einen anderen Ordner.</value></data>

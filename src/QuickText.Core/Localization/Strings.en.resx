@@ -161,6 +161,11 @@
   <data name="Settings.SectionAbbr"><value>Abbreviations</value></data>
   <data name="Settings.SectionData"><value>Data</value></data>
   <data name="Settings.SectionGeneral"><value>General</value></data>
+  <data name="Settings.NavSummon"><value>Summon &amp; hotkeys</value></data>
+  <data name="Settings.NavAbbr"><value>Abbreviations</value></data>
+  <data name="Settings.NavOutput"><value>Output method</value></data>
+  <data name="Settings.NavData"><value>Data &amp; backups</value></data>
+  <data name="Settings.NavGeneral"><value>Language &amp; theme</value></data>
   <data name="Manager.Color"><value>Color</value></data>
   <data name="Manager.DuplicateCategory"><value>A category with that name already exists</value></data>
   <data name="Manager.SaveFailed"><value>Couldn’t save — the data folder is read-only or in use by another program. Free it up, or pick a different folder in Settings.</value></data>

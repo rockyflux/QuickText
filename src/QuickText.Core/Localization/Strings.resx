@@ -211,6 +211,11 @@
   <data name="Settings.SectionAbbr"><value>缩写</value></data>
   <data name="Settings.SectionData"><value>数据</value></data>
   <data name="Settings.SectionGeneral"><value>通用</value></data>
+  <data name="Settings.NavSummon"><value>呼出与热键</value></data>
+  <data name="Settings.NavAbbr"><value>缩写扩展</value></data>
+  <data name="Settings.NavOutput"><value>输出方式</value></data>
+  <data name="Settings.NavData"><value>数据与备份</value></data>
+  <data name="Settings.NavGeneral"><value>语言与主题</value></data>
   <data name="Manager.Color"><value>颜色</value></data>
   <data name="Manager.DuplicateCategory"><value>已存在同名分类</value></data>
   <data name="Manager.SaveFailed"><value>保存失败：数据文件夹只读，或正被其它程序占用。请解除占用，或在设置里换一个文件夹。</value></data>

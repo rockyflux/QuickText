@@ -161,6 +161,11 @@
   <data name="Settings.SectionAbbr"><value>Singkatan</value></data>
   <data name="Settings.SectionData"><value>Data</value></data>
   <data name="Settings.SectionGeneral"><value>Umum</value></data>
+  <data name="Settings.NavSummon"><value>Panggil &amp; pintasan</value></data>
+  <data name="Settings.NavAbbr"><value>Singkatan</value></data>
+  <data name="Settings.NavOutput"><value>Cara keluaran</value></data>
+  <data name="Settings.NavData"><value>Data &amp; cadangan</value></data>
+  <data name="Settings.NavGeneral"><value>Bahasa &amp; tema</value></data>
   <data name="Manager.Color"><value>Warna</value></data>
   <data name="Manager.DuplicateCategory"><value>Kategori dengan nama itu sudah ada</value></data>
   <data name="Manager.SaveFailed"><value>Tidak bisa menyimpan: folder data bersifat hanya-baca atau sedang dipakai program lain. Bebaskan folder itu, atau pilih folder lain di Pengaturan.</value></data>

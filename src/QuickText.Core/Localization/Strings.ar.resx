@@ -161,6 +161,11 @@
   <data name="Settings.SectionAbbr"><value>الاختصارات</value></data>
   <data name="Settings.SectionData"><value>البيانات</value></data>
   <data name="Settings.SectionGeneral"><value>عام</value></data>
+  <data name="Settings.NavSummon"><value>الاستدعاء والمفاتيح</value></data>
+  <data name="Settings.NavAbbr"><value>الاختصارات</value></data>
+  <data name="Settings.NavOutput"><value>طريقة الإخراج</value></data>
+  <data name="Settings.NavData"><value>البيانات والنسخ الاحتياطي</value></data>
+  <data name="Settings.NavGeneral"><value>اللغة والمظهر</value></data>
   <data name="Manager.Color"><value>اللون</value></data>
   <data name="Manager.DuplicateCategory"><value>توجد فئة بهذا الاسم بالفعل</value></data>
   <data name="Manager.SaveFailed"><value>تعذّر الحفظ: مجلد البيانات للقراءة فقط أو يستخدمه برنامج آخر. حرّره، أو اختر مجلدًا آخر في الإعدادات.</value></data>

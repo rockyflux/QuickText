@@ -161,6 +161,11 @@
   <data name="Settings.SectionAbbr"><value>Abréviations</value></data>
   <data name="Settings.SectionData"><value>Données</value></data>
   <data name="Settings.SectionGeneral"><value>Général</value></data>
+  <data name="Settings.NavSummon"><value>Appel et raccourcis</value></data>
+  <data name="Settings.NavAbbr"><value>Abréviations</value></data>
+  <data name="Settings.NavOutput"><value>Mode de sortie</value></data>
+  <data name="Settings.NavData"><value>Données et sauvegardes</value></data>
+  <data name="Settings.NavGeneral"><value>Langue et thème</value></data>
   <data name="Manager.Color"><value>Couleur</value></data>
   <data name="Manager.DuplicateCategory"><value>Une catégorie portant ce nom existe déjà</value></data>
   <data name="Manager.SaveFailed"><value>Enregistrement impossible : le dossier de données est en lecture seule ou utilisé par un autre programme. Libérez-le ou choisissez un autre dossier dans les Paramètres.</value></data>

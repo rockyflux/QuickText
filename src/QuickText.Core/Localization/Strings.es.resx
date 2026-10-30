@@ -161,6 +161,11 @@
   <data name="Settings.SectionAbbr"><value>Abreviaturas</value></data>
   <data name="Settings.SectionData"><value>Datos</value></data>
   <data name="Settings.SectionGeneral"><value>General</value></data>
+  <data name="Settings.NavSummon"><value>Invocación y atajos</value></data>
+  <data name="Settings.NavAbbr"><value>Abreviaturas</value></data>
+  <data name="Settings.NavOutput"><value>Forma de salida</value></data>
+  <data name="Settings.NavData"><value>Datos y copias</value></data>
+  <data name="Settings.NavGeneral"><value>Idioma y tema</value></data>
   <data name="Manager.Color"><value>Color</value></data>
   <data name="Manager.DuplicateCategory"><value>Ya existe una categoría con ese nombre</value></data>
   <data name="Manager.SaveFailed"><value>No se pudo guardar: la carpeta de datos es de solo lectura o la está usando otro programa. Libérala o elige otra carpeta en Configuración.</value></data>

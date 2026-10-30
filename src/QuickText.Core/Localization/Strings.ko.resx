@@ -161,6 +161,11 @@
   <data name="Settings.SectionAbbr"><value>약어</value></data>
   <data name="Settings.SectionData"><value>데이터</value></data>
   <data name="Settings.SectionGeneral"><value>일반</value></data>
+  <data name="Settings.NavSummon"><value>호출 및 단축키</value></data>
+  <data name="Settings.NavAbbr"><value>약어 확장</value></data>
+  <data name="Settings.NavOutput"><value>출력 방식</value></data>
+  <data name="Settings.NavData"><value>데이터 및 백업</value></data>
+  <data name="Settings.NavGeneral"><value>언어 및 테마</value></data>
   <data name="Manager.Color"><value>색상</value></data>
   <data name="Manager.DuplicateCategory"><value>같은 이름의 카테고리가 이미 있습니다</value></data>
   <data name="Manager.SaveFailed"><value>저장할 수 없습니다. 데이터 폴더가 읽기 전용이거나 다른 프로그램이 사용 중입니다. 사용을 해제하거나 설정에서 다른 폴더를 지정하세요.</value></data>

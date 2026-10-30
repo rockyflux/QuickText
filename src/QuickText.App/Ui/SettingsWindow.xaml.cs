@@ -76,7 +76,7 @@ public partial class SettingsWindow : Window
         CaptureBox.InvokeRequested += (_, _) => BeginCapture(CaptureBox);
         WindowTheming.UseDarkChrome(this);
         WindowTheming.ApplyFlowDirection(this);
-        WindowTheming.PlaceOnActiveMonitor(this);   // shared with Manager: on the user's monitor, capped, on-screen
+        WindowTheming.PlaceOnActiveMonitor(this);   // cursor's monitor, capped, on-screen
 
         var s = AppState.Current.Settings;
         _hotkey = s.Hotkey;
@@ -128,6 +128,26 @@ public partial class SettingsWindow : Window
         Closed += (_, _) => { if (_suspended) (Application.Current as App)?.ResumeSummonTriggers(); };
         Closing += OnClosing;
         _savedForm = CurrentForm();
+        // After the whole tree exists: select the first nav item (fires OnNavSelected → show that card).
+        NavList.SelectedIndex = 0;
+    }
+
+    /// <summary>Left-nav click: select the item and swap the right pane to that section only.
+    /// Switching (not scrolling) so the highlight and the visible card always stay in lockstep.</summary>
+    private void OnNavSelected(object sender, SelectionChangedEventArgs e)
+    {
+        if (NavList.SelectedItem is not ListBoxItem item || item.Tag is not string name) return;
+        ShowNavSection(name);
+    }
+
+    private void ShowNavSection(string name)
+    {
+        SectionSummon.Visibility = name == nameof(SectionSummon) ? Visibility.Visible : Visibility.Collapsed;
+        SectionAbbr.Visibility = name == nameof(SectionAbbr) ? Visibility.Visible : Visibility.Collapsed;
+        SectionOutput.Visibility = name == nameof(SectionOutput) ? Visibility.Visible : Visibility.Collapsed;
+        SectionData.Visibility = name == nameof(SectionData) ? Visibility.Visible : Visibility.Collapsed;
+        SectionGeneral.Visibility = name == nameof(SectionGeneral) ? Visibility.Visible : Visibility.Collapsed;
+        ContentScroll.ScrollToHome();
     }
 
     /// <summary>A settings change is not applied until Save (except the live theme preview), so a
@@ -166,8 +186,7 @@ public partial class SettingsWindow : Window
     protected override void OnSourceInitialized(System.EventArgs e)
     {
         base.OnSourceInitialized(e);
-        // Sizing/placement (cap to the work area so the docked Save button stays on-screen; the
-        // card area scrolls instead) is handled by WindowTheming.PlaceOnActiveMonitor.
+        // Sizing/placement is handled by WindowTheming.PlaceOnActiveMonitor.
         (Application.Current as App)?.SuspendSummonTriggers();
         _suspended = true;
     }
@@ -227,6 +246,7 @@ public partial class SettingsWindow : Window
     /// this machine runs in tap mode; the hidden hotkey box would render as no change at all.</summary>
     internal void ShotsCapturing()
     {
+        SelectNav(nameof(SectionSummon));
         var accent = (System.Windows.Media.Brush)FindResource("Brush.Accent");
         var prompt = LocalizationService.Instance["Settings.HotkeyPrompt"];
         if (_summonMode == "tap") { SummonTapText.Text = prompt; SummonTapBox.BorderBrush = accent; }
@@ -238,14 +258,32 @@ public partial class SettingsWindow : Window
     /// <summary>--shots only: keyboard focus lands where Tab would leave it, so the focus visual
     /// (or its absence) is on film — the one interaction state no static shot used to show.</summary>
     internal void ShotsFocusSave() => Keyboard.Focus(SaveButton);
-    internal void ShotsFocusChip() => Keyboard.Focus((System.Windows.Controls.RadioButton)OutputPanel.Children[0]);
-    internal void ShotsFocusBox() => Keyboard.Focus(DataFolder);   // witness: this template DOES react to focus
+    internal void ShotsFocusChip()
+    {
+        SelectNav(nameof(SectionOutput));
+        Keyboard.Focus((System.Windows.Controls.RadioButton)OutputPanel.Children[0]);
+    }
+    internal void ShotsFocusBox()
+    {
+        SelectNav(nameof(SectionData));
+        Keyboard.Focus(DataFolder);   // witness: this template DOES react to focus
+    }
 
     /// <summary>--shots only: switch 呼出方式 to combo mode. The machine defaults to tap, so
     /// without this the combo panel — and its hint promising Ctrl/Alt/Shift/Win — is rendered by
     /// no fixture at all (a mode-selected conditional panel is invisible to the whole shot matrix).</summary>
-    internal void ShotsComboMode() =>
+    internal void ShotsComboMode()
+    {
+        SelectNav(nameof(SectionSummon));
         ((System.Windows.Controls.RadioButton)SummonModePanel.Children[0]).IsChecked = true;
+    }
+
+    private void SelectNav(string sectionName)
+    {
+        var item = NavList.Items.OfType<ListBoxItem>()
+            .FirstOrDefault(i => (string?)i.Tag == sectionName);
+        if (item != null) NavList.SelectedItem = item;
+    }
 
     private void OnCaptureBoxClick(object sender, MouseButtonEventArgs e)
     {

@@ -161,6 +161,11 @@
   <data name="Settings.SectionAbbr"><value>Abbreviazioni</value></data>
   <data name="Settings.SectionData"><value>Dati</value></data>
   <data name="Settings.SectionGeneral"><value>Generale</value></data>
+  <data name="Settings.NavSummon"><value>Richiamo e scorciatoie</value></data>
+  <data name="Settings.NavAbbr"><value>Abbreviazioni</value></data>
+  <data name="Settings.NavOutput"><value>Modalità di output</value></data>
+  <data name="Settings.NavData"><value>Dati e backup</value></data>
+  <data name="Settings.NavGeneral"><value>Lingua e tema</value></data>
   <data name="Manager.Color"><value>Colore</value></data>
   <data name="Manager.DuplicateCategory"><value>Esiste già una categoria con questo nome</value></data>
   <data name="Manager.SaveFailed"><value>Impossibile salvare: la cartella dati è in sola lettura o in uso da un altro programma. Liberala o scegli un’altra cartella nelle Impostazioni.</value></data>
