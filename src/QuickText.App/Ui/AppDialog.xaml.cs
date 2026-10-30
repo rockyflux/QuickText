@@ -1,0 +1,117 @@
+using System.Windows;
+using System.Windows.Input;
+using QuickText.Core.Localization;
+
+namespace QuickText.App.Ui;
+
+/// <summary>Themed replacement for InputBox / MessageBox — prompt, confirm, alert.</summary>
+public partial class AppDialog : Window
+{
+    public AppDialog()
+    {
+        InitializeComponent();
+        WindowTheming.UseDarkChrome(this);
+        WindowTheming.CapHeightToMonitor(this);   // SizeToContent=Height + NoResize: bound it or the OK button leaves the screen
+        WindowTheming.ApplyFlowDirection(this);
+        // Esc means cancel. Do not rely on ShowDialog() returning null for a plain Close():
+        // WPF returns false there, which made every three-way prompt read Cancel as Discard.
+        // _choice is the explicit contract; it stays null for Esc, Cancel and the window's X.
+        PreviewKeyDown += (_, e) =>
+        {
+            if (e.Key == Key.Escape) { e.Handled = true; Close(); }
+        };
+    }
+
+    private bool? _choice;
+
+    private void OnOk(object sender, RoutedEventArgs e) { _choice = true; DialogResult = true; }
+
+    private void OnCancel(object sender, RoutedEventArgs e) => Close();
+
+    private void OnDiscard(object sender, RoutedEventArgs e) { _choice = false; DialogResult = false; }
+
+    private static string L(string key) => LocalizationService.Instance[key];
+
+    /// <summary>Text input. Returns the entered string (trimmed), or null if cancelled.</summary>
+    public static string? Prompt(Window owner, string title, string label, string def = "")
+    {
+        var d = new AppDialog { Owner = owner };
+        SetupPrompt(d, title, label, def);
+        d.Loaded += (_, _) => { d.InputBox.Focus(); d.InputBox.SelectAll(); };
+        return d.ShowDialog() == true ? d.InputBox.Text.Trim() : null;
+    }
+
+    /// <summary>Populates a dialog as a prompt. Split from <see cref="Prompt"/> so the --shots
+    /// fixture renders the SAME wiring — notably the empty-name disable — rather than a
+    /// hand-dressed lookalike that would prove nothing about the real path.</summary>
+    internal static void SetupPrompt(AppDialog d, string title, string label, string def)
+    {
+        d.Title = title;
+        d.MessageText.Text = label;
+        d.InputBox.Visibility = Visibility.Visible;
+        d.InputBox.Text = def;
+        d.OkButton.Content = L("Dialog.OK");
+        d.CancelButton.Content = L("Dialog.Cancel");
+        // An empty name is a no-op both callers silently swallow (they check IsNullOrWhiteSpace and
+        // return), so the button that would do nothing is disabled instead — the same disabled-dim
+        // the rest of the palette already has. Trim on the way out too (in Prompt): " 周报" and
+        // "周报" must not become two categories the duplicate check can't see.
+        void Validate() => d.OkButton.IsEnabled = d.InputBox.Text.Trim().Length > 0;
+        d.InputBox.TextChanged += (_, _) => Validate();
+        Validate();
+    }
+
+    /// <summary>Two-button confirmation. Returns true if the primary button was chosen.
+    /// <para>The confirm button carries DANGER styling, not the accent: every caller of this method
+    /// asks about something irreversible (delete a category and its snippets, overwrite the data
+    /// folder from a backup, purge the trash), and the trash dialog already paints exactly those
+    /// actions red. Confirming in the same green used for Save / Send / Restore told the reader the
+    /// opposite of what the button does. If a genuinely benign confirmation ever needs this method,
+    /// give it a parameter rather than quietly repainting the destructive ones.</para></summary>
+    public static bool Confirm(Window owner, string title, string message, string okText, string? cancelText = null)
+    {
+        var d = new AppDialog { Owner = owner, Title = title };
+        d.MessageText.Text = message;
+        d.InputBox.Visibility = Visibility.Collapsed;
+        d.OkButton.Style = (Style)d.FindResource("DarkButtonDanger");
+        d.OkButton.Content = okText;
+        d.CancelButton.Content = cancelText ?? L("Dialog.Cancel");
+        return d.ShowDialog() == true;
+    }
+
+    /// <summary>Three-way question (e.g. Save / Don't save / Cancel). Returns true if
+    /// <paramref name="saveText"/> was chosen, false for <paramref name="discardText"/>, or null
+    /// if the user cancelled (Esc, Cancel or the window's close button) — cancel must never be
+    /// treated as a silent discard by the caller. The result comes from the dialog's explicit
+    /// choice, not ShowDialog(): a plain Close() reports false, indistinguishable from Discard.
+    /// <para>Discard carries DANGER styling for the same reason <see cref="Confirm"/>'s OK does:
+    /// it is the button that throws the user's unsaved edits away. Left in the default grey it was
+    /// pixel-identical to Cancel right beside it — two buttons that look the same and do opposite
+    /// things, in the one dialog where the wrong click costs work. It is styled in the XAML rather
+    /// than here because DiscardButton exists for this method alone (OkButton cannot be: Prompt and
+    /// Alert need it primary).</para></summary>
+    public static bool? ConfirmSaveDiscard(Window owner, string title, string message,
+                                            string saveText, string discardText, string cancelText)
+    {
+        var d = new AppDialog { Owner = owner, Title = title };
+        d.MessageText.Text = message;
+        d.InputBox.Visibility = Visibility.Collapsed;
+        d.OkButton.Content = saveText;
+        d.DiscardButton.Content = discardText;
+        d.DiscardButton.Visibility = Visibility.Visible;
+        d.CancelButton.Content = cancelText;
+        d.ShowDialog();
+        return d._choice;
+    }
+
+    /// <summary>Single-button message.</summary>
+    public static void Alert(Window owner, string title, string message)
+    {
+        var d = new AppDialog { Owner = owner, Title = title };
+        d.MessageText.Text = message;
+        d.InputBox.Visibility = Visibility.Collapsed;
+        d.CancelButton.Visibility = Visibility.Collapsed;
+        d.OkButton.Content = L("Dialog.OK");
+        d.ShowDialog();
+    }
+}

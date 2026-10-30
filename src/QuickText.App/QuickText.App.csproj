@@ -1,0 +1,90 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\QuickText.Core\QuickText.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="H.NotifyIcon.Wpf" Version="2.4.1" />
+    <PackageReference Include="AvalonEdit" Version="6.3.1.120" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Brand icon lives once under assets/branding; linked in as the tray/window resource. -->
+    <Resource Include="..\..\assets\branding\quicktext.ico" Link="Assets\quicktext.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- AvalonEdit ships no YAML/INI/Shell definition; ours are embedded so a single-file
+         publish carries them. A missing resource is invisible at build time - the smoke
+         check in App.xaml.cs is what catches it. -->
+    <EmbeddedResource Include="Ui\Syntax\yaml.xshd" />
+    <EmbeddedResource Include="Ui\Syntax\ini.xshd" />
+    <EmbeddedResource Include="Ui\Syntax\shell.xshd" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>QuickText</AssemblyName>
+    <ApplicationIcon>..\..\assets\branding\quicktext.ico</ApplicationIcon>
+    <!-- Per-monitor v2 DPI awareness (see WindowTheming.cs): without this the process is only
+         system-DPI-aware and a single global px->DIP factor is wrong for any non-primary monitor
+         running at a different scale. -->
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <!-- Product metadata (shows in the exe's file properties + the Settings version stamp). CI
+       overrides Version from the git tag on a v* release (dotnet publish -p:Version=...). -->
+  <PropertyGroup>
+    <!-- Fallback only. A source build takes the version from the newest git tag (target below),
+         and CI passes -p:Version= from the tag it is building; this literal is what's left when
+         neither applies — a .zip of the sources with no .git in it. -->
+    <VersionFallback>1.4.2</VersionFallback>
+    <Version>$(VersionFallback)</Version>
+    <Product>QuickText</Product>
+    <Authors>rockbenben</Authors>
+    <Company>rockbenben</Company>
+    <Description>Tray-resident Windows snippet manager and text expander — recall stored text or images by a few pinyin keystrokes or an abbreviation, pasted at the cursor.</Description>
+    <Copyright>Copyright © 2026 rockbenben</Copyright>
+    <PackageProjectUrl>http://172.16.68.178:8090/vb-coding/quicktext</PackageProjectUrl>
+    <RepositoryUrl>http://172.16.68.178:8090/vb-coding/quicktext</RepositoryUrl>
+  </PropertyGroup>
+
+  <!--
+    Keep the version honest in a source build without anyone remembering to edit it.
+
+    The Settings version stamp and the update check both read the ASSEMBLY version, so a stale
+    literal made a self-built exe report an old number and then claim, forever, that an update was
+    available. This takes the newest reachable tag instead — i.e. the release this working tree is
+    built on top of — which is exactly what makes the update check agree with reality.
+
+    The Condition is what keeps CI correct, and it is load-bearing: a PropertyGroup inside a
+    target DOES override a global property (measured — without this guard,
+    `-p:Version=9.9.9` still produced 1.2.0, i.e. a v1.3.0 tag would have shipped an exe stamped
+    with the previous release). Version only equals VersionFallback when nobody passed one in.
+    `git describe` failing (no git, no tags, a source zip) leaves the fallback in place; the
+    version is cosmetic, never a reason to fail a build.
+
+    IgnoreExitCode, not ContinueOnError: the latter only demotes the failure to a warning, and
+    having no tags is CI's normal state rather than an anomaly — actions/checkout clones shallow
+    without tags and ci.yml's build step passes no -p:Version, so every run logged two MSB3073
+    warnings (measured). The exit code is still read through _GitTagExit, so the logic is
+    unchanged; it just stops reporting the normal case as a problem.
+  -->
+  <Target Name="VersionFromGitTag" BeforeTargets="GetAssemblyVersion"
+          Condition="'$(Version)' == '$(VersionFallback)'">
+    <Exec Command="git describe --tags --abbrev=0" ConsoleToMSBuild="true"
+          IgnoreExitCode="true" StandardOutputImportance="low" StandardErrorImportance="low">
+      <Output TaskParameter="ConsoleOutput" PropertyName="_GitTag"/>
+      <Output TaskParameter="ExitCode" PropertyName="_GitTagExit"/>
+    </Exec>
+    <PropertyGroup Condition="'$(_GitTagExit)' == '0' AND $([System.Text.RegularExpressions.Regex]::IsMatch($(_GitTag), '^v?[0-9]+\.[0-9]+\.[0-9]+$'))">
+      <Version>$(_GitTag.TrimStart('v'))</Version>
+    </PropertyGroup>
+  </Target>
+
+</Project>

@@ -1,0 +1,221 @@
+<p align="left">
+  <img src="../../assets/branding/quicktext-256.png" width="72" alt="QuickText">
+</p>
+
+[English](../../README.md) · [简体中文](../../README.zh.md) · [繁體中文](README.zh-Hant.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Português](README.pt.md) · [Français](README.fr.md) · **Deutsch** · [Italiano](README.it.md) · [Русский](README.ru.md) · [Tiếng Việt](README.vi.md) · [ไทย](README.th.md) · [Bahasa Indonesia](README.id.md) · [हिन्दी](README.hi.md) · [বাংলা](README.bn.md) · [العربية](README.ar.md) · [Türkçe](README.tr.md)
+
+# QuickText
+
+> ein Snippet-Manager und Textexpander im Windows-Infobereich.
+
+![Panel über jedem Fenster aufrufen, ein paar Buchstaben tippen — das Snippet landet an der Cursorposition](../images/quicktext-demo.webp)
+
+**Schluss damit, dasselbe zweimal zu tippen.** QuickText sitzt im Windows-Infobereich: Speichere den Text, den du immer wieder brauchst — E-Mail, Adressen, Signaturen, Vorlagen, Standardantworten, Bilder — einmal ab, und tippe dann in **jedem beliebigen Eingabefeld** ein paar Tasten oder ein Kürzel, und er landet genau an deiner Cursorposition. Mehrzeilig, Sonderzeichen und Emojis bleiben Zeichen für Zeichen erhalten.
+
+> Dein wiederverwendbarer Text, nur ein paar Tastendrücke entfernt — direkt am Cursor abgelegt.
+
+- WPF / .NET 10, portable Einzeldatei-Exe, **kein Konto, standardmäßig offline** — nur die optionale Update-Prüfung kontaktiert GitLab.
+- Die Daten liegen als **lokales JSON** in deinem eigenen Ordner — leg ihn in Dropbox / OneDrive / ein NAS, um zu synchronisieren.
+- Dunkles und helles Design (oder Windows folgen), **18 Oberflächensprachen** (mit Rechts-nach-links-Spiegelung für Arabisch), Einstellungen greifen sofort.
+
+## Download
+
+**[⬇ Neueste Version herunterladen](http://172.16.68.178:8090/vb-coding/quicktext/-/releases)** —— Windows x64, portable Einzeldatei. Nicht signiert, daher warnt SmartScreen beim ersten Start: **Weitere Informationen → Trotzdem ausführen**.
+
+- `QuickText-<version>-win-x64.zip` – die .NET-Runtime ist enthalten, läuft also ohne Voraussetzungen auf jedem Windows 10/11 x64. Im Zweifel diese nehmen: Intranet- oder Offline-Rechner oder ein USB-Stick zum Mitnehmen.
+- `QuickText-<version>-win-x64-needs-dotnet10.zip` – setzt die installierte [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0) voraus. Für den eigenen PC mit Internet: einmal installieren, danach sind Updates nur noch winzig.
+- `QuickText.exe` – derselbe Build ohne Zip: anklicken und starten, oder über die vorhandene Kopie legen, um zu aktualisieren.
+
+Funktionen und Daten sind identisch; der einzige Unterschied ist, ob die Runtime mitgeliefert wird.
+
+---
+
+## Wo du es einsetzt
+
+Überall, wo du **unter Windows immer wieder dasselbe tippst**. Es lebt im Infobereich und funktioniert in jedem Eingabefeld (Chat-Fenster, Browser-Formulare, Editoren, Mail-Programme — nicht an eine App gebunden). Es ist **Snippet-Manager und Textbaustein-Tool in einem**, dazu Pinyin-Suche, Variablenvorlagen und Bilder.
+
+| Wer                            | Was sie speichern                                                                                                      |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| **Support / E-Commerce**       | Standardantworten, Musterantworten, Werbetexte, QR-Codes oder Produktfotos                                             |
+| **Vertrieb / Business**        | E-Mail-Vorlagen, Gesprächseinstiege, Angebote, Grußformeln                                                             |
+| **Entwickler / Ops**           | Befehle, Konfiguration, JSON, Boilerplate (`{...}` wird wortwörtlich ausgegeben, nie interpretiert)                    |
+| **Büro / Formulare ausfüllen** | E-Mail, Adresse, Telefon, Ausweisnummern, Vorlagen für Besprechungsnotizen (fragen dich, merken sich den letzten Wert) |
+| **HR / Verwaltung / Recht**    | Onboarding-Hinweise, Standardbenachrichtigungen, Haftungsausschlüsse — lokal, offline, geeignet für sensible Inhalte   |
+
+> **Bevor Sie Sensibles hineinschreiben.** Snippets werden als **Klartext-JSON** gespeichert, bewusst unverschlüsselt — so können Sie die Datei selbst lesen, diffen und bearbeiten. Für Vorlagen und Textbausteine auf einem Rechner, den nur Sie nutzen, ist das in Ordnung. Es heißt aber auch: Eine Ausweisnummer oder ein Passwort darin ist für alles lesbar, was die Datei lesen kann — auch für jedes andere Programm unter Ihrem Konto und für den Sync-Anbieter, wenn der Ordner in Dropbox / OneDrive liegt. Für echte Geheimnisse nehmen Sie einen Passwortmanager und lassen QuickText den Text, der ruhig offen herumliegen darf.
+
+## In 30 Sekunden erklärt
+
+An **jedem Ort, an dem du tippen kannst** — sagen wir, du brauchst deine E-Mail-Adresse in einem Chat-Fenster:
+
+1. **Aufrufen** — drücke `Ctrl+Shift+8`; das Panel erscheint über dem aktiven Fenster.
+2. **Suchen** — tippe ein paar Buchstaben; Treffer werden hervorgehoben. Es durchsucht Name, Pinyin (voll + Initialen), Kürzel und Text.
+3. **Enter** — die E-Mail wird **genau dort eingefügt, wo dein Cursor war**. Fertig.
+
+> Tippe nichts, um nach Kategorie zu blättern, mit `Zuletzt` / `Favoriten` oben angeheftet; die am häufigsten genutzten **wandern automatisch nach oben**.
+> `↑↓` bewegen · `←→` Kategorie wechseln · `Alt+1–9` Schnellauswahl · Doppelklick zum Senden · `Esc` zum Schließen.
+
+## Drei Wege, es zu erreichen — nimm den passenden
+
+Dieselbe Bibliothek, drei Wege, daraus abzurufen; kombiniere sie frei:
+
+| Weg                     | Wie ausgelöst                                                    | Am besten für                                                 |
+| ----------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------- |
+| 🔍 **Panel-Suche**      | `Ctrl+Shift+8` → tippen → Enter                                  | Viele Snippets, gelegentliche Nutzung, Auswahl durch Blättern |
+| ⌨️ **Inline-Kürzel**    | Tippe einfach `;sig`, dann Leertaste / Tab / Enter               | Häufige feste Textbausteine, kein Panel nötig                 |
+| 🧩 **Variablenvorlage** | Rufe ein Snippet mit `{variables}` über einen der beiden Wege ab | E-Mail / Formulare: eine Vorlage, ein paar Wörter geändert    |
+
+- **Auch Bilder**: aus Zwischenablage oder Datei hinzufügen, beim Senden als Bild eingefügt; Bilder können Kürzel haben, also tippe das Kürzel und erhalte das Bild (QR-Codes, Logo-Signaturen).
+- **Ausgabe pro Snippet**: Chat-Textbausteine werden nach dem Einfügen automatisch abgeschickt, Code-Snippets niemals — sie stören nicht.
+
+Alle Details zu Kürzeln und Variablen findest du weiter unten unter **Im Detail** — in den Abschnitten **Platzhalter** und **Kürzel**.
+
+---
+
+**Im Detail**
+
+## Funktioniert sofort
+
+Doppelklicke **`QuickText.exe`**; es lebt im **System-Infobereich** (keine Taskleisten-Schaltfläche) und zeigt eine **ziehbare schwebende Kugel** (Position wird gespeichert; Linksklick schaltet die Suche um; Rechtsklick wie das Infobereich-Menü, für diese Sitzung ausblendbar — wieder einblenden über den Infobereich). Beim **ersten Start**:
+
+- legt es eine kleine **Starter-Bibliothek** an (zwei Kategorien, in deiner **Oberflächensprache**), damit du es sofort ausprobieren kannst;
+- zeigt es eine Sprechblase mit dem Aufruf-Hotkey — Standard **`Ctrl+Shift+8`**.
+
+> Die Symbole oben rechts im Panel: **＋ Neu** · **Manager** (den Editor öffnen) · **Einstellungen** · **📌 Anheften** (das Panel nach dem Senden offen halten, um mehrere hintereinander abzufeuern). Spring direkt zum Manager / zu den Einstellungen, ohne über den Infobereich zu gehen.
+
+## Deinen Text hinzufügen / bearbeiten
+
+![Manager: Kategorien und Snippets links, Editor rechts](../images/quicktext-manager.webp)
+
+- **Infobereich → Manager öffnen** — der vollständige Editor: Kategorien und Snippets links, Editor rechts. Kategorien hinzufügen/umbenennen/löschen (mit einer **7-farbigen** Markierung), Snippets bearbeiten (Name, Kürzel, Text, Bild). Zum Umsortieren oder Verschieben zwischen Kategorien ziehen; `Ctrl+Z` macht ein Löschen rückgängig.
+- **Infobereich → Neu aus Zwischenablage** — erstellt ein neues Snippet aus dem aktuellen Inhalt der Zwischenablage und öffnet es im Manager zum Fertigstellen (auf **Speichern** klicken, um es auf den Datenträger zu schreiben; beim Schließen des Managers wirst du gefragt, ob gespeichert oder verworfen werden soll).
+- **Im Panel erstellen** — tippe den Text ins Suchfeld und drücke `Ctrl+N`, um ihn als neuen Baustein zu speichern (dieser Text wird der Inhalt; `@Kategorie …` legt ihn in dieser Kategorie ab) und zum Fertigstellen in den Manager zu springen (`Ctrl+E` bearbeitet das ausgewählte).
+
+> **Langer Text / Code**: Die Schaltfläche `⤢` über dem Text öffnet ihn in einem nahezu bildschirmfüllenden Editor (oder drücke `Ctrl+Shift+Enter` im Text); `Esc` oder „Fertig“ beendet die Bearbeitung; bei Änderungen wird vorher gefragt, ob gespeichert oder verworfen werden soll. Ist „{variable}-Platzhalter aktivieren“ angehakt, werden die Tokens **je nach Art eingefärbt** — Variablen cyan, automatische Tokens wie `{date}` bernstein, `{snippet:x}` violett, `{cursor}` cyan gestrichelt — während ein falsch geschriebener Snippet-Name, ein ungültiges Datumsformat oder eine nicht geschlossene geschweifte Klammer eine **rote Wellenlinie** erhält, die beim Hovern den Grund zeigt. All das wird beim Senden **wortwörtlich** eingefügt, was früher erst nach dem Einfügen des Falschen auffiel. Beim Hovern über ein Datums-Token wird zudem sein aufgelöster Wert als Vorschau angezeigt. Für Code lässt du den Haken weg: Die Hervorhebung ist dann vollständig deaktiviert, sodass ein Text voller `{}` ruhig bleibt, und die Statusleiste vermerkt nur, wie viele Tokens unverändert ausgegeben werden. Ebenfalls enthalten: **Enter behält die Einrückung bei** und **`Tab` rückt eine ganze mehrzeilige Auswahl ein**.
+>
+> Das vergrößerte Fenster **zeigt immer Zeilennummern**, und seine Fußzeile bietet eine Auswahl des **Code-Formats** — JSON, YAML, XML, HTML, Markdown, SQL, Python, JavaScript/TypeScript, C#, Java, PowerShell, Shell und INI, 13 insgesamt —, die den Text mit Syntaxhervorhebung versieht und pro Snippet gemerkt wird. **Der gespeicherte Text bleibt unverändert, und was eingefügt wird, ändert sich nicht.** Die Platzhalter-Hervorhebung färbt den Hintergrund, während die Syntaxhervorhebung die Zeichen einfärbt, sodass sich beide nie in die Quere kommen: Ein JSON-Text mit `{variables}` darin zeigt gleichzeitig seine Struktur und seine Variablen.
+
+## Platzhalter (eine Vorlage, viele Situationen) · pro Snippet aktivierbar
+
+Platzhalter sind ein **Schalter pro Snippet**: Setze im Manager-Editor den Haken bei „**{variable}-Platzhalter aktivieren**“, und die Tokens unten werden beim Senden aufgelöst; **bleibt der Haken deaktiviert (der Standard), wird der Text wortwörtlich gesendet** — Code, Skripte und JSON voller wörtlicher `{...}` werden nie falsch interpretiert oder abgefragt.
+
+> Beim Upgrade: Platzhalter waren früher immer aktiv. Der erste Start nach dem Upgrade setzt den Haken automatisch für **vorhandene Snippets**, deren Text `{...}` enthält, sodass sich am Verhalten nichts ändert; entferne den Haken im Manager für die, die tatsächlich Code sind.
+
+Wenn aktiviert, werden diese Platzhalter beim Senden aufgelöst:
+
+| Platzhalter                       | Was er tut                                                                                                                                                                                                                                                                                                    |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `{name}` (beliebige Beschriftung) | **Fordert dich vor dem Einfügen zum Ausfüllen auf**; **merkt sich deinen letzten Wert**, damit Wiederholungen nicht erneut fragen                                                                                                                                                                             |
+| `{name:John}`                     | Variable mit einem **Standardwert**, im Dialog vorausgefüllt                                                                                                                                                                                                                                                  |
+| `{env\|dev\|test\|prod}`          | Variable mit **Optionen** — der Dialog zeigt ein Dropdown (die erste Option dient zugleich als Standard; freies Tippen bleibt möglich)                                                                                                                                                                        |
+| `{clipboard}`                     | Fügt den aktuellen Inhalt der Zwischenablage ein                                                                                                                                                                                                                                                              |
+| `{cursor}`                        | Lässt den Cursor nach dem Einfügen an dieser Stelle (unterdrückt außerdem das automatische Enter)                                                                                                                                                                                                             |
+| `{date}` `{time}` `{datetime}`    | Fügt das aktuelle Datum/die Uhrzeit ein; unterstützt Verschiebungen wie `{date+7}` (7 Tage in der Zukunft) sowie eigene Formate wie `{date=yyyy-MM-dd}` / `{time=HH:mm:ss}`, kombinierbar mit Verschiebungen: `{date+7=MM-dd}`. Chinesische Aliase `{日期}` / `{时间}` / `{日期时间}` funktionieren ebenfalls |
+| `{uuid}` `{random}`               | Zufallswerte: eine UUID / 6 Ziffern, pro Vorkommen neu                                                                                                                                                                                                                                                        |
+| `{snippet:name}`                  | **Bindet den Text eines anderen Snippets ein** (3 Ebenen tief, zyklussicher) — halte gemeinsame Signaturen an einem Ort                                                                                                                                                                                       |
+
+Beispiel: eine Signatur `Best regards,\n{name}` (mit aktivierten Platzhaltern) → fragt beim Senden nach dem Namen → fügt die fertige Signatur ein.
+
+## Kürzel (beim Tippen expandieren, kein Panel) · optional
+
+Gib einem Snippet ein **Kürzel**, um es direkt in jedem Eingabefeld zu expandieren. Das **Auslöse-Präfix** wird einmal in den Einstellungen festgelegt (Standard `;`):
+
+1. Tippe im Manager nur das **Kürzel selbst** — z. B. `sig` für deine Signatur. Das Präfix wird automatisch ergänzt (nicht erneut eingeben); das Feld zeigt das aktuelle Präfix `;` davor.
+2. Tippe in einem beliebigen Eingabefeld **`;sig`** (= Präfix + Kürzel), dann **Leertaste / Tab / Enter** → es löscht `;sig` und expandiert den Text (ein `{placeholder}` fragt zuerst nach, wenn bei diesem Snippet Platzhalter aktiviert sind).
+3. **Vertippt?** Drücke **direkt danach Rücktaste**, um die Expansion wieder zu `;sig` zurückzusetzen (gleiches Fenster, innerhalb von 5 s).
+
+Details: Der Abgleich ist **ohne Berücksichtigung der Groß-/Kleinschreibung** (`;SIG` löst mit aktivierter Feststelltaste aus); ein mit Rücktaste korrigierter Tippfehler expandiert trotzdem; zwei Snippets mit demselben Kürzel erhalten im Manager eine **Inline-Warnung**; und das Infobereich-Menü hat einen Ein-Klick-Umschalter **„Expansion pausieren“** (für Demos/Spiele).
+
+> **Zum Präfix:** Das Präfix (Standard `;`) verhindert, dass normales Tippen / Pinyin ein bloßes Kürzel fälschlich auslöst. Ändere es unter **Einstellungen → Kürzel → Auslöse-Präfix** (auf `,`, `:`, …) oder **lass es leer**. Ein Kürzel mit Präfix begrenzt sich selbst und löst auch dann aus, wenn es direkt am vorangehenden Text klebt (z. B. `thx;sig`); ohne Präfix löst es nur als eigenständiges Wort aus (nie als Ende eines längeren wie `graf`). Du kannst Kürzel auch pro App deaktivieren (eine Sperrliste, z. B. `cmd.exe; putty.exe`) oder ganz ausschalten.
+
+## Ausgabe & gängige Einstellungen (Infobereich → Einstellungen)
+
+- **Ausgabe** — Standard „in die aktive App einfügen“; oder „nur in die Zwischenablage kopieren“ (du fügst mit `Ctrl+V` ein). Optional: nach dem Einfügen Enter drücken, mit Einfachklick senden, “Zwischenablage unverändert lassen” (Wiederherstellen ist standardmäßig aus — Apps, die die Zwischenablage langsam lesen, fügen sonst den alten Inhalt ein). **Jedes Snippet kann dies überschreiben** (Manager → Ausgabe: global folgen / einfügen / einfügen + Enter / nur kopieren) — Chat-Textbausteine werden automatisch gesendet, Code-Snippets niemals.
+- **Panel-Position** — dem aktiven Fenster folgen (Standard) / dem Textcursor folgen / letzte Position merken.
+- **Aufruf-Methode (eine wählen)** — ① **Tastenkombination**: klicke ins Feld und drücke eine neue (normale Tasten brauchen `Ctrl`/`Alt`/`Shift`/`Win`; Funktionstasten **`F1`–`F24` funktionieren allein**); oder ② **Modifikatortaste tippen**: **einfaches oder doppeltes Tippen einer Modifikatortaste** (z. B. rechte `Ctrl`, rechte `Shift`) zum Aufrufen (eine einzelne Modifikatortaste kann kein normaler Hotkey sein, wird also per Tippen erkannt). Die Wahl des Tippens deaktiviert die Kombination — beide schließen sich gegenseitig aus, sodass immer klar ist, welche aktiv ist.
+- **Erfassungs-Hotkey** — optionale zweite Kombination, die **die Zwischenablage still als neues Snippet speichert** (Sprechblasen-Rückmeldung, kein Fenster).
+- **Datenordner** — richte ihn auf ein Synchronisierungslaufwerk; **Backup exportieren / importieren** (Zip, mit Überschreib-Bestätigung geprüft); tägliches **Auto-Backup** auf diesem Rechner (die neuesten 10 bleiben, Ein-Klick-Ordnerzugriff).
+- **Sprache** — **18 Sprachen**: English · 简体中文 · 繁體中文 · 日本語 · 한국어 · Español · Português · Français · Deutsch · Italiano · Русский · Tiếng Việt · ไทย · Bahasa Indonesia · हिन्दी · বাংলা · العربية (RTL) · Türkçe, sofort umgeschaltet. **Mit Windows starten** optional.
+- **Design** — dunkel (Standard) / hell / Windows folgen, greift sofort, kein Neustart.
+- **Nach Updates suchen** — standardmäßig aus; wenn aktiviert, verbindet sich die App beim Start mit GitLab, um eine neuere Version zu prüfen und lokal herunterzuladen (das laufende Programm wird nicht ersetzt; das einzige Mal online). „Jetzt suchen“ führt es bei Bedarf aus.
+
+## Tastatur-Spickzettel
+
+| Aktion                                          | Tasten                                                               |
+| ----------------------------------------------- | -------------------------------------------------------------------- |
+| Panel aufrufen / schließen                      | `Ctrl+Shift+8` (konfigurierbar) / `Esc`                              |
+| Auswählen / Kategorie wechseln / Schnellauswahl | `↑↓` / `←→` / `Alt+1–9`                                              |
+| Senden                                          | `Enter` oder Doppelklick (Einfachklick optional)                     |
+| Favorit / kein Favorit                          | `Ctrl+D`                                                             |
+| Im Panel erstellen / bearbeiten                 | `Ctrl+N` / `Ctrl+E`                                                  |
+| Vorschau: ein-/ausklappen                       | `Ctrl+Space` (wenn eine Vorschau angezeigt wird)                     |
+| Löschen rückgängig (Manager)                    | `Ctrl+Z`                                                             |
+| Kürzel: auslösen / rückgängig                   | Kürzel + Leertaste·Tab·Enter tippen / Rücktaste nach dem Expandieren |
+
+---
+
+## Funktionen auf einen Blick
+
+- **Aufrufen**: globaler Hotkey — eine **Tastenkombination** (Funktionstasten funktionieren als Einzeltaste) oder **einfaches/doppeltes Tippen einer Modifikatortaste** (z. B. rechte Ctrl), **eine wählen**; das Panel folgt dem aktiven Fenster / dem Textcursor / der gemerkten Position; die Schaltflächen oben springen zu **Neu / Manager / Einstellungen**; anheften, um mehrere hintereinander zu senden; ziehen & Größe ändern mit gemerkter Größe.
+- **Suche**: Name / Pinyin / Initialen / Kürzel / Text, hervorgehoben; **Gleichstände nach Nutzungshäufigkeit (Frecency) aufgelöst**; `@category keywords` grenzt die Suche auf eine Kategorie ein (bloßes `@category` durchblättert sie).
+- **Inhalt**: Klartext (mehrzeilig, Sonderzeichen, Emojis verlustfrei), Platzhalter (Standardwerte / Options-Dropdowns / Snippet-Verschachtelung / eigene Datumsformate / uuid / random — **pro Snippet aktivierbar**), **Bilder** (aus Zwischenablage oder Datei, beim Senden als Bild eingefügt; **Bilder können ebenfalls Kürzel haben** — tippe das Kürzel, erhalte das Bild).
+- **Kürzel**: durch Abschlusszeichen ausgelöst, Variablen-Abfrage, Rückgängig mit einem Tastendruck, Tippfehlerkorrektur per Rücktaste, ohne Groß-/Kleinschreibung, Klick trennt das Token, Duplikat-Warnung, App-Sperrliste, **Ein-Klick-Pause im Infobereich**.
+- **Ausgabe**: direkt einfügen / nur kopieren; optional automatisches Enter, Zwischenablage wiederherstellen, Senden per Einfachklick; **Ausgabe-Überschreibung pro Snippet**; Erfassungs-Hotkey (Zwischenablage → Snippet mit einem Tastendruck).
+- **Manager**: **geräumiger Text-Editor** (`⤢ Vergrößern` öffnet ihn in einem eigenen Fenster; ungespeicherte Änderungen werden immer abgefragt — beim Schließen und beim Wechsel zu einem anderen Eintrag), **Platzhalter-Hervorhebung** (je nach Art eingefärbt; ungültige Snippet-Verweise / ungültige Datumsformate / nicht geschlossene geschweifte Klammern erhalten eine rote Wellenlinie mit Grund beim Hovern; sind Platzhalter deaktiviert, wird nichts hervorgehoben — das steht dann stattdessen in der Statusleiste), **codefreundlich** (das vergrößerte Fenster zeigt immer Zeilennummern und bietet 13 Code-Formate zur Syntaxhervorhebung; Enter behält die Einrückung bei, `Tab` rückt eine mehrzeilige Auswahl komplett ein, Zeilenumbruch-aus-Modus), 7 Kategoriefarben, Ziehen zum Umsortieren / Verschieben, **Mehrfachauswahl für Stapel-Verschieben / -Löschen** (Ctrl / Shift auswählen, dann Rechtsklick), Löschen rückgängig, **Papierkorb (30-Tage-Wiederherstellung, mit Textvorschau)**, Duplikat-Kürzel-Warnung, Nutzungsstatistik, Speicher-Rückmeldung.
+- **Daten**: lokales JSON, Hot-Reload (führt externe Änderungen / Synchronisierung automatisch zusammen), Hinweis bei Synchronisierungskonflikten, Backup exportieren / importieren, **tägliches Auto-Backup (10 aufbewahrt)**, mit Windows starten.
+- **Lokalisierung**: **18 Oberflächensprachen** (vereinfachtes / traditionelles Chinesisch, English, 日本語, 한국어, Español, Français, Deutsch, Русский, العربية …) mit **Rechts-nach-links-Spiegelung für Arabisch**, live in den Einstellungen umgeschaltet. Dunkles und helles Design (oder Windows folgen), ebenfalls sofort umschaltbar.
+- **Robustheit**: einzelne Instanz (ein zweiter Start ruft das Suchpanel auf, statt Hooks doppelt zu installieren); CI führt bei jedem Push Tests plus einen Fenster-Smoke-Check aus und veröffentlicht bei `v*`-Tags beide Einzeldatei-Builds.
+
+## Daten & Synchronisierung
+
+Datenordner (Standard `Documents\QuickText`, in den Einstellungen änderbar, kann auf ein Synchronisierungslaufwerk zeigen):
+
+```text
+<data folder>/
+  ├─ index.json        # category order + each category's file name and color
+  ├─ <category>.json   # the snippets in that category (Snippet[])
+  ├─ trash.json        # soft-deleted snippets (auto-purged after 30 days)
+  └─ images/           # image files for image snippets
+```
+
+- `Snippet`: `{ id, name, abbr, body, useVariables, outputMode, imagePath?, codeFormat?, updatedAt }`.
+- **Atomare Schreibvorgänge** (`*.tmp` → `File.Replace`), damit eine Synchronisierung nie eine halb geschriebene Datei liest; `FileSystemWatcher`-Hot-Reload (gebündelt), mit einem Schutz gegen Selbst-Schreibvorgänge.
+- Maschinenlokaler Zustand bleibt **außerhalb des Synchronisierungsordners**: Einstellungen in `%APPDATA%\QuickText\settings.json`, Nutzungszähler / Favoriten in `%APPDATA%\QuickText\usage.stats` (sie ändern sich bei jedem Senden und würden zwischen Rechnern kollidieren), tägliche Auto-Backups in `%APPDATA%\QuickText\backups\`.
+- **Portabler Modus** (spurenfrei / USB): Aktiviere ihn unter **Einstellungen → Daten → Portabler Modus** — er legt eine `QuickText.portable`-Markierung neben `QuickText.exe` ab und **greift beim nächsten Neustart** (der erste portable Start überträgt deine Einstellungen und Nutzung mit, sodass du nicht neu konfigurieren musst). Einstellungen, Nutzung, Backups und die Standardbibliothek liegen dann unter `<exe folder>\Data\` statt in `%APPDATA%` / Documents, und „mit Windows starten“ verwendet eine Verknüpfung im Autostart-Ordner statt der Registry — so reist das ganze Tool auf einem Stick und hinterlässt nichts auf dem Host. Die App muss an einem beschreibbaren Ort liegen (ein USB-Stick, nicht `Program Files`); die **Textbibliothek wandert über Backup exportieren / importieren**. „Mit Windows starten“ wird pro Modus verfolgt, also hake es nach dem Wechsel im neuen Modus erneut an, falls du es möchtest. Lass es für das oben beschriebene installierte Layout aus (die richtige Wahl, wenn der Datenordner ein Synchronisierungslaufwerk ist).<br>_(Es muss eine Markierungsdatei sein, keine einfache Einstellung — sie entscheidet, wo `settings.json` selbst liegt; der Schalter greift erst beim nächsten Start und stört nie die laufende Sitzung.)_
+
+## Marke
+
+Die Assets liegen in `assets/branding/`: `quicktext-mark.svg` (primär), `quicktext-mark-mono.svg` (monochrom), `quicktext.ico` (16–256, App-/Infobereich-Symbol), `quicktext-256.png`, `quicktext-social.png` (1200×630 og:image), `quicktext-social-2x.png` (2400×1260 @2x), `brand.html` (Markenblatt). Das Zeichen ist ein **Text-Cursor (I-Beam)** auf einer mintfarbenen Kachel neben einem bernsteinfarbenen Block gerade gelandeten Textes — „text▮“, also dein Text an der Cursorposition. Palette „terminal dusk“: Mint (die App-Akzentfarbe `#3DC2A0`) + Bernstein `#F2B457` auf teal-lastigem Tintenton; eine Sans-Wortmarke gepaart mit der Monospace-Schrift Cascadia Code.
+
+## Architektur
+
+Reiner Core (kein Win32, unit-testbar) getrennt von Win32/UI gehalten.
+
+| Projekt                      | Inhalt                                                                                                                                                                                                                   |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `src/QuickText.Core`         | `Models`, `Persistence` (`Store`, `UsageStore`, `JsonConfig`), `Search` (`SearchIndex`), `Abbr` (`AbbrMatcher`), `Snippets` (`Placeholders`), `Pinyin`, `Settings`, `Localization` (.resx, 18 Sprachen)                  |
+| `src/QuickText.App`          | WPF-UI (`SearchPanel` / `ManagerWindow` / `SettingsWindow` / `AppDialog` / `VariablesDialog`), `Ui/Theme.xaml` (dunkles Design), `Interop` (`GlobalHotkey`, `KeyboardHook`, `PasteEngine`, `Autostart`, `NativeMethods`) |
+| `tests/QuickText.Core.Tests` | Core-Unit-Tests (xUnit)                                                                                                                                                                                                  |
+
+## Build & Ausführung
+
+```bash
+dotnet build QuickText.sln -c Debug
+dotnet test  tests/QuickText.Core.Tests/QuickText.Core.Tests.csproj
+dotnet run  --project src/QuickText.App        # or run QuickText.exe under bin
+```
+
+Einen portablen Einzeldatei-Build veröffentlichen (win-x64):
+
+```bash
+dotnet publish src/QuickText.App -c Release -p:PublishProfile=win-x64
+dotnet publish src/QuickText.App -c Release -p:PublishProfile=win-x64-needs-dotnet10
+```
+
+Erfordert das .NET 10 SDK. Nur Windows (Win32-Globaler-Hotkey / Tastatur-Hook / Zwischenablage).
+
+## Über den 365 Open Source Plan
+
+Projekt **#023** des [365 Open Source Plan](https://github.com/rockbenben/365opensource) — eine Person + KI, über 300 Open-Source-Projekte in einem Jahr.
+
+[Reiche deine Idee ein →](https://365.aishort.top/) · [Discord](https://discord.gg/PZTQfJ4GjX) · [Telegram](https://t.me/aishort_top)

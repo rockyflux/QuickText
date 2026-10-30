@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="App.Name"><value>QuickText</value></data>
+  <data name="Tray.OpenManager"><value>Mở trình quản lý</value></data>
+  <data name="Tray.OpenSearch"><value>Mở tìm kiếm</value></data>
+  <data name="Tray.Settings"><value>Cài đặt</value></data>
+  <data name="Tray.Autostart"><value>Khởi động cùng Windows</value></data>
+  <data name="Tray.Exit"><value>Thoát</value></data>
+  <data name="Search.Placeholder"><value>Tìm kiếm hoặc @danh mục</value></data>
+  <data name="Manager.Categories"><value>Danh mục</value></data>
+  <data name="Manager.Snippets"><value>Mẫu văn bản</value></data>
+  <data name="Manager.Name"><value>Tên</value></data>
+  <data name="Manager.Abbr"><value>Viết tắt</value></data>
+  <data name="Manager.Body"><value>Nội dung</value></data>
+  <data name="Manager.Delete"><value>Xóa</value></data>
+  <data name="Manager.Save"><value>Lưu</value></data>
+  <data name="Manager.Rename"><value>Đổi tên</value></data>
+  <data name="Manager.NewCategory"><value>Danh mục mới</value></data>
+  <data name="Manager.AddSnippet"><value>Thêm mẫu văn bản</value></data>
+  <data name="Manager.RenameCategory"><value>Đổi tên danh mục</value></data>
+  <data name="Manager.CategoryName"><value>Tên danh mục</value></data>
+  <data name="Manager.NewCategoryName"><value>Danh mục mới</value></data>
+  <data name="Manager.Wrap"><value>Ngắt dòng</value></data>
+  <data name="Manager.OutputMode"><value>Đầu ra</value></data>
+  <data name="Manager.OutputModeHint"><value>Cách gửi mẫu này; “Theo mặc định chung” dùng phương thức đầu ra trong Cài đặt.</value></data>
+  <data name="Manager.Output.Default"><value>Theo mặc định chung</value></data>
+  <data name="Manager.Output.Paste"><value>Dán</value></data>
+  <data name="Manager.Output.PasteEnter"><value>Dán + Enter</value></data>
+  <data name="Manager.Output.Copy"><value>Chỉ sao chép</value></data>
+  <data name="Manager.AbbrConflict"><value>Trùng chữ viết tắt của “{0}” — chỉ một mục hoạt động</value></data>
+  <data name="Manager.Trash"><value>Thùng rác</value></data>
+  <data name="Manager.MoveTo"><value>Chuyển đến danh mục</value></data>
+  <data name="Manager.DeleteSelected"><value>Xóa mục đã chọn ({0})</value></data>
+  <data name="Manager.UsageStat"><value>Đã dùng {0} lần · gần nhất {1}</value></data>
+  <data name="Manager.NeverUsed"><value>Chưa dùng</value></data>
+  <data name="Trash.Restore"><value>Khôi phục</value></data>
+  <data name="Trash.DeleteForever"><value>Xóa vĩnh viễn</value></data>
+  <data name="Trash.Empty"><value>Dọn sạch</value></data>
+  <data name="Trash.Close"><value>Đóng</value></data>
+  <data name="Trash.EmptyState"><value>Thùng rác trống</value></data>
+  <data name="Trash.Hint"><value>Mẫu đã xóa được giữ ở đây {0} ngày, sau đó tự động xóa. Khôi phục sẽ đưa chúng về danh mục gốc (tạo lại nếu cần).</value></data>
+  <data name="Trash.EmptyConfirm"><value>Dọn sạch thùng rác? Mọi thứ bên trong sẽ mất vĩnh viễn.</value></data>
+  <data name="Tray.PauseAbbr"><value>Tạm dừng mở rộng</value></data>
+  <data name="Tray.ResumeAbbr"><value>Tiếp tục mở rộng</value></data>
+  <data name="Tray.PausedTip"><value>đã tạm dừng mở rộng viết tắt</value></data>
+  <data name="Settings.CaptureHotkey"><value>Phím tắt lưu nhanh</value></data>
+  <data name="Settings.CaptureHotkeyHint"><value>Âm thầm lưu văn bản hiện có trong bộ nhớ tạm thành mẫu mới. Nhấp rồi bấm tổ hợp phím; Delete để xóa (trống = tắt).</value></data>
+  <data name="Settings.OpenBackups"><value>Mở thư mục sao lưu</value></data>
+  <data name="Settings.AutoBackupHint"><value>Thư mục dữ liệu được nén về máy này hằng ngày (giữ 10 bản mới nhất); khôi phục bằng “Nhập bản sao lưu”.</value></data>
+  <data name="Msg.Captured"><value>Đã lưu mẫu: {0}</value></data>
+  <data name="Msg.AbbrConflicts"><value>Chữ viết tắt trùng (mỗi lần chỉ một mục hoạt động): {0}. Sửa trong trình quản lý.</value></data>
+  <data name="Msg.CaptureEmpty"><value>Không có văn bản trong bộ nhớ tạm</value></data>
+  <data name="Manager.UseVars"><value>Bật placeholder {variable}</value></data>
+  <data name="Manager.UseVarsHint"><value>Khi bật, các token {variable}, {clipboard}, {date} và {cursor} được xử lý khi gửi; khi tắt, nội dung được gửi nguyên văn (tốt cho mã/tập lệnh chứa {…} theo nghĩa đen).</value></data>
+  <data name="Manager.FromClipboard"><value>Từ bộ nhớ tạm</value></data>
+  <data name="Manager.FromFile"><value>Chọn tệp</value></data>
+  <data name="Manager.RemoveImage"><value>Xóa</value></data>
+  <data name="Manager.Saved"><value>✓ Đã lưu</value></data>
+  <data name="Manager.NewSnippetName"><value>Mẫu mới</value></data>
+  <data name="Manager.Filter"><value>Lọc…</value></data>
+  <data name="Manager.Duplicate"><value>Nhân bản</value></data>
+  <data name="Manager.Expand"><value>Phóng to</value></data>
+  <data name="Manager.LineNumbers"><value>Số dòng</value></data>
+  <data name="Manager.CodeFormat"><value>Định dạng</value></data>
+  <data name="Manager.CodeFormat.PlainText"><value>Văn bản thuần túy</value></data>
+  <data name="Manager.LongLinePlainText"><value>Dòng quá dài — hiển thị dưới dạng văn bản thuần túy</value></data>
+  <data name="Manager.BodyEditorTitle"><value>Nội dung · {0}</value></data>
+  <data name="Manager.Done"><value>Xong</value></data>
+  <data name="Manager.BodyStats"><value>{0} dòng · {1} ký tự</value></data>
+  <data name="Manager.BodyCaret"><value>Dòng {0} : Cột {1}</value></data>
+  <data name="Manager.BodyVars"><value>Biến: {0}</value></data>
+  <data name="Manager.BodyVarsOff"><value>Placeholder đang tắt · {0} chỗ {{…}} sẽ được xuất nguyên văn</value></data>
+  <data name="Manager.BodyInvalid"><value>{0} token không hợp lệ</value></data>
+  <data name="Manager.ImageSection"><value>Hình ảnh</value></data>
+  <data name="Manager.Token.UnknownSnippet"><value>Không có mẫu nào tên “{0}”</value></data>
+  <data name="Manager.Token.BadDateFormat"><value>Định dạng ngày không hợp lệ — sẽ xuất nguyên văn</value></data>
+  <data name="Manager.Token.EmptyName"><value>Tên biến trống — sẽ không bao giờ được hỏi</value></data>
+  <data name="Manager.Token.Unclosed"><value>Dấu ngoặc nhọn chưa đóng</value></data>
+  <data name="Manager.DuplicateAbbr"><value>Chữ viết tắt “{0}” đã được “{1}” dùng — mở rộng sẽ nhập nhằng</value></data>
+  <data name="Msg.FirstRunHint"><value>Nhấn {0} để mở bảng</value></data>
+  <data name="Settings.OpenFolder"><value>Mở thư mục dữ liệu</value></data>
+  <data name="Settings.ChooseFolder"><value>Chọn thư mục</value></data>
+  <data name="Tray.NewFromClipboard"><value>Tạo từ bộ nhớ tạm</value></data>
+  <data name="Ctx.Edit"><value>Chỉnh sửa</value></data>
+  <data name="Ctx.Copy"><value>Sao chép nội dung</value></data>
+  <data name="Settings.AbbrBlacklist"><value>Tắt viết tắt trong các tiến trình này</value></data>
+  <data name="Settings.AbbrBlacklistHint"><value>Tên tiến trình phân tách bằng dấu chấm phẩy, ví dụ cmd.exe; putty.exe</value></data>
+  <data name="Settings.ExportBackup"><value>Xuất bản sao lưu</value></data>
+  <data name="Msg.Exported"><value>Đã xuất bản sao lưu</value></data>
+  <data name="Settings.ImportBackup"><value>Nhập bản sao lưu</value></data>
+  <data name="Msg.ImportConfirm"><value>Nhập sẽ ghi đè thư viện hiện tại. Tiếp tục?</value></data>
+  <data name="Msg.ImportInvalid"><value>Không phải tệp sao lưu hợp lệ</value></data>
+  <data name="Msg.Imported"><value>Đã nhập bản sao lưu</value></data>
+  <data name="Search.CreateNew"><value>Tạo “{0}”</value></data>
+  <data name="Search.Hint.New"><value>Mới</value></data>
+  <data name="Search.Hint.Create"><value>Tạo</value></data>
+  <data name="Settings.SectionSummon"><value>Gọi bảng</value></data>
+  <data name="Settings.PanelPlacement"><value>Vị trí bảng</value></data>
+  <data name="Settings.PlaceWindow"><value>Theo cửa sổ đang hoạt động</value></data>
+  <data name="Settings.PlaceCaret"><value>Theo con trỏ văn bản</value></data>
+  <data name="Settings.PlaceFixed"><value>Nhớ vị trí lần trước</value></data>
+  <data name="Settings.SectionOutput"><value>Đầu ra</value></data>
+  <data name="Settings.SectionAbbr"><value>Viết tắt</value></data>
+  <data name="Settings.SectionData"><value>Dữ liệu</value></data>
+  <data name="Settings.SectionGeneral"><value>Chung</value></data>
+  <data name="Manager.Color"><value>Màu</value></data>
+  <data name="Manager.DuplicateCategory"><value>Đã có danh mục trùng tên</value></data>
+  <data name="Manager.SaveFailed"><value>Không lưu được: thư mục dữ liệu ở chế độ chỉ đọc hoặc đang bị chương trình khác chiếm. Hãy giải phóng nó, hoặc chọn thư mục khác trong Cài đặt.</value></data>
+  <data name="Manager.DeleteCategoryConfirm"><value>Xóa danh mục “{0}”? Các mẫu trong đó cũng bị xóa.</value></data>
+  <data name="Dialog.OK"><value>OK</value></data>
+  <data name="Dialog.Cancel"><value>Hủy</value></data>
+  <data name="Dialog.Send"><value>Gửi</value></data>
+  <data name="Search.Recents"><value>Gần đây</value></data>
+  <data name="Search.Favorites"><value>Yêu thích</value></data>
+  <data name="Search.KeepOpen"><value>Giữ mở (gửi nhiều mục)</value></data>
+  <data name="Dialog.FillVariables"><value>Điền biến</value></data>
+  <data name="Settings.AutoSend"><value>Nhấn Enter sau khi dán</value></data>
+  <data name="Settings.ClickToSend"><value>Nhấp một lần để gửi</value></data>
+  <data name="Settings.ClickToSendHint"><value>Trong bảng tìm kiếm, một cú nhấp sẽ gửi mẫu; mặc định bạn nhấp đúp hoặc nhấn Enter.</value></data>
+  <data name="Settings.OutputPaste"><value>Dán vào ứng dụng đang mở</value></data>
+  <data name="Settings.OutputClipboard"><value>Chỉ sao chép vào bộ nhớ tạm</value></data>
+  <data name="Settings.Hotkey"><value>Phím tắt</value></data>
+  <data name="Settings.SummonMode"><value>Gọi bằng</value></data>
+  <data name="Settings.SummonModeHotkey"><value>Tổ hợp phím</value></data>
+  <data name="Settings.SummonModeTap"><value>Chạm phím bổ trợ</value></data>
+  <data name="Settings.SummonTapDouble"><value>Chạm đúp (nếu không, chạm đơn)</value></data>
+  <data name="Settings.SummonTapHint"><value>Nhấp vào đây rồi bấm một phím bổ trợ (ví dụ Ctrl phải); chạm nó sẽ gọi bảng. Nhấn Delete để xóa. (Một phím bổ trợ đơn không thể làm phím tắt thường nên được nhận qua thao tác chạm.)</value></data>
+  <data name="Settings.DataFolder"><value>Thư mục dữ liệu</value></data>
+  <data name="Settings.Language"><value>Ngôn ngữ</value></data>
+  <data name="Settings.AbbrEnabled"><value>Bật viết tắt</value></data>
+  <data name="Settings.AbbrPrefix"><value>Tiền tố kích hoạt</value></data>
+  <data name="Settings.AbbrPrefixHint"><value>Thêm vào trước mỗi chữ viết tắt (mặc định ;). Trong trình quản lý chỉ gõ phần viết tắt (ví dụ qm) — nó kích hoạt khi gõ tiền tố+viết tắt (ví dụ ;qm). Để trống nếu không dùng tiền tố; tiền tố giúp việc gõ thường không vô tình kích hoạt.</value></data>
+  <data name="Settings.AbbrExpandHint"><value>Nhập tiền tố + từ viết tắt, rồi nhấn Space, Tab hoặc Enter để mở rộng. Ngay sau khi mở rộng, Backspace sẽ trả lại từ viết tắt bạn đã gõ.</value></data>
+  <data name="Settings.RestoreClipboard"><value>Giữ nguyên bộ nhớ tạm của tôi</value></data>
+  <data name="Settings.RestoreClipboardHint"><value>Khi dán, clipboard được dùng trong chốc lát rồi khôi phục nội dung bạn đã sao chép. Mặc định tắt: các ứng dụng đọc clipboard chậm có thể dán ra nội dung cũ.</value></data>
+  <data name="Settings.FollowSystem"><value>Theo hệ thống</value></data>
+  <data name="Msg.HotkeyTaken"><value>{0} đã bị ứng dụng khác chiếm — bảng sẽ không mở cho đến khi bạn chọn phím tắt khác trong Cài đặt.</value></data>
+  <data name="Msg.ConflictFiles"><value>Đã bỏ qua {0} tệp xung đột đồng bộ — kiểm tra trong thư mục dữ liệu rồi xoá</value></data>
+  <data name="Msg.DataFolderUnavailable"><value>Không truy cập được thư mục dữ liệu (ổ di động hoặc ổ mạng có thể đã ngắt kết nối). Tạm khởi động với thư viện trống — chỉ lại trong Cài đặt, hoặc kết nối lại và khởi động lại.</value></data>
+  <data name="Msg.SearchIndexFailed"><value>Không tạo được chỉ mục tìm kiếm — bảng tìm kiếm tạm thời sẽ không thấy gì. Các mẫu văn bản của bạn không mất, Trình quản lý vẫn liệt kê đầy đủ. Khởi động lại để thử lại.</value></data>
+  <data name="Search.Hint.Nav"><value>Điều hướng</value></data>
+  <data name="Search.Hint.Send"><value>Gửi</value></data>
+  <data name="Search.Hint.Close"><value>Đóng</value></data>
+  <data name="Search.Hint.SwitchCat"><value>Danh mục</value></data>
+  <data name="Search.Hint.QuickPick"><value>Chọn nhanh</value></data>
+  <data name="Search.Empty.Title"><value>Chưa có mẫu nào</value></data>
+  <data name="Search.Empty.Sub"><value>Thêm mẫu văn bản đầu tiên — rồi gọi bảng điều khiển bất cứ lúc nào bằng phím nóng</value></data>
+  <data name="Search.Empty.Action"><value>Thêm mẫu văn bản</value></data>
+  <data name="Search.NoMatch"><value>Không có mẫu nào khớp “{0}”</value></data>
+  <data name="Search.NoMatch.Sub"><value>Thử từ khóa khác hoặc chữ viết tắt</value></data>
+  <data name="Search.Count.Browse"><value>{0} mục</value></data>
+  <data name="Search.Count.Hits"><value>{0} kết quả</value></data>
+  <data name="Settings.HotkeyHint"><value>Nhấp rồi bấm một phím; phím thường cần Ctrl / Alt / Shift / Win, phím chức năng F1–F24 có thể dùng riêng</value></data>
+  <data name="Settings.HotkeyPrompt"><value>Bấm phím… (Esc để hủy)</value></data>
+  <data name="Settings.Portable"><value>Chế độ di động</value></data>
+  <data name="Settings.PortableHint"><value>Giữ dữ liệu trong thư mục Data cạnh ứng dụng — mang theo trên USB, không để lại gì trên máy chủ. Nút bật sẽ tạo tệp đánh dấu; có hiệu lực sau khi khởi động lại, và cần ứng dụng ở vị trí ghi được.</value></data>
+  <data name="Settings.PortableRestart"><value>Đã chuyển chế độ di động — khởi động lại để áp dụng. Chuyển thư viện văn bản bằng Xuất / Nhập bản sao lưu.</value></data>
+  <data name="Settings.PortableFailed"><value>Không ghi được cạnh ứng dụng (có thể ở vị trí chỉ đọc như Program Files). Chế độ di động cần ứng dụng ở nơi ghi được, chẳng hạn USB.</value></data>
+  <data name="Settings.CheckUpdates"><value>Kiểm tra cập nhật khi khởi động</value></data>
+  <data name="Settings.CheckUpdatesHint"><value>Khi bật, ứng dụng chỉ truy cập GitLab một lần khi khởi động để kiểm tra và tải bản mới hơn về ổ đĩa cục bộ. Ứng dụng không thay thế chương trình đang chạy; đây là thao tác mạng duy nhất của ứng dụng.</value></data>
+  <data name="Settings.CheckNow"><value>Kiểm tra ngay</value></data>
+  <data name="Msg.UpToDate"><value>Bạn đang dùng phiên bản mới nhất.</value></data>
+  <data name="Msg.UpdateCheckFailed"><value>Không kiểm tra được cập nhật. Vui lòng thử lại sau.</value></data>
+  <data name="Msg.UpdateVerifyFailed"><value>Tệp đã tải xuống không khớp với tổng kiểm tra đã công bố nên đã bị loại bỏ. Vui lòng thử lại sau.</value></data>
+  <data name="Msg.UpdateReady"><value>Phiên bản {0} đã sẵn sàng. Chương trình mới nằm ở {1}. Hãy thoát chương trình đang chạy rồi chép đè chương trình mới lên để cập nhật.</value></data>
+  <data name="Manager.UnsavedConfirm"><value>Có thay đổi chưa được lưu. Lưu lại?</value></data>
+  <data name="Manager.DontSave"><value>Không lưu</value></data>
+  <data name="Msg.HotkeyInvalid" xml:space="preserve"><value>{0} không phải phím tắt hợp lệ — hãy đặt lại trong Cài đặt.</value></data>
+  <data name="Ctx.Favorite" xml:space="preserve"><value>Bật/tắt yêu thích</value></data>
+  <data name="Settings.Theme" xml:space="preserve"><value>Giao diện</value></data>
+  <data name="Settings.ThemeDark" xml:space="preserve"><value>Tối</value></data>
+  <data name="Settings.ThemeLight" xml:space="preserve"><value>Sáng</value></data>
+  <data name="Msg.TargetLost"><value>Cửa sổ đích chưa sẵn sàng. Nội dung đã được sao chép vào clipboard; hãy dán thủ công.</value></data>
+  <data name="Msg.NoTarget"><value>Đã sao chép vào clipboard. Dán thủ công hoặc mở bảng từ ô nhập và chọn lại để dán trực tiếp.</value></data>
+  <data name="Msg.LibraryLoadWarning"><value>Không thể đọc một số tệp trong thư mục dữ liệu; một phần thư viện có thể bị thiếu. Xem error.log để biết chi tiết.</value></data>
+  <data name="Manager.StaleNotice"><value>Thư viện đã được cập nhật trong cửa sổ khác hoặc bên ngoài ứng dụng. Các thay đổi chưa lưu của bạn ở đây chưa được ghi vào đĩa. Việc lưu đã tạm dừng; hãy tải lại phiên bản trên đĩa hoặc đóng rồi mở lại cửa sổ này.</value></data>
+  <data name="Manager.Reload"><value>Tải lại</value></data>
+  <data name="Tray.FloatBall"><value>Nút nổi</value></data>
+  <data name="Tray.HideFloatBall"><value>Ẩn nút nổi</value></data>
+  <data name="Tray.ShowFloatBall"><value>Hiện nút nổi</value></data>
+</root>

@@ -1,0 +1,640 @@
+using System;
+using System.ComponentModel;
+using System.Globalization;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using QuickText.App;
+using QuickText.App.Interop;
+using QuickText.Core.Localization;
+
+namespace QuickText.App.Ui;
+
+public partial class SettingsWindow : Window
+{
+    private sealed record LangItem(string Code, string Name);
+
+    // Single source of truth for the shipped UI languages (culture code + native display name).
+    private static readonly LangItem[] Languages =
+    {
+        new("zh-Hans", "简体中文"), new("en", "English"), new("zh-Hant", "繁體中文"),
+        new("ja", "日本語"), new("ko", "한국어"), new("es", "Español"),
+        new("pt", "Português"), new("hi", "हिन्दी"), new("id", "Bahasa Indonesia"),
+        new("vi", "Tiếng Việt"), new("th", "ไทย"), new("fr", "Français"),
+        new("de", "Deutsch"), new("it", "Italiano"), new("ru", "Русский"),
+        new("ar", "العربية"), new("tr", "Türkçe"), new("bn", "বাংলা"),
+    };
+
+    // Accepted Settings.Language values: the 18 codes plus "" (follow the OS). Derived from the
+    // list above so the picker and this guard can't drift apart.
+    private static readonly HashSet<string> KnownLanguages =
+        Languages.Select(l => l.Code).Append("").ToHashSet();
+
+    // Picker items: follow-system (localized) first, then the languages by native name.
+    private static LangItem[] LanguageChoices() =>
+        Languages.Prepend(new LangItem("", LocalizationService.Instance["Settings.FollowSystem"])).ToArray();
+
+    private bool _saving;
+    private bool _closeApproved;
+    private bool _closePromptOpen;
+    private FormState? _savedForm;
+
+    private sealed record FormState(
+        string Hotkey, string CaptureHotkey, string SummonMode, string SummonTapKey,
+        bool TapDouble, string DataFolder, string Language, string AbbrBlacklist, string AbbrPrefix,
+        bool AbbrEnabled, bool RestoreClipboard, bool AutoSend, bool ClickToSend, bool ClipboardOnly,
+        string Placement, string Theme, bool Autostart, bool CheckUpdates);
+
+    private FormState CurrentForm() => new(
+        _hotkey.Trim(), _captureHotkey.Trim(), _summonMode, _summonTapKey,
+        SummonTapDouble.IsChecked == true, DataFolder.Text.Trim(), (LangCombo.SelectedValue as string) ?? "",
+        AbbrBlacklist.Text.Trim(), AbbrPrefixBox.Text.Trim(), AbbrEnabled.IsChecked == true,
+        RestoreClipboard.IsChecked == true, AutoSend.IsChecked == true, ClickToSend.IsChecked == true,
+        _clipboardOnly, _placement, _theme, Autostart.IsChecked == true, CheckUpdates.IsChecked == true);
+
+    private static string L(string key) => LocalizationService.Instance[key];
+
+    private string _hotkey = "";
+    private string _captureHotkey = "";
+    private string _summonMode = "hotkey";
+    private string _summonTapKey = "";
+    private bool _capturingTap;
+    private string _language = "";
+    private Border? _capBox;   // which hotkey box is currently capturing (null = none)
+    private bool _clipboardOnly;
+    private string _placement = "window";
+    private string _theme = ThemeService.Dark;
+
+    public SettingsWindow()
+    {
+        InitializeComponent();
+        // A screen reader's Invoke action starts the same capture as clicking the box.
+        HotkeyBox.InvokeRequested += (_, _) => BeginCapture(HotkeyBox);
+        SummonTapBox.InvokeRequested += (_, _) => StartTapCapture();
+        CaptureBox.InvokeRequested += (_, _) => BeginCapture(CaptureBox);
+        WindowTheming.UseDarkChrome(this);
+        WindowTheming.ApplyFlowDirection(this);
+        WindowTheming.PlaceOnActiveMonitor(this);   // shared with Manager: on the user's monitor, capped, on-screen
+
+        var s = AppState.Current.Settings;
+        _hotkey = s.Hotkey;
+        HotkeyText.Text = HotkeyDisplay(_hotkey);
+        _captureHotkey = s.CaptureHotkey;
+        CaptureText.Text = HotkeyDisplay(_captureHotkey);
+        _summonTapKey = s.SummonTapKey;
+        SummonTapText.Text = TapDisplay(_summonTapKey);
+        SummonTapDouble.IsChecked = s.SummonTapDouble;
+        _summonMode = s.SummonMode == "tap" ? "tap" : "hotkey";
+        foreach (var rb in SummonModePanel.Children.OfType<RadioButton>())
+            if ((string?)rb.Tag == _summonMode) rb.IsChecked = true;   // fires OnSummonModeChecked → visibility
+        DataFolder.Text = s.DataFolder;
+        DataFolderPlaceholder.Text = AppState.Current.ResolveDataFolder();
+        _language = KnownLanguages.Contains(s.Language) ? s.Language : "";
+        LangCombo.ItemsSource = LanguageChoices();
+        LangCombo.SelectedValue = _language;   // "" selects "follow system"
+        AbbrBlacklist.Text = s.AbbrBlacklist;
+        AbbrPrefixBox.Text = s.AbbrPrefix;
+        AbbrEnabled.IsChecked = s.AbbrEnabled;
+        RestoreClipboard.IsChecked = s.RestoreClipboard;
+        AutoSend.IsChecked = s.AutoSend;
+        ClickToSend.IsChecked = s.ClickToSend;
+        Autostart.IsChecked = QuickText.App.Interop.Autostart.IsEnabled();
+        CheckUpdates.IsChecked = s.CheckUpdates;
+        PortableMode.IsChecked = Core.AppPaths.IsPortable;   // Click-wired, so this set won't fire the handler
+        VersionText.Text = LocalizationService.Instance["App.Name"] + " v" +
+            (System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "1.0.0");
+
+        _clipboardOnly = s.CopyToClipboardOnly;
+        foreach (var rb in OutputPanel.Children.OfType<RadioButton>())
+            if ((string?)rb.Tag == (_clipboardOnly ? "clip" : "paste")) rb.IsChecked = true;
+
+        _placement = s.PanelPlacement is "caret" or "fixed" ? s.PanelPlacement : "window";
+        foreach (var rb in PlacementPanel.Children.OfType<RadioButton>())
+            if ((string?)rb.Tag == _placement) rb.IsChecked = true;
+
+        _theme = s.Theme is ThemeService.Light or ThemeService.FollowSystem ? s.Theme : ThemeService.Dark;
+        foreach (var rb in ThemePanel.Children.OfType<RadioButton>())
+            if ((string?)rb.Tag == _theme) rb.IsChecked = true;
+
+        // Suspend the summon triggers while this window is open so pressing the current hotkey
+        // (or tap key) reaches the capture boxes instead of firing the panel; the ref-counted
+        // resume re-arms them once the last Settings window closes (OnSave re-arms via the same
+        // path, held off until this window's close decrements the count). Suspend/resume are
+        // strictly paired via _suspended: we resume iff THIS window actually suspended, so a
+        // window constructed-but-never-shown (no OnSourceInitialized) can neither strand the
+        // count nor spuriously decrement it.
+        Closed += (_, _) => { if (_suspended) (Application.Current as App)?.ResumeSummonTriggers(); };
+        Closing += OnClosing;
+        _savedForm = CurrentForm();
+    }
+
+    /// <summary>A settings change is not applied until Save (except the live theme preview), so a
+    /// bare X must not silently discard it. Keep the Manager's Save/Don't-save/Cancel choice;
+    /// discarding also reverts the preview so the UI matches the persisted theme.</summary>
+    private void OnClosing(object? sender, CancelEventArgs e)
+    {
+        if (App.InSmoke || _saving || _closeApproved || _savedForm == null) return;
+        if (CurrentForm() == _savedForm) return;
+
+        // Always abort this close and ask afterwards. Prompting (or starting the async save)
+        // inside Closing leaves the window in its closing state: a Cancel cannot be undone
+        // cleanly and a save that calls Close() later throws "window is closing".
+        e.Cancel = true;
+        if (_closePromptOpen) return;
+        _closePromptOpen = true;
+        Dispatcher.BeginInvoke(new Action(AskToClose));
+    }
+
+    private void AskToClose()
+    {
+        _closePromptOpen = false;
+        if (!IsVisible) return;
+
+        bool? choice = AppDialog.ConfirmSaveDiscard(this, L("App.Name"), L("Manager.UnsavedConfirm"),
+            L("Manager.Save"), L("Manager.DontSave"), L("Dialog.Cancel"));
+        if (choice == null) return;
+        if (choice == true) { OnSave(this, new RoutedEventArgs()); return; }
+        ThemeService.Apply(AppState.Current.Settings.Theme);   // discard the live preview
+        _closeApproved = true;
+        Close();
+    }
+
+    private bool _suspended;   // this window incremented the summon-trigger ref-count
+
+    protected override void OnSourceInitialized(System.EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+        // Sizing/placement (cap to the work area so the docked Save button stays on-screen; the
+        // card area scrolls instead) is handled by WindowTheming.PlaceOnActiveMonitor.
+        (Application.Current as App)?.SuspendSummonTriggers();
+        _suspended = true;
+    }
+
+    private static string HotkeyDisplay(string h) => string.IsNullOrWhiteSpace(h) ? "—" : h;
+
+    /// <summary>Called by the tray pause toggle so an already-open window can't save a stale value back.</summary>
+    public void SyncAbbrEnabled(bool on) => AbbrEnabled.IsChecked = on;
+
+    private void OnOutputChecked(object sender, RoutedEventArgs e)
+    {
+        if (sender is RadioButton rb) _clipboardOnly = (string?)rb.Tag == "clip";
+    }
+
+    private void OnPlacementChecked(object sender, RoutedEventArgs e)
+    {
+        if (sender is RadioButton rb) _placement = (string?)rb.Tag ?? "window";
+    }
+
+    /// <summary>Applied on click, not on Save: a theme is judged by looking at it, and every window
+    /// repaints live. Save still persists it; closing without saving leaves the preview in place
+    /// until the next launch, which is the honest trade for being able to see the choice.</summary>
+    private void OnThemeChecked(object sender, RoutedEventArgs e)
+    {
+        if (sender is not RadioButton rb) return;
+        _theme = (string?)rb.Tag ?? ThemeService.Dark;
+        ThemeService.Apply(_theme);
+    }
+
+    private void OnSummonModeChecked(object sender, RoutedEventArgs e)
+    {
+        if (sender is RadioButton rb) { _summonMode = (string?)rb.Tag ?? "hotkey"; ApplySummonModeVisibility(); }
+    }
+
+    // Show only the chosen mode's config so it's unambiguous which one is active.
+    private void ApplySummonModeVisibility()
+    {
+        bool tap = _summonMode == "tap";
+        HotkeyModePanel.Visibility = tap ? Visibility.Collapsed : Visibility.Visible;
+        TapModePanel.Visibility = tap ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    // ---------- hotkey capture (shared by the summon and capture boxes) ----------
+    private (TextBlock Text, Func<string> Get, Action<string> Set) Target(Border box) =>
+        box == HotkeyBox
+            ? (HotkeyText, () => _hotkey, v => _hotkey = v)
+            : (CaptureText, () => _captureHotkey, v => _captureHotkey = v);
+
+    private void OnHotkeyBoxClick(object sender, MouseButtonEventArgs e)
+    {
+        BeginCapture(HotkeyBox);
+        e.Handled = true;
+    }
+
+    /// <summary>--shots only: the "press keys…" capture state, painted exactly like BeginCapture —
+    /// the transient is otherwise invisible to every static check. The tap box is painted because
+    /// this machine runs in tap mode; the hidden hotkey box would render as no change at all.</summary>
+    internal void ShotsCapturing()
+    {
+        var accent = (System.Windows.Media.Brush)FindResource("Brush.Accent");
+        var prompt = LocalizationService.Instance["Settings.HotkeyPrompt"];
+        if (_summonMode == "tap") { SummonTapText.Text = prompt; SummonTapBox.BorderBrush = accent; }
+        else { HotkeyText.Text = prompt; HotkeyBox.BorderBrush = accent; }
+        CaptureText.Text = prompt;
+        CaptureBox.BorderBrush = accent;
+    }
+
+    /// <summary>--shots only: keyboard focus lands where Tab would leave it, so the focus visual
+    /// (or its absence) is on film — the one interaction state no static shot used to show.</summary>
+    internal void ShotsFocusSave() => Keyboard.Focus(SaveButton);
+    internal void ShotsFocusChip() => Keyboard.Focus((System.Windows.Controls.RadioButton)OutputPanel.Children[0]);
+    internal void ShotsFocusBox() => Keyboard.Focus(DataFolder);   // witness: this template DOES react to focus
+
+    /// <summary>--shots only: switch 呼出方式 to combo mode. The machine defaults to tap, so
+    /// without this the combo panel — and its hint promising Ctrl/Alt/Shift/Win — is rendered by
+    /// no fixture at all (a mode-selected conditional panel is invisible to the whole shot matrix).</summary>
+    internal void ShotsComboMode() =>
+        ((System.Windows.Controls.RadioButton)SummonModePanel.Children[0]).IsChecked = true;
+
+    private void OnCaptureBoxClick(object sender, MouseButtonEventArgs e)
+    {
+        BeginCapture(CaptureBox);
+        e.Handled = true;
+    }
+
+    private void BeginCapture(Border box)
+    {
+        _capBox = box;
+        Keyboard.Focus(box);
+        Target(box).Text.Text = LocalizationService.Instance["Settings.HotkeyPrompt"];
+        box.BorderBrush = (Brush)FindResource("Brush.Accent");
+    }
+
+    private void EndCapture()
+    {
+        if (_capBox is not { } box) return;
+        var t = Target(box);
+        t.Text.Text = HotkeyDisplay(t.Get());
+        box.BorderBrush = (Brush)FindResource("Brush.InputBorder");
+        _capBox = null;
+    }
+
+    private void OnHotkeyLostFocus(object sender, KeyboardFocusChangedEventArgs e)
+    {
+        if (_capBox != null && ReferenceEquals(sender, _capBox)) EndCapture();
+    }
+
+    private void OnHotkeyKeyDown(object sender, KeyEventArgs e)
+    {
+        if (_capBox is null)
+        {
+            // Enter/Space on a focused-but-idle box = clicking it. The box is a custom focusable
+            // Border, not a Button, so without this focus lands on it but no key starts capture.
+            if (e.Key is Key.Enter or Key.Space && sender is Border idleBox) { BeginCapture(idleBox); e.Handled = true; }
+            return;
+        }
+        if (!ReferenceEquals(sender, _capBox)) return;
+        e.Handled = true;
+        var t = Target(_capBox);
+
+        var key = e.Key == Key.System ? e.SystemKey : e.Key;
+        if (key == Key.Escape) { EndCapture(); return; }
+        if (key is Key.Delete or Key.Back)
+        {
+            // The capture hotkey is optional — clearing it disables the feature. The SUMMON box is
+            // the only keyboard entry in hotkey mode, so clearing it would silently lock the user
+            // out; Delete there falls back to the default instead of empty.
+            t.Set(ReferenceEquals(_capBox, HotkeyBox) ? Core.Settings.AppSettings.DefaultHotkey : "");
+            EndCapture();
+            return;
+        }
+        if (IsModifier(key)) return;                 // still holding modifiers — wait for the real key
+
+        // Keyboard.Modifiers never reports the Windows key in WPF, so poll it directly — otherwise
+        // the combos the hint promises ("… Ctrl / Alt / Shift / Win") silently lose their Win half.
+        bool winDown = (NativeMethods.GetKeyState(0x5B) & 0x8000) != 0    // VK_LWIN
+                    || (NativeMethods.GetKeyState(0x5C) & 0x8000) != 0;   // VK_RWIN
+        var combo = BuildCombo(key, KeyToken(key), Keyboard.Modifiers, winDown);
+        if (combo == null)
+        {
+            // not a usable combo yet; keep prompting (the hint states the rule)
+            t.Text.Text = LocalizationService.Instance["Settings.HotkeyPrompt"];
+            return;
+        }
+        // The two slots can't hold the same combo — RegisterHotKey fails the second and blames
+        // "another program". Reject the collision here so the user isn't sent hunting a culprit app.
+        var other = ReferenceEquals(_capBox, HotkeyBox) ? _captureHotkey : _hotkey;
+        if (combo == other)
+        {
+            t.Text.Text = LocalizationService.Instance["Settings.HotkeyPrompt"];
+            return;
+        }
+        t.Set(combo);
+        EndCapture();
+    }
+
+    /// <summary>Maps the WPF key event onto the Core combo builder (which is what the unit test
+    /// drives). The Win flag comes from the caller's GetKeyState poll, not Keyboard.Modifiers.</summary>
+    internal static string? BuildCombo(Key key, string? token, ModifierKeys mods, bool winDown)
+        => Core.Interop.HotkeyDefinition.BuildCombo(
+            token,
+            mods.HasFlag(ModifierKeys.Control),
+            mods.HasFlag(ModifierKeys.Shift),
+            mods.HasFlag(ModifierKeys.Alt),
+            winDown,
+            bareKeyOk: key is >= Key.F1 and <= Key.F24);
+
+    // ---------- summon-by-tap capture (a LONE modifier, unlike the combo boxes above) ----------
+    private void OnSummonTapClick(object sender, MouseButtonEventArgs e)
+    {
+        StartTapCapture();
+        e.Handled = true;
+    }
+
+    private void StartTapCapture()
+    {
+        _capturingTap = true;
+        Keyboard.Focus(SummonTapBox);
+        SummonTapText.Text = LocalizationService.Instance["Settings.HotkeyPrompt"];
+        SummonTapBox.BorderBrush = (Brush)FindResource("Brush.Accent");
+    }
+
+    private void OnSummonTapKeyDown(object sender, KeyEventArgs e)
+    {
+        if (!_capturingTap)
+        {
+            // same fake-tab-stop fix as the combo boxes: Enter/Space starts the capture
+            if (e.Key is Key.Enter or Key.Space) { StartTapCapture(); e.Handled = true; }
+            return;
+        }
+        e.Handled = true;
+        var key = e.Key == Key.System ? e.SystemKey : e.Key;
+        if (key == Key.Escape) { EndTapCapture(); return; }
+        if (key is Key.Delete or Key.Back) { _summonTapKey = ""; EndTapCapture(); return; }   // clear = off
+        if (ModifierName(key) is not { } name)
+        {
+            SummonTapText.Text = LocalizationService.Instance["Settings.HotkeyPrompt"];   // wants a modifier
+            return;
+        }
+        _summonTapKey = name;
+        EndTapCapture();
+    }
+
+    private void OnSummonTapLostFocus(object sender, KeyboardFocusChangedEventArgs e)
+    {
+        if (_capturingTap) EndTapCapture();
+    }
+
+    private void EndTapCapture()
+    {
+        _capturingTap = false;
+        SummonTapText.Text = TapDisplay(_summonTapKey);
+        SummonTapBox.BorderBrush = (Brush)FindResource("Brush.InputBorder");
+    }
+
+    // Only left/right Ctrl/Shift — no OS side effect when tapped alone (Alt activates the menu
+    // bar, Win opens Start, so both are excluded).
+    private static string? ModifierName(Key k) => k switch
+    {
+        Key.LeftCtrl => "LCtrl", Key.RightCtrl => "RCtrl",
+        Key.LeftShift => "LShift", Key.RightShift => "RShift",
+        _ => null,
+    };
+
+    private static string TapDisplay(string name) => name switch
+    {
+        "LCtrl" => "L-Ctrl", "RCtrl" => "R-Ctrl",
+        "LShift" => "L-Shift", "RShift" => "R-Shift",
+        _ => "—",
+    };
+
+    private static bool IsModifier(Key k) => k is Key.LeftCtrl or Key.RightCtrl
+        or Key.LeftShift or Key.RightShift or Key.LeftAlt or Key.RightAlt
+        or Key.LWin or Key.RWin or Key.System;
+
+    private static string? KeyToken(Key k)
+    {
+        if (k >= Key.A && k <= Key.Z) return ((char)('A' + (k - Key.A))).ToString();
+        if (k >= Key.D0 && k <= Key.D9) return ((char)('0' + (k - Key.D0))).ToString();
+        if (k >= Key.NumPad0 && k <= Key.NumPad9) return ((char)('0' + (k - Key.NumPad0))).ToString();
+        if (k >= Key.F1 && k <= Key.F24) return "F" + (k - Key.F1 + 1);
+        return k switch
+        {
+            Key.Space => "Space",
+            Key.Oem3 => "`",
+            Key.Enter => "Enter",
+            Key.Tab => "Tab",
+            _ => null,
+        };
+    }
+
+    private void OnBrowse(object sender, RoutedEventArgs e)
+    {
+        var dlg = new Microsoft.Win32.OpenFolderDialog();
+        if (dlg.ShowDialog() == true) DataFolder.Text = dlg.FolderName;
+    }
+
+    // Toggle portable mode immediately (create/remove the marker beside the exe) rather than on
+    // Save — the marker is a filesystem side effect, not a saved field, and it only takes hold on
+    // the next startup. Click fires on user interaction only, so the ctor's IsChecked set is quiet.
+    private void OnPortableToggle(object sender, RoutedEventArgs e)
+    {
+        var loc = LocalizationService.Instance;
+        bool enable = PortableMode.IsChecked == true;
+        if (!Core.AppPaths.SetPortable(enable))
+        {
+            PortableMode.IsChecked = !enable;   // exe folder not writable — undo the visual toggle
+            AppDialog.Alert(this, loc["App.Name"], loc["Settings.PortableFailed"]);
+            return;
+        }
+        AppDialog.Alert(this, loc["App.Name"], loc["Settings.PortableRestart"]);
+    }
+
+    // Check the release server for a newer build right now (explicit user action, so it runs
+    // regardless of the saved opt-in flag). The App shows the result as a tray balloon and downloads.
+    private async void OnCheckUpdatesNow(object sender, RoutedEventArgs e)
+    {
+        CheckNowButton.IsEnabled = false;
+        try
+        {
+            if (Application.Current is App app) await app.CheckForUpdatesAsync(manual: true);
+        }
+        finally { CheckNowButton.IsEnabled = true; }
+    }
+
+    private void OnOpenRepo(object sender, RoutedEventArgs e)
+    {
+        try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(UpdateService.ProjectUrl) { UseShellExecute = true }); }
+        catch { }
+    }
+
+    private void OnOpenFolder(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            // Prefer the folder typed in the box (if it exists), else the active one.
+            var typed = DataFolder.Text.Trim();
+            var folder = typed.Length > 0 && System.IO.Directory.Exists(typed)
+                ? typed
+                : AppState.Current.ResolveDataFolder();
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("explorer.exe", $"\"{folder}\"")
+            { UseShellExecute = true });
+        }
+        catch { }
+    }
+
+    private void OnOpenBackups(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            System.IO.Directory.CreateDirectory(AppState.BackupDir);
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("explorer.exe", $"\"{AppState.BackupDir}\"")
+            { UseShellExecute = true });
+        }
+        catch { }
+    }
+
+    private void OnExportBackup(object sender, RoutedEventArgs e)
+    {
+        var dlg = new Microsoft.Win32.SaveFileDialog
+        {
+            Filter = "Zip (*.zip)|*.zip",
+            FileName = $"QuickText-backup-{DateTime.Now:yyyyMMdd-HHmm}.zip",
+        };
+        if (dlg.ShowDialog() != true) return;
+        try
+        {
+            var folder = AppState.Current.ResolveDataFolder();
+            if (System.IO.File.Exists(dlg.FileName)) System.IO.File.Delete(dlg.FileName);
+            System.IO.Compression.ZipFile.CreateFromDirectory(folder, dlg.FileName);
+            AppDialog.Alert(this, LocalizationService.Instance["App.Name"], LocalizationService.Instance["Msg.Exported"]);
+        }
+        catch (Exception ex)
+        {
+            AppDialog.Alert(this, LocalizationService.Instance["App.Name"], ex.Message);
+        }
+    }
+
+    private bool _importing;
+
+    private async void OnImportBackup(object sender, RoutedEventArgs e)
+    {
+        if (_importing) return;
+        _importing = true;
+        var loc = LocalizationService.Instance;
+        // Extract to a temp dir first so a bad zip never touches the live library.
+        var tmp = System.IO.Path.Combine(System.IO.Path.GetTempPath(),
+            "QuickText-import-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var dlg = new Microsoft.Win32.OpenFileDialog { Filter = "Zip (*.zip)|*.zip" };
+            if (dlg.ShowDialog() != true) return;
+            await Task.Run(() => System.IO.Compression.ZipFile.ExtractToDirectory(dlg.FileName, tmp));
+
+            // A QuickText backup is the data folder zipped: index.json must exist and parse.
+            var idxPath = System.IO.Path.Combine(tmp, "index.json");
+            var idx = System.IO.File.Exists(idxPath)
+                ? System.Text.Json.JsonSerializer.Deserialize<QuickText.Core.Models.LibraryIndex>(
+                    System.IO.File.ReadAllText(idxPath), QuickText.Core.Persistence.JsonConfig.Read)
+                : null;
+            if (idx?.Categories == null)
+            {
+                AppDialog.Alert(this, loc["App.Name"], loc["Msg.ImportInvalid"]);
+                return;
+            }
+
+            if (!AppDialog.Confirm(this, loc["App.Name"], loc["Msg.ImportConfirm"],
+                    loc["Settings.ImportBackup"])) return;
+
+            // An open Manager holds a whole-category model; importing behind its back would let its
+            // next save overwrite the imported files. Close it first (its own prompt may cancel).
+            var manager = Application.Current.Windows.OfType<ManagerWindow>().FirstOrDefault();
+            if (manager != null)
+            {
+                manager.Close();
+                if (manager.IsVisible) return;   // user kept it open (unsaved-changes prompt)
+            }
+
+            var dest = AppState.Current.ResolveDataFolder();
+            AppState.Current.MarkSelfWrite(60_000);
+            await Task.Run(() => QuickText.Core.Persistence.FileTreeCopy.CopyWithRollback(tmp, dest));
+            AppState.Current.MarkSelfWrite();   // extend suppression past the last copied file
+            await AppState.Current.ReloadDataAsync();
+            AppDialog.Alert(this, loc["App.Name"], loc["Msg.Imported"]);
+        }
+        catch (Exception ex)
+        {
+            AppState.Current.MarkSelfWrite(0);   // let a failed import's restore be seen by the watcher
+            AppDialog.Alert(this, loc["App.Name"], ex.Message);
+        }
+        finally
+        {
+            _importing = false;
+            try { System.IO.Directory.Delete(tmp, recursive: true); } catch { }
+        }
+    }
+
+    private async void OnSave(object sender, RoutedEventArgs e)
+    {
+        if (_saving) return;
+        _saving = true;
+        SaveButton.IsEnabled = false;
+        try
+        {
+            var s = AppState.Current.Settings;
+            // "tap" mode needs a VALID modifier to work; if the captured key isn't one recognized
+            // (empty, an old-build name, a hand-edited value), save as "hotkey" so the mode shown next
+            // time matches the trigger that actually fires. Same predicate the runtime arming uses, so
+            // display and trigger can't disagree.
+            s.SummonMode = Core.Interop.ModifierTapKeys.IsValidTap(_summonMode, _summonTapKey) ? "tap" : "hotkey";
+            s.Hotkey = _hotkey.Trim();
+            s.CaptureHotkey = _captureHotkey.Trim();
+            s.SummonTapKey = _summonTapKey;
+            s.SummonTapDouble = SummonTapDouble.IsChecked == true;
+            s.DataFolder = DataFolder.Text.Trim();
+            s.Language = (LangCombo.SelectedValue as string) ?? "";
+            s.AbbrBlacklist = AbbrBlacklist.Text.Trim();
+            s.AbbrPrefix = AbbrPrefixBox.Text.Trim();
+            s.AbbrEnabled = AbbrEnabled.IsChecked == true;
+            s.RestoreClipboard = RestoreClipboard.IsChecked == true;
+            s.AutoSend = AutoSend.IsChecked == true;
+            s.ClickToSend = ClickToSend.IsChecked == true;
+            s.CopyToClipboardOnly = _clipboardOnly;
+            s.PanelPlacement = _placement;
+            s.Theme = _theme;
+            s.Autostart = Autostart.IsChecked == true;
+            s.CheckUpdates = CheckUpdates.IsChecked == true;
+
+            AppState.Current.SettingsStore.Save(s);
+            _savedForm = CurrentForm();
+
+            // Guard: only apply a known culture (SetCulture throws on bad input).
+            if (KnownLanguages.Contains(s.Language))
+            {
+                try { LocalizationService.Instance.SetCulture(s.Language); }
+                catch (CultureNotFoundException) { /* keep current culture */ }
+            }
+
+            try
+            {
+                if (s.Autostart) QuickText.App.Interop.Autostart.Enable();
+                else QuickText.App.Interop.Autostart.Disable();
+            }
+            catch (Exception ex)
+            {
+                AppDialog.Alert(this, LocalizationService.Instance["App.Name"],
+                    $"Could not update the autostart setting: {ex.Message}");
+            }
+
+            // Apply hotkey / data folder / abbreviation changes immediately — no restart. The summon
+            // triggers stay suspended until this window's Close decrements the ref-count and re-arms
+            // them, so Close MUST run even if the apply throws — otherwise the window stays open, the
+            // ref-count never drops, and the global hotkey + tap-summon stay dead for the session.
+            try
+            {
+                if (Application.Current is App app) await app.ReapplySettingsAsync();
+            }
+            finally
+            {
+                if (IsVisible) Close();
+            }
+        }
+        catch
+        {
+            _saving = false;
+            SaveButton.IsEnabled = true;
+            throw;
+        }
+    }
+}
