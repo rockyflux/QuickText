@@ -9,6 +9,8 @@ public sealed class KeyboardHook : IDisposable
     private readonly AbbrMatcher _matcher;
     private readonly Func<bool> _isEnabled;
     private readonly Func<bool> _restoreClipboard;
+    private readonly Func<bool> _copyToClipboardOnly;
+    private readonly Func<bool> _autoSend;
     private readonly Action<string>? _recordUse;   // record a snippet use (for frecency), by id
     private readonly HashSet<char> _terminators;
     private readonly HookProc _proc;        // keep alive to avoid GC
@@ -27,17 +29,23 @@ public sealed class KeyboardHook : IDisposable
     private (IntPtr Target, int Backspaces, string Abbr, DateTime Armed)? _pendingUndo;
 
     public KeyboardHook(AbbrMatcher matcher, Func<bool> isEnabled, string terminatorChars,
-        Func<bool> restoreClipboard, string blacklist = "", Action<string>? recordUse = null)
+        Func<bool> restoreClipboard, string blacklist = "", Action<string>? recordUse = null,
+        Func<bool>? copyToClipboardOnly = null, Func<bool>? autoSend = null)
     {
         _matcher = matcher;
         _isEnabled = isEnabled;
         _restoreClipboard = restoreClipboard;
+        _copyToClipboardOnly = copyToClipboardOnly ?? (() => false);
+        _autoSend = autoSend ?? (() => false);
         _terminators = new HashSet<char>(terminatorChars);
         _blacklist = ParseBlacklist(blacklist);
         _recordUse = recordUse;
         _proc = HookCallback;
         _mouseProc = MouseCallback;
     }
+
+    private (bool CopyOnly, bool AutoSend) ResolveOutput(string? outputMode, bool hasCursor) =>
+        OutputModeRules.Resolve(outputMode, _copyToClipboardOnly(), _autoSend(), hasCursor);
 
     private static HashSet<string> ParseBlacklist(string raw)
     {
@@ -215,10 +223,11 @@ public sealed class KeyboardHook : IDisposable
                     _suppressingSelfInput = true;
                     try
                     {
+                        var (copyOnly, autoSend) = ResolveOutput(sn.OutputMode, hasCursor: false);
                         bool deleted = PasteEngine.SendBackspaces(match.BackspaceCount);
-                        bool ok = sn.OutputMode == "copy"
+                        bool ok = copyOnly
                             ? PasteEngine.CopyImage(image)
-                            : PasteEngine.PasteImage(image, autoSend: sn.OutputMode == "paste-enter",
+                            : PasteEngine.PasteImage(image, autoSend: autoSend,
                                 restoreClipboard: _restoreClipboard());
                         if (deleted && !ok) PasteEngine.SendUnicodeText(match.Abbr);
                         _pendingUndo = null;
@@ -245,11 +254,8 @@ public sealed class KeyboardHook : IDisposable
             if (string.IsNullOrEmpty(text)) return;   // nothing to send — do not delete the trigger
             int caret = resolved.CaretFromEnd;
             bool prompted = resolved.Prompted;
-            // Per-snippet output override. "copy": remove the typed abbr, put the text on the
-            // clipboard, paste nothing. "paste-enter": auto-Enter after the paste (unless a
-            // {光标} token says "keep typing here"). Global AutoSend never applies to abbrs.
-            bool copyOnly = sn.OutputMode == "copy";
-            bool autoSend = sn.OutputMode == "paste-enter" && !resolved.HasCursor;
+            // Same OutputMode resolution as the search panel ("" follows global copy/AutoSend).
+            var (copyOnly, autoSend) = ResolveOutput(sn.OutputMode, resolved.HasCursor);
 
             void Emit()
             {

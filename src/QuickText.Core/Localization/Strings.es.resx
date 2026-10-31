@@ -60,6 +60,7 @@
   </resheader>
   <data name="App.Name"><value>QuickText</value></data>
   <data name="Tray.OpenManager"><value>Abrir administrador</value></data>
+  <data name="Tray.OpenCategories"><value>Categorías</value></data>
   <data name="Tray.OpenSearch"><value>Abrir búsqueda</value></data>
   <data name="Tray.Settings"><value>Configuración</value></data>
   <data name="Tray.Autostart"><value>Iniciar con Windows</value></data>
@@ -149,6 +150,10 @@
   <data name="Msg.ImportConfirm"><value>La importación sobrescribirá la biblioteca actual. ¿Continuar?</value></data>
   <data name="Msg.ImportInvalid"><value>No es un archivo de copia válido</value></data>
   <data name="Msg.Imported"><value>Copia importada</value></data>
+  <data name="Settings.ClearLibrary"><value>Borrar todos los datos</value></data>
+  <data name="Msg.ClearLibraryConfirm"><value>Se eliminarán todas las categorías y textos (incluida la papelera). No se puede deshacer. Exporte una copia primero si la necesita. ¿Continuar?</value></data>
+  <data name="Msg.ClearLibraryConfirmAgain"><value>Confirmar de nuevo: la biblioteca se vaciará de forma permanente.</value></data>
+  <data name="Msg.Cleared"><value>Biblioteca vaciada</value></data>
   <data name="Search.CreateNew"><value>Crear «{0}»</value></data>
   <data name="Search.Hint.New"><value>Nuevo</value></data>
   <data name="Search.Hint.Create"><value>Crear</value></data>
@@ -167,6 +172,21 @@
   <data name="Settings.NavData"><value>Datos y copias</value></data>
   <data name="Settings.NavGeneral"><value>Idioma y tema</value></data>
   <data name="Manager.Color"><value>Color</value></data>
+  <data name="Manager.Sort"><value>Orden</value></data>
+  <data name="Manager.SortManual"><value>Manual</value></data>
+  <data name="Manager.SortCreated"><value>Fecha de creación</value></data>
+  <data name="Manager.SortName"><value>Nombre</value></data>
+  <data name="Manager.SortUsage"><value>Usos</value></data>
+  <data name="Manager.SortLastUsed"><value>Último uso</value></data>
+  <data name="CatMgr.Title"><value>Categorías</value></data>
+  <data name="CatMgr.Hint"><value>Arrastra para reordenar. Lote: un nombre por línea; se omiten los existentes.</value></data>
+  <data name="CatMgr.DoubleClickRename"><value>Doble clic en una fila para renombrar.</value></data>
+  <data name="CatMgr.Empty"><value>Aún no hay categorías</value></data>
+  <data name="CatMgr.BatchAdd"><value>Añadir lote</value></data>
+  <data name="CatMgr.BatchHint"><value>Un nombre de categoría por línea</value></data>
+  <data name="CatMgr.Initialize"><value>Categorías predeterminadas</value></data>
+  <data name="CatMgr.InitHint"><value>Añade las categorías integradas y ejemplos (Perfil / Prompts / Skills) de tu idioma. No se sobrescriben los existentes.</value></data>
+  <data name="CatMgr.BatchResult"><value>Añadidas {0}, omitidos {1} duplicado(s)</value></data>
   <data name="Manager.DuplicateCategory"><value>Ya existe una categoría con ese nombre</value></data>
   <data name="Manager.SaveFailed"><value>No se pudo guardar: la carpeta de datos es de solo lectura o la está usando otro programa. Libérala o elige otra carpeta en Configuración.</value></data>
   <data name="Manager.DeleteCategoryConfirm"><value>¿Eliminar la categoría «{0}»? También se eliminarán sus fragmentos.</value></data>
@@ -209,6 +229,7 @@
   <data name="Search.Empty.Title"><value>Aún no hay fragmentos</value></data>
   <data name="Search.Empty.Sub"><value>Añade tu primer fragmento; luego invocas el panel con el atajo</value></data>
   <data name="Search.Empty.Action"><value>Añadir un fragmento</value></data>
+  <data name="Search.Empty.InitSeed"><value>Inicializar categorías integradas</value></data>
   <data name="Search.NoMatch"><value>Ningún fragmento coincide con «{0}»</value></data>
   <data name="Search.NoMatch.Sub"><value>Prueba otra palabra clave o una abreviatura</value></data>
   <data name="Search.Count.Browse"><value>{0} elementos</value></data>

@@ -21,11 +21,10 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- categories -->
+                <!-- categories: CRUD / color / sort live in Category Manager -->
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -35,15 +34,9 @@
                                     Style="{StaticResource SetHeader}"
                                     Content="{Binding [Manager.Categories], Source={x:Static app:LocProxy.Instance}}"/>
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
-                        <Button x:Name="AddCategoryButton" Style="{StaticResource GhostIconButton}" Content="&#xE710;" Click="OnAddCategory"
-                                AutomationProperties.Name="{Binding [Manager.NewCategory], Source={x:Static app:LocProxy.Instance}}"
-                                ToolTip="{Binding [Manager.NewCategory], Source={x:Static app:LocProxy.Instance}}"/>
-                        <Button Style="{StaticResource GhostIconButton}" Content="&#xE70F;" Click="OnRenameCategory"
-                                AutomationProperties.Name="{Binding [Manager.Rename], Source={x:Static app:LocProxy.Instance}}"
-                                ToolTip="{Binding [Manager.Rename], Source={x:Static app:LocProxy.Instance}}"/>
-                        <Button Style="{StaticResource GhostIconButton}" Content="&#xE738;" Click="OnDeleteCategory"
-                                AutomationProperties.Name="{Binding [Manager.Delete], Source={x:Static app:LocProxy.Instance}}"
-                                ToolTip="{Binding [Manager.Delete], Source={x:Static app:LocProxy.Instance}}"/>
+                        <Button x:Name="OpenCategoryManagerButton" Style="{StaticResource GhostIconButton}" Content="&#xE710;" Click="OnOpenCategoryManager"
+                                AutomationProperties.Name="{Binding [CatMgr.Title], Source={x:Static app:LocProxy.Instance}}"
+                                ToolTip="{Binding [CatMgr.Title], Source={x:Static app:LocProxy.Instance}}"/>
                         <Button Style="{StaticResource GhostIconButton}" Content="&#xE81C;" Click="OnOpenTrash"
                                 AutomationProperties.Name="{Binding [Manager.Trash], Source={x:Static app:LocProxy.Instance}}"
                                 ToolTip="{Binding [Manager.Trash], Source={x:Static app:LocProxy.Instance}}"/>
@@ -55,21 +48,8 @@
                          Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource DarkListItem}"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="OnCategorySelected"/>
 
-                <!-- category color -->
-                <WrapPanel Grid.Row="2" Margin="6,10,0,2">
-                    <TextBlock Style="{StaticResource FieldLabel}" Margin="0,0,9,0" VerticalAlignment="Center"
-                               Text="{Binding [Manager.Color], Source={x:Static app:LocProxy.Instance}}"/>
-                    <Button Style="{StaticResource ColorSwatch}" Background="Transparent" Tag="" Click="OnCategoryColor"/>
-                    <Button Style="{StaticResource ColorSwatch}" Background="#3DC2A0" Tag="#3DC2A0" Click="OnCategoryColor"/>
-                    <Button Style="{StaticResource ColorSwatch}" Background="#5B9BD5" Tag="#5B9BD5" Click="OnCategoryColor"/>
-                    <Button Style="{StaticResource ColorSwatch}" Background="#A98CE8" Tag="#A98CE8" Click="OnCategoryColor"/>
-                    <Button Style="{StaticResource ColorSwatch}" Background="#FF8A5B" Tag="#FF8A5B" Click="OnCategoryColor"/>
-                    <Button Style="{StaticResource ColorSwatch}" Background="#E8C264" Tag="#E8C264" Click="OnCategoryColor"/>
-                    <Button Style="{StaticResource ColorSwatch}" Background="#E87AA8" Tag="#E87AA8" Click="OnCategoryColor"/>
-                </WrapPanel>
-
                 <!-- snippets -->
-                <Grid Grid.Row="3" Margin="0,18,0,0">
+                <Grid Grid.Row="2" Margin="0,18,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
@@ -89,7 +69,7 @@
                                 ToolTip="{Binding [Manager.Delete], Source={x:Static app:LocProxy.Instance}}"/>
                     </StackPanel>
                 </Grid>
-                <Grid Grid.Row="4" Margin="0,8,0,0">
+                <Grid Grid.Row="3" Margin="0,8,0,0">
                     <TextBox x:Name="FilterBox" Style="{StaticResource DarkTextBox}" FontSize="12.5" Padding="8,5"
                              AutomationProperties.Name="{Binding [Manager.Filter], Source={x:Static app:LocProxy.Instance}}"
                              TextChanged="OnFilterChanged"/>
@@ -108,7 +88,7 @@
                         </TextBlock.Style>
                     </TextBlock>
                 </Grid>
-                <ListBox Grid.Row="5" x:Name="Snippets" DisplayMemberPath="Name" Margin="0,6,0,0" AllowDrop="True"
+                <ListBox Grid.Row="4" x:Name="Snippets" DisplayMemberPath="Name" Margin="0,6,0,0" AllowDrop="True"
                          SelectionMode="Extended" ContextMenuOpening="OnSnippetsMenuOpening"
                          PreviewMouseLeftButtonDown="OnListPressed" PreviewMouseMove="OnListMove" Drop="OnSnippetsDrop"
                          Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource DarkListItem}"

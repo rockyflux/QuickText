@@ -47,6 +47,36 @@ public class ModelsTests
     }
 
     [Fact]
+    public void CreatedAt_round_trips_and_legacy_deserializes_to_default()
+    {
+        var created = DateTimeOffset.Parse("2024-03-15T12:00:00Z");
+        var s = new Snippet { Name = "新", CreatedAt = created, UpdatedAt = created.AddDays(1) };
+        var back = JsonSerializer.Deserialize<Snippet>(JsonSerializer.Serialize(s, JsonConfig.Write), JsonConfig.Read)!;
+        Assert.Equal(created, back.CreatedAt);
+
+        var legacy = JsonSerializer.Deserialize<Snippet>(
+            """{"name":"旧","updatedAt":"2022-01-01T00:00:00+00:00"}""", JsonConfig.Read)!;
+        Assert.Equal(default, legacy.CreatedAt);
+    }
+
+    [Fact]
+    public void CategoryRef_omits_null_SortMode_and_round_trips_usage()
+    {
+        var empty = new CategoryRef { Name = "a", File = "a.json", Color = "#3DC2A0", SortMode = null };
+        var emptyJson = JsonSerializer.Serialize(empty, JsonConfig.Write);
+        Assert.DoesNotContain("sortMode", emptyJson, StringComparison.OrdinalIgnoreCase);
+
+        var with = new CategoryRef { Name = "a", File = "a.json", SortMode = "usage" };
+        var back = JsonSerializer.Deserialize<CategoryRef>(
+            JsonSerializer.Serialize(with, JsonConfig.Write), JsonConfig.Read)!;
+        Assert.Equal("usage", back.SortMode);
+
+        var legacy = JsonSerializer.Deserialize<CategoryRef>(
+            """{"name":"a","file":"a.json","color":""}""", JsonConfig.Read)!;
+        Assert.True(string.IsNullOrEmpty(legacy.SortMode));
+    }
+
+    [Fact]
     public void Write_keeps_cjk_readable_and_round_trips_emoji()
     {
         var s = new Snippet { Name = "中文", Body = "😀 100% a|b" };

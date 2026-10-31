@@ -60,6 +60,7 @@
   </resheader>
   <data name="App.Name"><value>QuickText</value></data>
   <data name="Tray.OpenManager"><value>Открыть менеджер</value></data>
+  <data name="Tray.OpenCategories"><value>Категории</value></data>
   <data name="Tray.OpenSearch"><value>Открыть поиск</value></data>
   <data name="Tray.Settings"><value>Настройки</value></data>
   <data name="Tray.Autostart"><value>Запускать с Windows</value></data>
@@ -149,6 +150,10 @@
   <data name="Msg.ImportConfirm"><value>Импорт перезапишет текущую библиотеку. Продолжить?</value></data>
   <data name="Msg.ImportInvalid"><value>Недействительный файл резервной копии</value></data>
   <data name="Msg.Imported"><value>Резервная копия импортирована</value></data>
+  <data name="Settings.ClearLibrary"><value>Очистить все данные</value></data>
+  <data name="Msg.ClearLibraryConfirm"><value>Будут удалены все категории и тексты (включая корзину). Отменить нельзя. Сначала экспортируйте резервную копию, если нужно. Продолжить?</value></data>
+  <data name="Msg.ClearLibraryConfirmAgain"><value>Подтвердите ещё раз: библиотека будет очищена безвозвратно.</value></data>
+  <data name="Msg.Cleared"><value>Библиотека очищена</value></data>
   <data name="Search.CreateNew"><value>Создать «{0}»</value></data>
   <data name="Search.Hint.New"><value>Новый</value></data>
   <data name="Search.Hint.Create"><value>Создать</value></data>
@@ -167,6 +172,21 @@
   <data name="Settings.NavData"><value>Данные и резервные копии</value></data>
   <data name="Settings.NavGeneral"><value>Язык и тема</value></data>
   <data name="Manager.Color"><value>Цвет</value></data>
+  <data name="Manager.Sort"><value>Сортировка</value></data>
+  <data name="Manager.SortManual"><value>Вручную</value></data>
+  <data name="Manager.SortCreated"><value>Дата создания</value></data>
+  <data name="Manager.SortName"><value>Имя</value></data>
+  <data name="Manager.SortUsage"><value>Использования</value></data>
+  <data name="Manager.SortLastUsed"><value>Последнее использование</value></data>
+  <data name="CatMgr.Title"><value>Категории</value></data>
+  <data name="CatMgr.Hint"><value>Перетащите, чтобы изменить порядок. Пакет: одно имя в строке; существующие пропускаются.</value></data>
+  <data name="CatMgr.DoubleClickRename"><value>Двойной щелчок — переименовать.</value></data>
+  <data name="CatMgr.Empty"><value>Пока нет категорий</value></data>
+  <data name="CatMgr.BatchAdd"><value>Пакетное добавление</value></data>
+  <data name="CatMgr.BatchHint"><value>Одно имя категории в строке</value></data>
+  <data name="CatMgr.Initialize"><value>Категории по умолчанию</value></data>
+  <data name="CatMgr.InitHint"><value>Добавляет встроенные категории и примеры (Профиль / Промпты / Skills) для языка. Существующие не перезаписываются.</value></data>
+  <data name="CatMgr.BatchResult"><value>Добавлено {0}, пропущено дубликатов: {1}</value></data>
   <data name="Manager.DuplicateCategory"><value>Категория с таким названием уже существует</value></data>
   <data name="Manager.SaveFailed"><value>Не удалось сохранить: папка данных доступна только для чтения или занята другой программой. Освободите её или выберите другую папку в настройках.</value></data>
   <data name="Manager.DeleteCategoryConfirm"><value>Удалить категорию «{0}»? Её фрагменты тоже будут удалены.</value></data>
@@ -209,6 +229,7 @@
   <data name="Search.Empty.Title"><value>Пока нет фрагментов</value></data>
   <data name="Search.Empty.Sub"><value>Добавьте первый фрагмент — панель вызывается горячей клавишей в любой момент</value></data>
   <data name="Search.Empty.Action"><value>Добавить фрагмент</value></data>
+  <data name="Search.Empty.InitSeed"><value>Инициализировать встроенные категории</value></data>
   <data name="Search.NoMatch"><value>Нет фрагментов по запросу «{0}»</value></data>
   <data name="Search.NoMatch.Sub"><value>Попробуйте другое слово или сокращение</value></data>
   <data name="Search.Count.Browse"><value>{0} записей</value></data>

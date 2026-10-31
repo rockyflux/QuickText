@@ -1,0 +1,837 @@
+{
+  "zh-Hans": {
+    "categories": [
+      {
+        "name": "资料信息",
+        "snippets": [
+          {
+            "name": "手机号码",
+            "abbr": "sjh",
+            "body": "13800138000",
+            "useVariables": false
+          },
+          {
+            "name": "邮箱",
+            "abbr": "yx",
+            "body": "your.name@example.com",
+            "useVariables": false
+          },
+          {
+            "name": "住址",
+            "abbr": "zz",
+            "body": "XX省XX市XX区XX路XX号",
+            "useVariables": false
+          },
+          {
+            "name": "身份证号码",
+            "abbr": "sfz",
+            "body": "110101199001011234",
+            "useVariables": false
+          },
+          {
+            "name": "公司名称",
+            "abbr": "gs",
+            "body": "某某科技有限公司",
+            "useVariables": false
+          }
+        ]
+      },
+      {
+        "name": "开发类提示词",
+        "snippets": [
+          {
+            "name": "代码生成",
+            "abbr": "dmmc",
+            "body": "你是资深后端/前端工程师，技术栈：{技术栈}。\n需求描述：{需求详情}\n要求：\n1. 输出可直接运行的完整代码，注释清晰；\n2. 遵循 {规范|阿里巴巴Java规范|Vue3组合式API规范}；\n3. 处理异常、边界情况；\n4. 附带简单使用示例和入参说明；\n5. 不要多余废话，代码优先。",
+            "useVariables": true
+          },
+          {
+            "name": "代码重构优化",
+            "abbr": "dmcg",
+            "body": "帮我重构下面这段代码，语言：{语言}\n目标：{优化目标|提升性能|可读性|减少重复|兼容JDK21|消除告警}\n约束：{约束|不能改原有入参结构|保持接口不变}\n代码：\n{剪贴板}\n输出：优化后代码 + 修改点简要说明",
+            "useVariables": true
+          },
+          {
+            "name": "Bug排查日志分析",
+            "abbr": "dmbg",
+            "body": "帮我分析报错日志，定位问题根因，给出排查步骤和修复方案。\n项目信息：{项目名称}，{技术栈}，环境：{环境|dev|test|prod}\n报错日志：\n{剪贴板}\n重点关注：{关键词|空指针|连接超时|500|Redis broken pipe|Nacos注册失败}\n区分：是代码bug、配置问题、资源限制还是第三方依赖问题。",
+            "useVariables": true
+          },
+          {
+            "name": "接口文档生成",
+            "abbr": "dmjk",
+            "body": "根据下面接口信息，生成标准接口文档，格式markdown。\n接口名称：{接口名}\n请求方式：{请求方式|GET|POST|PUT|DELETE}\n路径：{url}\n入参：{入参列表}\n出参：{返回结构}\n异常码：{错误码说明}\n文档受众：{文档受众|前端|测试|内部交付}",
+            "useVariables": true
+          },
+          {
+            "name": "SQL编写优化",
+            "abbr": "dmsql",
+            "body": "数据库：{数据库|MySQL8|PostgreSQL}\n表结构：\n{剪贴板}\n查询需求：{查询需求}\n要求：\n1. SQL高效，优先考虑索引；\n2. 标注可加索引建议；\n3. 附带SQL逻辑说明；\n4. 禁止select *。",
+            "useVariables": true
+          },
+          {
+            "name": "需求转技术方案",
+            "abbr": "dmfa",
+            "body": "需求：{业务需求原文}\n用户角色：{用户角色}\n技术环境：{技术栈}、{中间件}\n输出一份技术方案提纲，包含：背景、目标、整体设计、核心流程、数据库设计要点、风险点、上线步骤、回滚方案。",
+            "useVariables": true
+          },
+          {
+            "name": "Docker配置生成",
+            "abbr": "dmdk",
+            "body": "生成 {配置类型|Dockerfile|nginx.conf|shell脚本}\n用途：{用途|SpringBoot打包|前端静态资源反向代理|定时备份Redis}\n环境：{系统版本|Ubuntu22.04|Windows WSL2}\n特殊要求：{特殊要求|内存限制|端口|持久化|日志切割}\n输出完整配置 + 启动命令。",
+            "useVariables": true
+          },
+          {
+            "name": "单元测试生成",
+            "abbr": "dmcs",
+            "body": "为下面方法写单元测试，测试框架：{测试框架|JUnit5|Vitest}\n待测试代码：\n{剪贴板}\n覆盖正常场景、异常场景、边界值；输出测试代码+测试点清单。",
+            "useVariables": true
+          }
+        ]
+      },
+      {
+        "name": "其他类提示词",
+        "snippets": [
+          {
+            "name": "周报",
+            "abbr": "zb",
+            "body": "帮我写一份工作周报，汇报人：{姓名}\n周期：{开始日期} ~ {结束日期}\n已完成工作：\n- {事项1}\n- {事项2}\n进行中：\n- {事项3}\n遇到问题&需要支持：\n- {卡点}\n下周计划：\n- {计划1}\n风格：{风格|简洁干练给领导|详细技术版|团队同步版}",
+            "useVariables": true
+          },
+          {
+            "name": "日报",
+            "abbr": "rb",
+            "body": "生成工作日日报，汇报人：{姓名}\n日期：{日期}\n今日完成：\n{工作内容}\n明日计划：\n{计划}\n阻塞问题：{阻塞问题:无}",
+            "useVariables": true
+          },
+          {
+            "name": "会议纪要",
+            "abbr": "hyjy",
+            "body": "整理下面会议录音/文字，输出会议纪要。\n会议主题：{会议主题}\n参会人：{参会名单}\n时间：{会议时间}\n原文：\n{剪贴板}\n输出结构：【会议结论】【待办事项（责任人+截止时间）】【遗留问题】",
+            "useVariables": true
+          },
+          {
+            "name": "正式邮件",
+            "abbr": "yj",
+            "body": "写一封正式邮件，收件人：{收件人}，抄送：{抄送人}\n主题：{邮件标题}\n事由：{事情简述}\n诉求：{需要对方做什么}\n语气：{语气|客气沟通|问题告知|进度同步}\n落款：{姓名} {部门}",
+            "useVariables": true
+          },
+          {
+            "name": "需求提报",
+            "abbr": "xqtb",
+            "body": "帮我整理成标准需求单\n需求背景：{背景}\n目标用户：{用户}\n用户痛点：{痛点}\n期望功能：{功能描述}\n验收标准：{怎么算做完}\n风险：{风险}\n优先级：{优先级|高|中|低}",
+            "useVariables": true
+          },
+          {
+            "name": "PPT大纲",
+            "abbr": "ppt",
+            "body": "生成PPT大纲，主题：{标题}\n汇报对象：{汇报对象|领导|客户|团队分享}\n页数：{大概页数}\n风格：{风格|技术汇报|项目复盘|方案宣讲}\n输出每页标题+要点。",
+            "useVariables": true
+          },
+          {
+            "name": "述职报告",
+            "abbr": "sz",
+            "body": "撰写述职报告，姓名：{姓名}，岗位：{岗位}\n周期：{周期|年度|半年度}\n主要工作成果：\n{成果列表}\n不足：\n{不足}\n下一阶段规划：\n{规划}\n风格：{风格|稳重正式|偏技术干货}",
+            "useVariables": true
+          },
+          {
+            "name": "请假审批消息",
+            "abbr": "qj",
+            "body": "帮我写{审批类型|请假|调休|外出审批}消息\n申请人：{姓名}\n类型：{假别|事假|病假|调休}\n时间：{开始时间} 至 {结束时间}，共计{天数}天\n工作交接：{交接人}，紧急事项联系{紧急联系人}",
+            "useVariables": true
+          },
+          {
+            "name": "项目进度同步",
+            "abbr": "xmjd",
+            "body": "编辑一条项目进度同步消息，发送到{项目群}\n项目：{项目名}\n当前状态：{当前状态|进行中|已完成|阻塞}\n进度：{百分比}\n已完成：{已完成内容}\n待办：{待办内容}\n风险：{风险}\n对接人：{姓名}",
+            "useVariables": true
+          },
+          {
+            "name": "故障通知",
+            "abbr": "gztz",
+            "body": "写一条业务故障通知\n故障主题：{故障简述}\n影响范围：{影响范围}\n当前进展：{当前进展|已定位|修复中|已恢复}\n预计恢复：{预计恢复时间}\n跟进人：{姓名}",
+            "useVariables": true
+          },
+          {
+            "name": "面试评语",
+            "abbr": "mspj",
+            "body": "面试岗位：{岗位名称}\n候选人：{候选人姓名}\n面试维度：技术基础、项目经验、问题解决、沟通、稳定性\n根据下面面试记录，生成面试评价和录用建议：\n{剪贴板}",
+            "useVariables": true
+          },
+          {
+            "name": "操作手册",
+            "abbr": "czsc",
+            "body": "编写操作手册，功能名称：{功能名称}\n使用角色：{使用角色|运维|测试|业务人员}\n目标：{完成什么操作}\n步骤：{步骤简述}\n包含：前置准备、操作步骤、常见报错、注意事项。",
+            "useVariables": true
+          },
+          {
+            "name": "复盘文档",
+            "abbr": "fpwd",
+            "body": "写复盘文档\n事件：{事件名称}\n发生时间：{会议时间}\n现象：{现象}\n根因分析：{根因}\n本次处理动作：{处理步骤}\n改进措施：{长期优化项}，责任人{责任人}，预期时间{预期时间}",
+            "useVariables": true
+          },
+          {
+            "name": "整理成表格",
+            "abbr": "bg",
+            "body": "下面是文本数据，帮我整理成Markdown表格，字段：{字段列表}\n需求：{需求|排序|统计|去重|汇总}\n数据：\n{剪贴板}",
+            "useVariables": true
+          },
+          {
+            "name": "万能模板",
+            "abbr": "wn",
+            "body": "角色：{角色}\n任务：{核心任务}\n输入材料：\n{剪贴板}\n输出格式：{输出格式|markdown|纯文本|json|html}\n约束要求：\n1. {约束1}\n2. {约束2}",
+            "useVariables": true
+          }
+        ]
+      },
+      {
+        "name": "Skills",
+        "snippets": [
+          {
+            "name": "会议纪要助手",
+            "abbr": "skhy",
+            "body": "你是会议纪要助手。根据下方原始记录输出：1) 议题 2) 决议 3) 待办（负责人 / 截止日）。不确定处标「待确认」，不要编造。\n\n原始记录：\n{剪贴板}",
+            "useVariables": true
+          },
+          {
+            "name": "代码解释",
+            "abbr": "skdm",
+            "body": "你是代码讲解助手。用简洁中文说明下方代码：做什么、关键逻辑、注意点；不要改写代码，除非我明确要求。\n\n代码：\n{剪贴板}",
+            "useVariables": true
+          },
+          {
+            "name": "周报撰写助手",
+            "abbr": "skzb",
+            "body": "根据下方要点写一份周报，结构为：本周完成 / 进行中 / 风险与阻塞 / 下周计划。语气专业简洁，可适度整理表述，勿虚构事实。\n\n要点：\n{剪贴板}",
+            "useVariables": true
+          }
+        ]
+      }
+    ]
+  },
+  "zh-Hant": {
+    "categories": [
+      {
+        "name": "資料資訊",
+        "snippets": [
+          {
+            "name": "手機號碼",
+            "abbr": "sjh",
+            "body": "13800138000"
+          },
+          {
+            "name": "郵箱",
+            "abbr": "yx",
+            "body": "your.name@example.com"
+          },
+          {
+            "name": "住址",
+            "abbr": "zz",
+            "body": "XX縣市XX區XX路XX號"
+          },
+          {
+            "name": "身分證字號",
+            "abbr": "sfz",
+            "body": "A123456789"
+          },
+          {
+            "name": "公司名稱",
+            "abbr": "gs",
+            "body": "某某科技有限公司"
+          }
+        ]
+      },
+      {
+        "name": "開發類提示詞",
+        "snippets": [
+          {
+            "name": "程式碼生成",
+            "abbr": "dmmc",
+            "body": "你是資深後端/前端工程師，技術棧：{技術棧}。\n需求描述：{需求詳情}\n要求：\n1. 輸出可直接執行的完整程式碼，註解清晰；\n2. 遵循 {規範|阿里巴巴Java規範|Vue3組合式API規範}；\n3. 處理異常、邊界情況；\n4. 附帶簡單使用示例和入參說明；\n5. 不要多餘廢話，程式碼優先。",
+            "useVariables": true
+          },
+          {
+            "name": "程式碼重構優化",
+            "abbr": "dmcg",
+            "body": "幫我重構下面這段程式碼，語言：{语言}\n目標：{優化目標|提升效能|可讀性|減少重複|兼容JDK21|消除告警}\n約束：{約束|不能改原有入參結構|保持介面不變}\n程式碼：\n{剪贴板}\n輸出：優化後程式碼 + 修改點簡要說明",
+            "useVariables": true
+          },
+          {
+            "name": "Bug排查日志分析",
+            "abbr": "dmbg",
+            "body": "幫我分析報錯日誌，定位問題根因，給出排查步驟和修復方案。\n專案資訊：{專案名稱}，{技術棧}，環境：{環境|dev|test|prod}\n報錯日誌：\n{剪贴板}\n重點關注：{關鍵詞|空指標|連線逾時|500|Redis broken pipe|Nacos註冊失敗}\n區分：是程式碼bug、設定問題、資源限制還是第三方依賴問題。",
+            "useVariables": true
+          },
+          {
+            "name": "介面文檔生成",
+            "abbr": "dmjk",
+            "body": "根據下面介面資訊，生成標準介面文檔，格式markdown。\n介面名稱：{介面名}\n請求方式：{請求方式|GET|POST|PUT|DELETE}\n路徑：{url}\n入參：{入參列表}\n出參：{返回結構}\n異常碼：{錯誤碼說明}\n文檔受眾：{文檔受眾|前端|測試|內部交付}",
+            "useVariables": true
+          },
+          {
+            "name": "SQL编写优化",
+            "abbr": "dmsql",
+            "body": "資料庫：{資料庫|MySQL8|PostgreSQL}\n表結構：\n{剪贴板}\n查詢需求：{查詢需求}\n要求：\n1. SQL高效，優先考慮索引；\n2. 標註可加索引建議；\n3. 附帶SQL邏輯說明；\n4. 禁止select *。",
+            "useVariables": true
+          },
+          {
+            "name": "需求轉技術方案",
+            "abbr": "dmfa",
+            "body": "需求：{業務需求原文}\n使用者角色：{使用者角色}\n技術環境：{技術棧}、{中介軟體}\n輸出一份技術方案提綱，包含：背景、目標、整體設計、核心流程、資料庫設計要點、風險點、上線步驟、回滾方案。",
+            "useVariables": true
+          },
+          {
+            "name": "Docker配置生成",
+            "abbr": "dmdk",
+            "body": "生成 {設定類型|Dockerfile|nginx.conf|shell脚本}\n用途：{用途|SpringBoot打包|前端靜態資源反向代理|定時備份Redis}\n環境：{系統版本|Ubuntu22.04|Windows WSL2}\n特殊要求：{特殊要求|記憶體限制|端口|持久化|日誌切割}\n輸出完整設定 + 啟動命令。",
+            "useVariables": true
+          },
+          {
+            "name": "單元測試生成",
+            "abbr": "dmcs",
+            "body": "為下面方法寫單元測試，測試框架：{測試框架|JUnit5|Vitest}\n待測試程式碼：\n{剪贴板}\n覆蓋正常場景、異常場景、邊界值；輸出測試程式碼+測試點清單。",
+            "useVariables": true
+          }
+        ]
+      },
+      {
+        "name": "其他類提示詞",
+        "snippets": [
+          {
+            "name": "週報",
+            "abbr": "zb",
+            "body": "幫我寫一份工作週報，匯報人：{姓名}\n週期：{開始日期} ~ {結束日期}\n已完成工作：\n- {事項1}\n- {事項2}\n進行中：\n- {事項3}\n遇到問題&需要支援：\n- {卡點}\n下週計畫：\n- {計畫1}\n風格：{風格|簡潔幹練給領導|詳細技術版|團隊同步版}",
+            "useVariables": true
+          },
+          {
+            "name": "日報",
+            "abbr": "rb",
+            "body": "生成工作日日報，匯報人：{姓名}\n日期：{日期}\n今日完成：\n{工作內容}\n明日計畫：\n{計畫}\n阻塞問題：{阻塞問題:无}",
+            "useVariables": true
+          },
+          {
+            "name": "會議紀要",
+            "abbr": "hyjy",
+            "body": "整理下面會議錄音/文字，輸出會議紀要。\n會議主題：{會議主題}\n與會人：{與會名單}\n时间：{会议时间}\n原文：\n{剪贴板}\n輸出結構：【會議結論】【待辦事項（責任人+截止時間）】【遺留問題】",
+            "useVariables": true
+          },
+          {
+            "name": "正式郵件",
+            "abbr": "yj",
+            "body": "寫一封正式郵件，收件人：{收件人}，副本：{副本收件人}\n主旨：{郵件標題}\n事由：{事情簡述}\n訴求：{需要對方做什麼}\n語氣：{語氣|客氣溝通|問題告知|進度同步}\n落款：{姓名} {部門}",
+            "useVariables": true
+          },
+          {
+            "name": "需求提報",
+            "abbr": "xqtb",
+            "body": "幫我整理成標準需求單\n需求背景：{背景}\n目標使用者：{使用者}\n使用者痛點：{痛點}\n期望功能：{功能描述}\n驗收標準：{怎麼算做完}\n風險：{風險}\n優先級：{優先級|高|中|低}",
+            "useVariables": true
+          },
+          {
+            "name": "PPT大纲",
+            "abbr": "ppt",
+            "body": "生成PPT大綱，主旨：{標題}\n匯報對象：{匯報對象|領導|客戶|團隊分享}\n頁數：{大概頁數}\n風格：{風格|技術匯報|專案復盤|方案宣講}\n輸出每頁標題+要點。",
+            "useVariables": true
+          },
+          {
+            "name": "述職報告",
+            "abbr": "sz",
+            "body": "撰寫述職報告，姓名：{姓名}，崗位：{崗位}\n週期：{週期|年度|半年度}\n主要工作成果：\n{成果列表}\n不足：\n{不足}\n下一階段規劃：\n{規劃}\n風格：{風格|穩重正式|偏技術乾貨}",
+            "useVariables": true
+          },
+          {
+            "name": "請假審批訊息",
+            "abbr": "qj",
+            "body": "幫我寫{審批類型|請假|調休|外出審批}訊息\n申請人：{姓名}\n类型：{假別|事假|病假|調休}\n时间：{開始時間} 至 {結束時間}，共計{天數}天\n工作交接：{交接人}，緊急事項聯絡{緊急聯絡人}",
+            "useVariables": true
+          },
+          {
+            "name": "專案進度同步",
+            "abbr": "xmjd",
+            "body": "編輯一條專案進度同步訊息，發送到{專案群}\n專案：{專案名}\n目前狀態：{目前狀態|進行中|已完成|阻塞}\n進度：{百分比}\n已完成：{已完成內容}\n待辦：{待辦內容}\n風險：{風險}\n對接人：{姓名}",
+            "useVariables": true
+          },
+          {
+            "name": "故障通知",
+            "abbr": "gztz",
+            "body": "寫一條業務故障通知\n故障主題：{故障簡述}\n影響範圍：{影響範圍}\n目前進展：{目前進展|已定位|修復中|已恢復}\n預計恢復：{預計恢復時間}\n跟進人：{姓名}",
+            "useVariables": true
+          },
+          {
+            "name": "面試評語",
+            "abbr": "mspj",
+            "body": "面試崗位：{崗位名稱}\n候選人：{候選人姓名}\n面試維度：技術基礎、專案經驗、問題解決、溝通、穩定性\n根據下面面試記錄，生成面試評價和錄用建議：\n{剪贴板}",
+            "useVariables": true
+          },
+          {
+            "name": "操作手冊",
+            "abbr": "czsc",
+            "body": "編寫操作手冊，功能名稱：{功能名稱}\n使用角色：{使用角色|維運|測試|業務人員}\n目標：{完成什麼操作}\n步驟：{步驟簡述}\n包含：前置準備、操作步驟、常見報錯、注意事項。",
+            "useVariables": true
+          },
+          {
+            "name": "復盤文檔",
+            "abbr": "fpwd",
+            "body": "寫復盤文檔\n事件：{事件名稱}\n發生時間：{發生時間}\n現象：{現象}\n根因分析：{根因}\n本次處理動作：{處理步驟}\n改進措施：{長期優化項}，責任人{責任人}，預期時間{預期時間}",
+            "useVariables": true
+          },
+          {
+            "name": "整理成表格",
+            "abbr": "bg",
+            "body": "下面是文字資料，幫我整理成Markdown表格，欄位：{欄位列表}\n需求：{需求|排序|統計|去重|彙總}\n資料：\n{剪贴板}",
+            "useVariables": true
+          },
+          {
+            "name": "萬能模板",
+            "abbr": "wn",
+            "body": "角色：{角色}\n任務：{核心任務}\n輸入材料：\n{剪贴板}\n輸出格式：{輸出格式|markdown|純文字|json|html}\n約束要求：\n1. {約束1}\n2. {約束2}",
+            "useVariables": true
+          }
+        ]
+      },
+      {
+        "name": "Skills",
+        "snippets": [
+          {
+            "name": "會議紀要助手",
+            "abbr": "skhy",
+            "body": "你是會議紀要助手。根據下方原始記錄輸出：1) 議題 2) 決議 3) 待辦（负责人 / 截止日）。不確定處標「待確認」，不要編造。\n\n原始記錄：\n{剪贴板}",
+            "useVariables": true
+          },
+          {
+            "name": "程式碼解釋",
+            "abbr": "skdm",
+            "body": "你是程式碼講解助手。用簡潔中文說明下方程式碼：做什麼、關鍵邏輯、注意點；不要改寫程式碼，除非我明確要求。\n\n程式碼：\n{剪贴板}",
+            "useVariables": true
+          },
+          {
+            "name": "週報撰寫助手",
+            "abbr": "skzb",
+            "body": "根據下方要點寫一份週報，結構為：本週完成 / 進行中 / 風險與阻塞 / 下週計畫。語氣專業簡潔，可適度整理表述，勿虛構事實。\n\n要點：\n{剪贴板}",
+            "useVariables": true
+          }
+        ]
+      }
+    ]
+  },
+  "en": {
+    "categories": [
+      {
+        "name": "Profile",
+        "snippets": [
+          {
+            "name": "Phone",
+            "abbr": "ph",
+            "body": "+1 555 0100",
+            "useVariables": false
+          },
+          {
+            "name": "Email",
+            "abbr": "em",
+            "body": "your.name@example.com",
+            "useVariables": false
+          },
+          {
+            "name": "Address",
+            "abbr": "addr",
+            "body": "123 Example St, City, ST 00000",
+            "useVariables": false
+          },
+          {
+            "name": "ID number",
+            "abbr": "id",
+            "body": "000000000",
+            "useVariables": false
+          },
+          {
+            "name": "Company",
+            "abbr": "co",
+            "body": "Example Corp",
+            "useVariables": false
+          }
+        ]
+      },
+      {
+        "name": "Dev prompts",
+        "snippets": [
+          {
+            "name": "Code generation",
+            "abbr": "cgen",
+            "body": "You are a senior engineer. Stack: {stack}.\nRequirement: {requirement}\nRules:\n1. Output complete, runnable code with clear comments;\n2. Follow {style|Alibaba Java style|Vue3 Composition API};\n3. Handle errors and edge cases;\n4. Include a short usage example and parameter notes;\n5. Code first, no filler.",
+            "useVariables": true
+          },
+          {
+            "name": "Refactor / optimize",
+            "abbr": "cref",
+            "body": "Refactor this code. Language: {language}\nGoal: {goal|performance|readability|DRY|JDK21|clear warnings}\nConstraints: {constraint|keep parameter shape|keep API unchanged}\nCode:\n{clipboard}\nOutput: optimized code + brief change notes",
+            "useVariables": true
+          },
+          {
+            "name": "Bug / log analysis",
+            "abbr": "cbug",
+            "body": "Analyze the error log, find the root cause, and give steps plus a fix.\nProject: {project}, {stack}, env: {env|dev|test|prod}\nLog:\n{clipboard}\nFocus: {keyword|NPE|timeout|500|Redis broken pipe|registry failure}\nClassify: code bug, config, resource limit, or third-party.",
+            "useVariables": true
+          },
+          {
+            "name": "API docs",
+            "abbr": "capi",
+            "body": "Write markdown API docs from:\nName: {apiName}\nMethod: {method|GET|POST|PUT|DELETE}\nPath: {url}\nRequest: {request}\nResponse: {response}\nError codes: {errors}\nAudience: {audience|frontend|QA|internal}",
+            "useVariables": true
+          },
+          {
+            "name": "SQL write / tune",
+            "abbr": "csql",
+            "body": "Database: {database|MySQL8|PostgreSQL}\nSchema:\n{clipboard}\nNeed: {queryNeed}\nRules: efficient SQL, prefer indexes; suggest indexes; explain logic; no SELECT *.",
+            "useVariables": true
+          },
+          {
+            "name": "Requirement → tech plan",
+            "abbr": "cplan",
+            "body": "Requirement: {requirement}\nRoles: {roles}\nStack / middleware: {stack}, {middleware}\nOutput an outline: background, goals, design, flows, DB notes, risks, rollout, rollback.",
+            "useVariables": true
+          },
+          {
+            "name": "Docker / Nginx / Shell",
+            "abbr": "cdock",
+            "body": "Generate {artifact|Dockerfile|nginx.conf|shell script}\nPurpose: {purpose|Spring Boot image|static reverse proxy|Redis backup}\nOS: {os|Ubuntu 22.04|Windows WSL2}\nExtras: {extras|memory limit|ports|persistence|log rotate}\nOutput full config + start commands.",
+            "useVariables": true
+          },
+          {
+            "name": "Unit tests",
+            "abbr": "ctest",
+            "body": "Write unit tests with {framework|JUnit5|Vitest} for:\n{clipboard}\nCover happy path, errors, and edges; output tests + checklist.",
+            "useVariables": true
+          }
+        ]
+      },
+      {
+        "name": "Other prompts",
+        "snippets": [
+          {
+            "name": "Weekly report",
+            "abbr": "wr",
+            "body": "Write a weekly report for {name}\nPeriod: {startDate} ~ {endDate}\nDone:\n- {item1}\n- {item2}\nIn progress:\n- {item3}\nBlockers / asks:\n- {blocker}\nNext week:\n- {plan1}\nTone: {tone|concise for leadership|detailed technical|team sync}",
+            "useVariables": true
+          },
+          {
+            "name": "Daily report",
+            "abbr": "dr",
+            "body": "Daily report for {name}\nDate: {date}\nDone today:\n{done}\nTomorrow:\n{plan}\nBlockers: {blocker:none}",
+            "useVariables": true
+          },
+          {
+            "name": "Meeting notes",
+            "abbr": "mtg",
+            "body": "Turn this into meeting notes.\nTopic: {topic}\nAttendees: {attendees}\nTime: {meetingTime}\nTranscript:\n{clipboard}\nStructure: [Decisions] [Action items (owner+due)] [Open issues]",
+            "useVariables": true
+          },
+          {
+            "name": "Formal email",
+            "abbr": "eml",
+            "body": "Write a formal email to {to}, CC {cc}\nSubject: {subject}\nContext: {context}\nAsk: {ask}\nTone: {tone|polite|issue notice|status update}\nSign-off: {name} {dept}",
+            "useVariables": true
+          },
+          {
+            "name": "Requirement ticket",
+            "abbr": "req",
+            "body": "Turn this into a requirement ticket\nBackground: {background}\nUsers: {users}\nPain: {pain}\nDesired feature: {feature}\nAcceptance: {acceptance}\nRisk: {risk}\nPriority: {priority|high|medium|low}",
+            "useVariables": true
+          },
+          {
+            "name": "PPT outline",
+            "abbr": "ppt",
+            "body": "PPT outline titled {title}\nAudience: {audience|exec|customer|team}\nApprox pages: {pages}\nStyle: {style|tech update|retro|pitch}\nPer page: title + bullets.",
+            "useVariables": true
+          },
+          {
+            "name": "Performance review",
+            "abbr": "pr",
+            "body": "Performance / self-review for {name}, role {role}\nPeriod: {period|annual|half-year}\nWins:\n{wins}\nGaps:\n{gaps}\nNext:\n{next}\nTone: {tone|formal|technical}",
+            "useVariables": true
+          },
+          {
+            "name": "Leave / approval message",
+            "abbr": "leave",
+            "body": "Write a {kind|leave|comp time|out-of-office} note\nApplicant: {name}\nType: {leaveType|personal|sick|comp}\nFrom {start} to {end}, {days} day(s)\nHandoff: {handoff}, urgent contact {urgent}",
+            "useVariables": true
+          },
+          {
+            "name": "Project status",
+            "abbr": "pstat",
+            "body": "Project status for {channel}\nProject: {project}\nStatus: {status|in progress|done|blocked}\nProgress: {pct}\nDone: {done}\nTodo: {todo}\nRisk: {risk}\nOwner: {name}",
+            "useVariables": true
+          },
+          {
+            "name": "Incident notice",
+            "abbr": "inc",
+            "body": "Incident notice\nSummary: {summary}\nImpact: {impact}\nStatus: {status|identified|fixing|restored}\nETA: {eta}\nOwner: {name}",
+            "useVariables": true
+          },
+          {
+            "name": "Interview feedback",
+            "abbr": "iv",
+            "body": "Role: {role}\nCandidate: {candidate}\nAxes: fundamentals, experience, problem-solving, communication, stability\nFrom notes below, write feedback and hire recommendation:\n{clipboard}",
+            "useVariables": true
+          },
+          {
+            "name": "Runbook",
+            "abbr": "run",
+            "body": "Write a runbook for {feature}\nAudience: {audience|ops|QA|business}\nGoal: {goal}\nSteps sketch: {steps}\nInclude: prep, steps, common errors, notes.",
+            "useVariables": true
+          },
+          {
+            "name": "Postmortem",
+            "abbr": "pm",
+            "body": "Postmortem\nEvent: {event}\nWhen: {when}\nSymptoms: {symptoms}\nRoot cause: {rootCause}\nActions taken: {actions}\nFollow-ups: {followups}, owner {owner}, due {due}",
+            "useVariables": true
+          },
+          {
+            "name": "To Markdown table",
+            "abbr": "tbl",
+            "body": "Turn this into a Markdown table. Columns: {columns}\nNeed: {need|sort|stats|dedupe|aggregate}\nData:\n{clipboard}",
+            "useVariables": true
+          },
+          {
+            "name": "Universal template",
+            "abbr": "uni",
+            "body": "Role: {role}\nTask: {task}\nMaterials:\n{clipboard}\nOutput: {format|markdown|plain|json|html}\nConstraints:\n1. {c1}\n2. {c2}",
+            "useVariables": true
+          }
+        ]
+      },
+      {
+        "name": "Skills",
+        "snippets": [
+          {
+            "name": "Meeting notes helper",
+            "abbr": "skmtg",
+            "body": "You are a meeting-notes assistant. From the raw notes below, output: 1) Topics 2) Decisions 3) Action items (owner / due). Mark unknowns as TBD; do not invent.\n\nRaw notes:\n{clipboard}",
+            "useVariables": true
+          },
+          {
+            "name": "Explain code",
+            "abbr": "skcode",
+            "body": "You are a code explainer. Briefly describe what the code below does, key logic, and caveats. Do not rewrite unless asked.\n\nCode:\n{clipboard}",
+            "useVariables": true
+          },
+          {
+            "name": "Weekly report helper",
+            "abbr": "skwr",
+            "body": "Write a weekly report from the notes below: Done / In progress / Risks / Next week. Stay concise; do not invent.\n\nNotes:\n{clipboard}",
+            "useVariables": true
+          }
+        ]
+      }
+    ]
+  },
+  "ja": {
+    "categories": [
+      {
+        "name": "連絡先",
+        "snippets": [
+          {
+            "name": "Phone",
+            "abbr": "ph",
+            "body": "+1 555 0100",
+            "useVariables": false
+          },
+          {
+            "name": "Email",
+            "abbr": "em",
+            "body": "your.name@example.com",
+            "useVariables": false
+          },
+          {
+            "name": "Address",
+            "abbr": "addr",
+            "body": "123 Example St, City, ST 00000",
+            "useVariables": false
+          },
+          {
+            "name": "ID number",
+            "abbr": "id",
+            "body": "000000000",
+            "useVariables": false
+          },
+          {
+            "name": "Company",
+            "abbr": "co",
+            "body": "Example Corp",
+            "useVariables": false
+          }
+        ]
+      },
+      {
+        "name": "開発プロンプト",
+        "snippets": [
+          {
+            "name": "コード生成",
+            "abbr": "cgen",
+            "body": "You are a senior engineer. Stack: {stack}.\nRequirement: {requirement}\nRules:\n1. Output complete, runnable code with clear comments;\n2. Follow {style|Alibaba Java style|Vue3 Composition API};\n3. Handle errors and edge cases;\n4. Include a short usage example and parameter notes;\n5. Code first, no filler.",
+            "useVariables": true
+          },
+          {
+            "name": "リファクタ/最適化",
+            "abbr": "cref",
+            "body": "Refactor this code. Language: {language}\nGoal: {goal|performance|readability|DRY|JDK21|clear warnings}\nConstraints: {constraint|keep parameter shape|keep API unchanged}\nCode:\n{clipboard}\nOutput: optimized code + brief change notes",
+            "useVariables": true
+          },
+          {
+            "name": "バグ・ログ分析",
+            "abbr": "cbug",
+            "body": "Analyze the error log, find the root cause, and give steps plus a fix.\nProject: {project}, {stack}, env: {env|dev|test|prod}\nLog:\n{clipboard}\nFocus: {keyword|NPE|timeout|500|Redis broken pipe|registry failure}\nClassify: code bug, config, resource limit, or third-party.",
+            "useVariables": true
+          },
+          {
+            "name": "APIドキュメント",
+            "abbr": "capi",
+            "body": "Write markdown API docs from:\nName: {apiName}\nMethod: {method|GET|POST|PUT|DELETE}\nPath: {url}\nRequest: {request}\nResponse: {response}\nError codes: {errors}\nAudience: {audience|frontend|QA|internal}",
+            "useVariables": true
+          },
+          {
+            "name": "SQL作成/最適化",
+            "abbr": "csql",
+            "body": "Database: {database|MySQL8|PostgreSQL}\nSchema:\n{clipboard}\nNeed: {queryNeed}\nRules: efficient SQL, prefer indexes; suggest indexes; explain logic; no SELECT *.",
+            "useVariables": true
+          },
+          {
+            "name": "要件→技術方針",
+            "abbr": "cplan",
+            "body": "Requirement: {requirement}\nRoles: {roles}\nStack / middleware: {stack}, {middleware}\nOutput an outline: background, goals, design, flows, DB notes, risks, rollout, rollback.",
+            "useVariables": true
+          },
+          {
+            "name": "Docker/Nginx/Shell",
+            "abbr": "cdock",
+            "body": "Generate {artifact|Dockerfile|nginx.conf|shell script}\nPurpose: {purpose|Spring Boot image|static reverse proxy|Redis backup}\nOS: {os|Ubuntu 22.04|Windows WSL2}\nExtras: {extras|memory limit|ports|persistence|log rotate}\nOutput full config + start commands.",
+            "useVariables": true
+          },
+          {
+            "name": "ユニットテスト",
+            "abbr": "ctest",
+            "body": "Write unit tests with {framework|JUnit5|Vitest} for:\n{clipboard}\nCover happy path, errors, and edges; output tests + checklist.",
+            "useVariables": true
+          }
+        ]
+      },
+      {
+        "name": "その他プロンプト",
+        "snippets": [
+          {
+            "name": "週報",
+            "abbr": "wr",
+            "body": "Write a weekly report for {name}\nPeriod: {startDate} ~ {endDate}\nDone:\n- {item1}\n- {item2}\nIn progress:\n- {item3}\nBlockers / asks:\n- {blocker}\nNext week:\n- {plan1}\nTone: {tone|concise for leadership|detailed technical|team sync}",
+            "useVariables": true
+          },
+          {
+            "name": "日報",
+            "abbr": "dr",
+            "body": "Daily report for {name}\nDate: {date}\nDone today:\n{done}\nTomorrow:\n{plan}\nBlockers: {blocker:none}",
+            "useVariables": true
+          },
+          {
+            "name": "議事録",
+            "abbr": "mtg",
+            "body": "Turn this into meeting notes.\nTopic: {topic}\nAttendees: {attendees}\nTime: {meetingTime}\nTranscript:\n{clipboard}\nStructure: [Decisions] [Action items (owner+due)] [Open issues]",
+            "useVariables": true
+          },
+          {
+            "name": "正式メール",
+            "abbr": "eml",
+            "body": "Write a formal email to {to}, CC {cc}\nSubject: {subject}\nContext: {context}\nAsk: {ask}\nTone: {tone|polite|issue notice|status update}\nSign-off: {name} {dept}",
+            "useVariables": true
+          },
+          {
+            "name": "要件チケット",
+            "abbr": "req",
+            "body": "Turn this into a requirement ticket\nBackground: {background}\nUsers: {users}\nPain: {pain}\nDesired feature: {feature}\nAcceptance: {acceptance}\nRisk: {risk}\nPriority: {priority|high|medium|low}",
+            "useVariables": true
+          },
+          {
+            "name": "PPT構成",
+            "abbr": "ppt",
+            "body": "PPT outline titled {title}\nAudience: {audience|exec|customer|team}\nApprox pages: {pages}\nStyle: {style|tech update|retro|pitch}\nPer page: title + bullets.",
+            "useVariables": true
+          },
+          {
+            "name": "述職/振り返り",
+            "abbr": "pr",
+            "body": "Performance / self-review for {name}, role {role}\nPeriod: {period|annual|half-year}\nWins:\n{wins}\nGaps:\n{gaps}\nNext:\n{next}\nTone: {tone|formal|technical}",
+            "useVariables": true
+          },
+          {
+            "name": "休暇申請文",
+            "abbr": "leave",
+            "body": "Write a {kind|leave|comp time|out-of-office} note\nApplicant: {name}\nType: {leaveType|personal|sick|comp}\nFrom {start} to {end}, {days} day(s)\nHandoff: {handoff}, urgent contact {urgent}",
+            "useVariables": true
+          },
+          {
+            "name": "進捗共有",
+            "abbr": "pstat",
+            "body": "Project status for {channel}\nProject: {project}\nStatus: {status|in progress|done|blocked}\nProgress: {pct}\nDone: {done}\nTodo: {todo}\nRisk: {risk}\nOwner: {name}",
+            "useVariables": true
+          },
+          {
+            "name": "障害通知",
+            "abbr": "inc",
+            "body": "Incident notice\nSummary: {summary}\nImpact: {impact}\nStatus: {status|identified|fixing|restored}\nETA: {eta}\nOwner: {name}",
+            "useVariables": true
+          },
+          {
+            "name": "面接評価",
+            "abbr": "iv",
+            "body": "Role: {role}\nCandidate: {candidate}\nAxes: fundamentals, experience, problem-solving, communication, stability\nFrom notes below, write feedback and hire recommendation:\n{clipboard}",
+            "useVariables": true
+          },
+          {
+            "name": "操作マニュアル",
+            "abbr": "run",
+            "body": "Write a runbook for {feature}\nAudience: {audience|ops|QA|business}\nGoal: {goal}\nSteps sketch: {steps}\nInclude: prep, steps, common errors, notes.",
+            "useVariables": true
+          },
+          {
+            "name": "振り返り文書",
+            "abbr": "pm",
+            "body": "Postmortem\nEvent: {event}\nWhen: {when}\nSymptoms: {symptoms}\nRoot cause: {rootCause}\nActions taken: {actions}\nFollow-ups: {followups}, owner {owner}, due {due}",
+            "useVariables": true
+          },
+          {
+            "name": "Markdown表に整理",
+            "abbr": "tbl",
+            "body": "Turn this into a Markdown table. Columns: {columns}\nNeed: {need|sort|stats|dedupe|aggregate}\nData:\n{clipboard}",
+            "useVariables": true
+          },
+          {
+            "name": "万能テンプレート",
+            "abbr": "uni",
+            "body": "Role: {role}\nTask: {task}\nMaterials:\n{clipboard}\nOutput: {format|markdown|plain|json|html}\nConstraints:\n1. {c1}\n2. {c2}",
+            "useVariables": true
+          }
+        ]
+      },
+      {
+        "name": "Skills",
+        "snippets": [
+          {
+            "name": "議事録ヘルパー",
+            "abbr": "skmtg",
+            "body": "You are a meeting-notes assistant. From the raw notes below, output: 1) Topics 2) Decisions 3) Action items (owner / due). Mark unknowns as TBD; do not invent.\n\nRaw notes:\n{clipboard}",
+            "useVariables": true
+          },
+          {
+            "name": "コード解説",
+            "abbr": "skcode",
+            "body": "You are a code explainer. Briefly describe what the code below does, key logic, and caveats. Do not rewrite unless asked.\n\nCode:\n{clipboard}",
+            "useVariables": true
+          },
+          {
+            "name": "週報ヘルパー",
+            "abbr": "skwr",
+            "body": "Write a weekly report from the notes below: Done / In progress / Risks / Next week. Stay concise; do not invent.\n\nNotes:\n{clipboard}",
+            "useVariables": true
+          }
+        ]
+      }
+    ]
+  }
+}

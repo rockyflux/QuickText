@@ -60,6 +60,7 @@
   </resheader>
   <data name="App.Name"><value>QuickText</value></data>
   <data name="Tray.OpenManager"><value>管理を開く</value></data>
+  <data name="Tray.OpenCategories"><value>カテゴリ管理</value></data>
   <data name="Tray.OpenSearch"><value>検索を開く</value></data>
   <data name="Tray.Settings"><value>設定</value></data>
   <data name="Tray.Autostart"><value>スタートアップ</value></data>
@@ -149,6 +150,10 @@
   <data name="Msg.ImportConfirm"><value>読み込むと現在のライブラリを上書きします。続行しますか？</value></data>
   <data name="Msg.ImportInvalid"><value>有効なバックアップファイルではありません</value></data>
   <data name="Msg.Imported"><value>バックアップを読み込みました</value></data>
+  <data name="Settings.ClearLibrary"><value>すべてのデータを消去</value></data>
+  <data name="Msg.ClearLibraryConfirm"><value>すべての分類とテキスト（ゴミ箱を含む）を削除します。元に戻せません。必要なら先にバックアップを書き出してください。続行しますか？</value></data>
+  <data name="Msg.ClearLibraryConfirmAgain"><value>再確認：テキスト庫は完全に空になります。</value></data>
+  <data name="Msg.Cleared"><value>テキスト庫を消去しました</value></data>
   <data name="Search.CreateNew"><value>「{0}」を作成</value></data>
   <data name="Search.Hint.New"><value>新規</value></data>
   <data name="Search.Hint.Create"><value>作成</value></data>
@@ -167,6 +172,21 @@
   <data name="Settings.NavData"><value>データとバックアップ</value></data>
   <data name="Settings.NavGeneral"><value>言語とテーマ</value></data>
   <data name="Manager.Color"><value>色</value></data>
+  <data name="Manager.Sort"><value>並べ替え</value></data>
+  <data name="Manager.SortManual"><value>手動</value></data>
+  <data name="Manager.SortCreated"><value>作成日時</value></data>
+  <data name="Manager.SortName"><value>名前</value></data>
+  <data name="Manager.SortUsage"><value>使用回数</value></data>
+  <data name="Manager.SortLastUsed"><value>最終使用</value></data>
+  <data name="CatMgr.Title"><value>カテゴリ管理</value></data>
+  <data name="CatMgr.Hint"><value>ドラッグで並べ替え。一括追加は1行に1つ。同名はスキップします。</value></data>
+  <data name="CatMgr.DoubleClickRename"><value>ダブルクリックで名前を変更できます。</value></data>
+  <data name="CatMgr.Empty"><value>カテゴリがありません</value></data>
+  <data name="CatMgr.BatchAdd"><value>一括追加</value></data>
+  <data name="CatMgr.BatchHint"><value>1行に1つのカテゴリ名</value></data>
+  <data name="CatMgr.Initialize"><value>初期カテゴリを追加</value></data>
+  <data name="CatMgr.InitHint"><value>埋め込みの初期カテゴリとサンプル文（連絡先 / プロンプト / Skills）を追加します。同名は上書きしません。</value></data>
+  <data name="CatMgr.BatchResult"><value>{0} 件追加、同名 {1} 件スキップ</value></data>
   <data name="Manager.DuplicateCategory"><value>同名のカテゴリが既にあります</value></data>
   <data name="Manager.SaveFailed"><value>保存できません。データフォルダーが読み取り専用か、他のプログラムが使用中です。使用を解除するか、設定で別のフォルダーを指定してください。</value></data>
   <data name="Manager.DeleteCategoryConfirm"><value>カテゴリ「{0}」を削除しますか？中のスニペットも削除されます。</value></data>
@@ -209,6 +229,7 @@
   <data name="Search.Empty.Title"><value>スニペットがありません</value></data>
   <data name="Search.Empty.Sub"><value>最初のスニペットを追加すると、ホットキーでいつでも呼び出せます</value></data>
   <data name="Search.Empty.Action"><value>スニペットを追加</value></data>
+  <data name="Search.Empty.InitSeed"><value>初期カテゴリを読み込む</value></data>
   <data name="Search.NoMatch"><value>「{0}」に一致するスニペットがありません</value></data>
   <data name="Search.NoMatch.Sub"><value>別のキーワード、または略語をお試しください</value></data>
   <data name="Search.Count.Browse"><value>{0} 件</value></data>

@@ -158,6 +158,9 @@
                     <Button x:Name="CreateButton" Visibility="Collapsed" HorizontalAlignment="Center" Margin="0,14,0,0"
                             Style="{StaticResource DarkButtonPrimary}" Padding="16,6" FontSize="12.5"
                             Click="OnCreateFromQuery"/>
+                    <Button x:Name="InitSeedButton" Visibility="Collapsed" HorizontalAlignment="Center" Margin="0,8,0,0"
+                            Style="{StaticResource DarkButton}" Padding="16,6" FontSize="12.5"
+                            Click="OnInitBuiltinSeed"/>
                 </StackPanel>
 
                 <!-- Full-text preview of the selected snippet, OVERLAID on the list's bottom.

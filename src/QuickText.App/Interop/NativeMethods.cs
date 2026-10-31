@@ -32,7 +32,19 @@ internal static class NativeMethods
     public static extern IntPtr GetForegroundWindow();
 
     [DllImport("user32.dll")]
+    public static extern bool IsWindow(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
     public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+    /// <summary>True when <paramref name="hwnd"/> is a live window owned by another process —
+    /// the only kind of paste target that makes sense (never ourselves, never a stale HWND).</summary>
+    public static bool IsForeignWindow(IntPtr hwnd)
+    {
+        if (hwnd == IntPtr.Zero || !IsWindow(hwnd)) return false;
+        GetWindowThreadProcessId(hwnd, out uint pid);
+        return pid != 0 && pid != (uint)Environment.ProcessId;
+    }
 
     [DllImport("user32.dll")]
     public static extern bool SetForegroundWindow(IntPtr hWnd);
@@ -56,29 +68,82 @@ internal static class NativeMethods
     [DllImport("kernel32.dll")]
     public static extern uint GetCurrentThreadId();
 
+    public const int SW_RESTORE = 9;
+
+    [DllImport("user32.dll")]
+    public static extern bool IsIconic(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
+    public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+    [DllImport("user32.dll")]
+    public static extern bool BringWindowToTop(IntPtr hWnd);
+
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    public static extern int GetClassName(IntPtr hWnd, System.Text.StringBuilder lpClassName, int nMaxCount);
+
+    [DllImport("user32.dll")]
+    public static extern bool AllowSetForegroundWindow(uint dwProcessId);
+
+    private const uint ASFW_ANY = 0xFFFFFFFF;
+
     /// <summary>
-    /// Give the foreground to <paramref name="hwnd"/> reliably. Bare SetForegroundWindow is
-    /// often refused by Windows' foreground lock (e.g. right after our own modal dialog had
-    /// focus), so briefly attach to the target window's input queue to permit the handoff.
+    /// Give the foreground to <paramref name="hwnd"/> reliably. Windows' foreground lock only
+    /// yields when we attach to the thread that CURRENTLY holds the grant (same trick as
+    /// <see cref="StealForeground"/>). Attaching to the *target* thread — the old approach —
+    /// does nothing once our panel has Hidden and some other app holds the lock, so
+    /// SetForegroundWindow was refused and every send timed out into "copy only".
     /// </summary>
     public static void ForceForeground(IntPtr hwnd)
     {
-        if (hwnd == IntPtr.Zero) return;
+        if (hwnd == IntPtr.Zero || !IsWindow(hwnd)) return;
+        if (GetForegroundWindow() == hwnd) return;
+
+        if (IsIconic(hwnd)) ShowWindow(hwnd, SW_RESTORE);
+
         uint self = GetCurrentThreadId();
-        uint targetThread = GetWindowThreadProcessId(hwnd, out _);
-        if (self == targetThread || targetThread == 0) { SetForegroundWindow(hwnd); return; }
-        AttachThreadInput(self, targetThread, true);
-        try { SetForegroundWindow(hwnd); }
-        finally { AttachThreadInput(self, targetThread, false); }
+        IntPtr fg = GetForegroundWindow();
+        uint fgThread = fg != IntPtr.Zero ? GetWindowThreadProcessId(fg, out _) : 0;
+        uint targetThread = GetWindowThreadProcessId(hwnd, out uint targetPid);
+
+        // Unlock for the target process when we still can (hotkey / recent input grant).
+        if (targetPid != 0) AllowSetForegroundWindow(targetPid);
+        else AllowSetForegroundWindow(ASFW_ANY);
+
+        // We already hold the grant — a bare set is enough (and AttachThreadInput to ourselves
+        // is a no-op that some Windows builds dislike).
+        if (fgThread == 0 || fgThread == self)
+        {
+            SetForegroundWindow(hwnd);
+            BringWindowToTop(hwnd);
+            return;
+        }
+
+        AttachThreadInput(self, fgThread, true);
+        bool linkedTarget = false;
+        try
+        {
+            // Bridge the grant-holder's queue to the target's when they differ, so focus can land
+            // on a control inside the target process rather than just raising its top-level frame.
+            if (targetThread != 0 && targetThread != self && targetThread != fgThread)
+                linkedTarget = AttachThreadInput(fgThread, targetThread, true);
+            SetForegroundWindow(hwnd);
+            BringWindowToTop(hwnd);
+        }
+        finally
+        {
+            if (linkedTarget) AttachThreadInput(fgThread, targetThread, false);
+            AttachThreadInput(self, fgThread, false);
+        }
     }
 
     /// <summary>
     /// Bring one of OUR OWN windows (<paramref name="ownHwnd"/>) to the foreground from a
     /// background context — e.g. a low-level-hook summon that holds no WM_HOTKEY foreground
-    /// grant. The trick is to attach to the CURRENTLY-foreground window's input queue (it holds
-    /// the grant) and set foreground from inside it. Note this is why ForceForeground(ownHwnd)
-    /// does nothing: our window lives on our own thread, so it hits the self==target early-out
-    /// and degrades to a bare, lock-refused SetForegroundWindow.
+    /// grant. Attaches to the CURRENTLY-foreground thread (it holds the grant) then sets
+    /// foreground. Prefer this over <see cref="ForceForeground"/> when raising ourselves: that
+    /// helper also restores minimized targets and bridges input queues for a foreign paste host,
+    /// which is unnecessary overhead for our own tool windows.
     /// </summary>
     public static void StealForeground(IntPtr ownHwnd)
     {

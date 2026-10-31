@@ -379,10 +379,14 @@ public partial class App : Application
 
         RegisterHotkey(_hotkeyHwnd);
         SetupTapHook();
+        // Remember the last real app window so a tray / ball summon (foreground = taskbar or us)
+        // still has somewhere to paste into.
+        Interop.PasteTarget.StartTracking();
 
         _hook = new KeyboardHook(state.Abbr, () => state.Settings.AbbrEnabled, state.Settings.TerminatorChars,
             () => state.Settings.RestoreClipboard, state.Settings.AbbrBlacklist,
-            id => AppState.Current.RecordUse(id));
+            id => AppState.Current.RecordUse(id),
+            () => state.Settings.CopyToClipboardOnly, () => state.Settings.AutoSend);
         if (state.Settings.AbbrEnabled) _hook.Install();
 
         // Pre-create the search panel so the first hotkey summon is instant
@@ -536,6 +540,7 @@ public partial class App : Application
     protected override void OnExit(ExitEventArgs e)
     {
         AppState.Current.Usage.Flush();   // persist any debounced usage/favorite changes
+        Interop.PasteTarget.StopTracking();
         // Hand the shell icon back explicitly. It is removed on process exit either way, but a
         // lingering icon that only disappears when the user mouses over it is the classic symptom
         // of skipping this, and ForceCreate above means we own the lifetime now.
@@ -554,19 +559,20 @@ public partial class App : Application
             ? System.Windows.FlowDirection.RightToLeft : System.Windows.FlowDirection.LeftToRight;
         ((MenuItem)menu.Items[0]).Header = loc["Tray.OpenSearch"];
         ((MenuItem)menu.Items[1]).Header = loc["Tray.OpenManager"];
-        ((MenuItem)menu.Items[2]).Header = loc["Tray.NewFromClipboard"];
-        ((MenuItem)menu.Items[3]).Header = loc["Tray.Settings"];
-        var pauseItem = (MenuItem)menu.Items[4];
+        ((MenuItem)menu.Items[2]).Header = loc["Tray.OpenCategories"];
+        ((MenuItem)menu.Items[3]).Header = loc["Tray.NewFromClipboard"];
+        ((MenuItem)menu.Items[4]).Header = loc["Tray.Settings"];
+        var pauseItem = (MenuItem)menu.Items[5];
         pauseItem.Header = loc[paused ? "Tray.ResumeAbbr" : "Tray.PauseAbbr"];
         // The icon follows the ACTION: offering "resume" while still showing the pause bars
         // contradicted the label one pixel away. E769 pause, E768 play.
         if (pauseItem.Icon is System.Windows.Controls.TextBlock ico)
             ico.Text = paused ? "\uE768" : "\uE769";
-        // Items[5] = separator; [6] = show floating ball (only while session-hidden); [7] = Exit.
-        var showBall = (MenuItem)menu.Items[6];
+        // Items[6] = separator; [7] = show floating ball (only while session-hidden); [8] = Exit.
+        var showBall = (MenuItem)menu.Items[7];
         showBall.Header = loc["Tray.ShowFloatBall"];
         showBall.Visibility = _floatBallHidden ? Visibility.Visible : Visibility.Collapsed;
-        ((MenuItem)menu.Items[7]).Header = loc["Tray.Exit"];
+        ((MenuItem)menu.Items[8]).Header = loc["Tray.Exit"];
         _tray.ToolTipText = paused ? loc["App.Name"] + " — " + loc["Tray.PausedTip"] : loc["App.Name"];
         _floatBall?.ApplyMenuLabels();
     }
@@ -629,8 +635,14 @@ public partial class App : Application
         var s = AppState.Current.Settings;
         if (!UseTapSummon(s)) return;   // same rule as the combo-hotkey gate — one predicate
         var vk = Core.Interop.ModifierTapKeys.VkOf(s.SummonTapKey)!.Value;   // non-null: UseTapSummon checked it
+        // Snapshot the paste target ON the hook callback (user app still focused). Waiting until
+        // BeginInvoke runs is too late: our message pump may already have moved focus.
         _tapHook = new ModifierTapHook(vk, s.SummonTapDouble,
-            () => Dispatcher.BeginInvoke(new Action(() => ShowSearch())));
+            () =>
+            {
+                Interop.PasteTarget.Remember(Interop.NativeMethods.GetForegroundWindow());
+                Dispatcher.BeginInvoke(new Action(() => ShowSearch()));
+            });
         _tapHook.Install();
     }
 
@@ -645,7 +657,13 @@ public partial class App : Application
             {
                 var def = HotkeyDefinition.Parse(settings.Hotkey);
                 _hotkey = new GlobalHotkey(hwnd, def);
-                _hotkey.Pressed += () => ShowSearch();   // keyboard summon toggles
+                _hotkey.Pressed += () =>
+                {
+                    // Hotkey runs while the user app still holds the foreground — remember it
+                    // before ShowSearch steals focus for the panel.
+                    Interop.PasteTarget.Remember(Interop.NativeMethods.GetForegroundWindow());
+                    ShowSearch();   // keyboard summon toggles
+                };
                 // TryRegister's message is a developer string (win32 error codes); the user gets
                 // the localized one, naming the combo and saying what it costs them — a silently
                 // dead summon hotkey otherwise looks like the app itself is broken.
@@ -723,6 +741,8 @@ public partial class App : Application
             panel.SmokeFill();       // seed a row so SearchPanel's own SnippetRowTemplate inflates on layout
             Exercise(panel);         // ...and lay the panel out, like the other windows
             Exercise(new ManagerWindow());
+            Exercise(new CategoryManagerWindow());
+            Exercise(new CategoryBatchDialog());
             var settings = new SettingsWindow();
             // The blank-data-folder field now carries a placeholder showing the resolved default —
             // if the box is empty and the placeholder isn't up, the user sees a broken-looking hole.
@@ -1152,6 +1172,7 @@ public partial class App : Application
                  PromptDress("Manager.RenameCategory", "项目周报与会议纪要归档模板名称超长测试超长测试"), allHeights: false);
             Shot(t + "dialog-prompt-empty", () => new AppDialog(), PromptDress("Manager.NewCategory", ""), allHeights: false);
             Shot(t + "dialog-confirm-import", () => new AppDialog(), ConfirmDress("Msg.ImportConfirm", "Settings.ImportBackup"), allHeights: false);
+            Shot(t + "dialog-confirm-clear", () => new AppDialog(), ConfirmDress("Msg.ClearLibraryConfirm", "Settings.ClearLibrary"), allHeights: false);
             Shot(t + "dialog-confirm-trash", () => new AppDialog(), ConfirmDress("Trash.EmptyConfirm", "Trash.Empty"), allHeights: false);
             Shot(t + "dialog-alert-abbr", () => new AppDialog(), w =>
             {
@@ -1300,7 +1321,8 @@ public partial class App : Application
         _hook?.Dispose();
         _hook = new KeyboardHook(state.Abbr, () => state.Settings.AbbrEnabled, state.Settings.TerminatorChars,
             () => state.Settings.RestoreClipboard, state.Settings.AbbrBlacklist,
-            id => AppState.Current.RecordUse(id));
+            id => AppState.Current.RecordUse(id),
+            () => state.Settings.CopyToClipboardOnly, () => state.Settings.AutoSend);
         if (state.Settings.AbbrEnabled) _hook.Install();
     }
 
@@ -1322,6 +1344,7 @@ public partial class App : Application
 
     private void OnOpenSearch(object s, RoutedEventArgs e) => ShowSearch(toggle: false);
     private void OnOpenManager(object s, RoutedEventArgs e) => ShowSingleton(() => new ManagerWindow());
+    private void OnOpenCategoryManager(object s, RoutedEventArgs e) => ShowSingleton(() => new CategoryManagerWindow());
     private void OnShowFloatBall(object s, RoutedEventArgs e) => ShowFloatBall();
 
     /// <summary>Double-clicking the tray icon opens search — the app's primary action, and the same
@@ -1330,10 +1353,16 @@ public partial class App : Application
     private void OnTrayDoubleClick(object s, RoutedEventArgs e) => ShowSearch(toggle: false);
 
     /// <summary>Floating-ball left-click: toggle search like the summon hotkey.</summary>
-    internal void ToggleSearchFromFloatBall() => ShowSearch(toggle: true);
+    internal void ToggleSearchFromFloatBall()
+    {
+        // Ball is MA_NOACTIVATE, so the user app should still be foreground — remember it now.
+        Interop.PasteTarget.Remember(Interop.NativeMethods.GetForegroundWindow());
+        ShowSearch(toggle: true);
+    }
 
     internal void OpenSearchFromMenu() => ShowSearch(toggle: false);
     internal void OpenManagerFromMenu() => ShowSingleton(() => new ManagerWindow());
+    internal void OpenCategoryManagerFromMenu() => ShowSingleton(() => new CategoryManagerWindow());
     internal void NewFromClipboardFromMenu() => OnNewFromClipboard(this, new RoutedEventArgs());
     internal void OpenSettingsFromMenu() => OnSettings(this, new RoutedEventArgs());
     internal void TogglePauseFromMenu() => OnTogglePause(this, new RoutedEventArgs());

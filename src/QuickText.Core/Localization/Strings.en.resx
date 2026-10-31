@@ -60,6 +60,7 @@
   </resheader>
   <data name="App.Name"><value>QuickText</value></data>
   <data name="Tray.OpenManager"><value>Open Manager</value></data>
+  <data name="Tray.OpenCategories"><value>Categories</value></data>
   <data name="Tray.OpenSearch"><value>Open Search</value></data>
   <data name="Tray.Settings"><value>Settings</value></data>
   <data name="Tray.Autostart"><value>Start with Windows</value></data>
@@ -149,6 +150,10 @@
   <data name="Msg.ImportConfirm"><value>Importing will overwrite the current library. Continue?</value></data>
   <data name="Msg.ImportInvalid"><value>Not a valid backup file</value></data>
   <data name="Msg.Imported"><value>Backup imported</value></data>
+  <data name="Settings.ClearLibrary"><value>Clear all data</value></data>
+  <data name="Msg.ClearLibraryConfirm"><value>This will delete every category and snippet (including the trash). It cannot be undone. Export a backup first if you need one. Continue?</value></data>
+  <data name="Msg.ClearLibraryConfirmAgain"><value>Confirm again: the library will be emptied permanently.</value></data>
+  <data name="Msg.Cleared"><value>Library cleared</value></data>
   <data name="Search.CreateNew"><value>Create “{0}”</value></data>
   <data name="Search.Hint.New"><value>New</value></data>
   <data name="Search.Hint.Create"><value>Create</value></data>
@@ -167,6 +172,21 @@
   <data name="Settings.NavData"><value>Data &amp; backups</value></data>
   <data name="Settings.NavGeneral"><value>Language &amp; theme</value></data>
   <data name="Manager.Color"><value>Color</value></data>
+  <data name="Manager.Sort"><value>Sort</value></data>
+  <data name="Manager.SortManual"><value>Manual</value></data>
+  <data name="Manager.SortCreated"><value>Date created</value></data>
+  <data name="Manager.SortName"><value>Name</value></data>
+  <data name="Manager.SortUsage"><value>Usage count</value></data>
+  <data name="Manager.SortLastUsed"><value>Last used</value></data>
+  <data name="CatMgr.Title"><value>Categories</value></data>
+  <data name="CatMgr.Hint"><value>Drag to reorder. Batch add: one name per line; existing names are skipped.</value></data>
+  <data name="CatMgr.DoubleClickRename"><value>Double-click a row to rename.</value></data>
+  <data name="CatMgr.Empty"><value>No categories yet</value></data>
+  <data name="CatMgr.BatchAdd"><value>Batch add</value></data>
+  <data name="CatMgr.BatchHint"><value>One category name per line</value></data>
+  <data name="CatMgr.Initialize"><value>Initialize defaults</value></data>
+  <data name="CatMgr.InitHint"><value>Adds the built-in categories and sample snippets for your language (Profile, Dev / Other prompts, Skills). Existing names are not overwritten.</value></data>
+  <data name="CatMgr.BatchResult"><value>Added {0}, skipped {1} duplicate(s)</value></data>
   <data name="Manager.DuplicateCategory"><value>A category with that name already exists</value></data>
   <data name="Manager.SaveFailed"><value>Couldn’t save — the data folder is read-only or in use by another program. Free it up, or pick a different folder in Settings.</value></data>
   <data name="Manager.DeleteCategoryConfirm"><value>Delete category “{0}”? Its snippets will be removed too.</value></data>
@@ -209,6 +229,7 @@
   <data name="Search.Empty.Title"><value>No snippets yet</value></data>
   <data name="Search.Empty.Sub"><value>Add your first snippet — then summon the panel anytime with the hotkey</value></data>
   <data name="Search.Empty.Action"><value>Add a snippet</value></data>
+  <data name="Search.Empty.InitSeed"><value>Initialize built-in categories</value></data>
   <data name="Search.NoMatch"><value>No snippets match “{0}”</value></data>
   <data name="Search.NoMatch.Sub"><value>Try another keyword, or an abbreviation</value></data>
   <data name="Search.Count.Browse"><value>{0} items</value></data>

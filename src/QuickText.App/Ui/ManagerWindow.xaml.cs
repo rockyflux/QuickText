@@ -11,6 +11,7 @@ using System.Windows.Threading;
 using QuickText.App;
 using QuickText.Core.Localization;
 using QuickText.Core.Models;
+using QuickText.Core.Snippets;
 
 namespace QuickText.App.Ui;
 
@@ -466,6 +467,14 @@ public partial class ManagerWindow : Window
         CommitEditor();
         bool ok = _editingCategory == null || PersistCategory(_editingCategory);
         if (!ok) AlertSaveFailed();
+        else
+        {
+            // Same as OnSave: push OutputMode / body / abbr into the live search+abbr indexes so a
+            // send from the panel (or an abbreviation expand) sees the just-saved override instead
+            // of the previous deep-copied snapshot.
+            AppState.Current.ApplyCategories(_cats);
+            _loadedVersion = AppState.Current.DataVersion;
+        }
         ResetBaseline();
         // A rename changes the list label and can create or break a {片段:名称} reference.
         Snippets.Items.Refresh();
@@ -598,14 +607,17 @@ public partial class ManagerWindow : Window
         RefreshSnippets(SelectedSnippet);
     }
 
-    private List<Snippet> FilteredSnippets(Category c) =>
-        string.IsNullOrEmpty(_filter)
-            ? c.Snippets.ToList()
+    private List<Snippet> FilteredSnippets(Category c)
+    {
+        IEnumerable<Snippet> src = string.IsNullOrEmpty(_filter)
+            ? c.Snippets
             : c.Snippets.Where(x =>
                     x.Name.Contains(_filter, StringComparison.OrdinalIgnoreCase)
                     || x.Abbr.Contains(_filter, StringComparison.OrdinalIgnoreCase)
-                    || x.Body.Contains(_filter, StringComparison.OrdinalIgnoreCase))
-                .ToList();
+                    || x.Body.Contains(_filter, StringComparison.OrdinalIgnoreCase));
+        var usage = AppState.Current.Usage;
+        return SnippetOrder.Apply(src, c.SortMode, usage.CountOf, usage.LastUsedOf);
+    }
 
     /// <summary>Re-apply the filter; keep <paramref name="select"/> selected when it still matches, else select the first row.</summary>
     private void RefreshSnippets(Snippet? select = null)
@@ -810,51 +822,6 @@ public partial class ManagerWindow : Window
 
     private static string L(string key) => LocalizationService.Instance[key];
 
-    private void OnCategoryColor(object sender, RoutedEventArgs e)
-    {
-        if (SelectedCategory is not Category c || sender is not Button b) return;
-        if (!TryLeaveEditor()) return;
-        if (!EnsureFreshForWrite()) return;
-        var prevColor = c.Color;
-        c.Color = (b.Tag as string) ?? "";
-        AppState.Current.MarkSelfWrite();
-        try { AppState.Current.Store.SaveCategory(c); }
-        catch { c.Color = prevColor; AlertSaveFailed(); }   // write didn't happen — revert to match disk
-        Categories.Items.Refresh();
-    }
-
-    private void OnAddCategory(object s, RoutedEventArgs e)
-    {
-        if (!TryLeaveEditor()) return;
-        if (!EnsureFreshForWrite()) return;
-        var name = AppDialog.Prompt(this, L("Manager.NewCategory"), L("Manager.CategoryName"), UniqueCategoryName());
-        if (string.IsNullOrWhiteSpace(name)) return;
-        if (_cats.Any(x => x.Name == name))
-        {
-            AppDialog.Alert(this, L("App.Name"), L("Manager.DuplicateCategory"));
-            return;
-        }
-        if (!PersistDirty()) { AlertSaveFailed(); return; }
-        if (FilterBox.Text.Length > 0) FilterBox.Text = "";   // a stale filter would hide the starter snippet
-        // Seed the new category with one starter snippet, so the (always-visible) editor is
-        // bound to a real item from the start — otherwise anything typed into the fields of a
-        // brand-new, empty category would be silently discarded on save.
-        var first = new Snippet { Name = L("Manager.NewSnippetName") };
-        var cat = new Category { Name = name, Snippets = { first } };
-        AppState.Current.MarkSelfWrite();
-        // On failure no index entry is committed, so the category doesn't appear. (SaveCategory
-        // writes the file then the index; a rare partial failure — file written, index write
-        // failed — can leave an orphan .json that the index-driven load simply ignores. Cleaning
-        // it up would need transactional writes, which this file store doesn't do.)
-        try { AppState.Current.Store.SaveCategory(cat); }
-        catch { AlertSaveFailed(); return; }
-        Load();                                    // one disk read: picks up the new category + index order
-        AppState.Current.ApplyCategories(_cats);   // rebuild indexes from it (was a second full read)
-        _loadedVersion = AppState.Current.DataVersion;
-        SelectCategoryByName(name);                // its lone snippet auto-selects (RefreshSnippets picks row 0)
-        FocusNameField();                          // ready to rename the starter snippet
-    }
-
     private void SelectCategoryByName(string name)
     {
         if (_cats.FirstOrDefault(x => x.Name == name) is { } c) Categories.SelectedItem = c;
@@ -870,72 +837,6 @@ public partial class ManagerWindow : Window
             var candidate = $"{baseName} {i}";
             if (_cats.All(x => x.Name != candidate)) return candidate;
         }
-    }
-
-    private void OnRenameCategory(object s, RoutedEventArgs e)
-    {
-        if (!TryLeaveEditor()) return;
-        if (!EnsureFreshForWrite()) return;
-        if (SelectedCategory is not { } c) return;
-        var name = AppDialog.Prompt(this, L("Manager.RenameCategory"), L("Manager.CategoryName"), c.Name);
-        if (string.IsNullOrWhiteSpace(name) || name == c.Name) return;
-        if (_cats.Any(x => x != c && x.Name == name))
-        {
-            AppDialog.Alert(this, L("App.Name"), L("Manager.DuplicateCategory"));
-            return;
-        }
-        if (!PersistDirty()) { AlertSaveFailed(); return; }
-        var oldName = c.Name;
-        c.Name = name;
-        // Write the new-name file+index entry, THEN delete the old one — never the reverse, so a
-        // mid-failure can't lose the category. On failure revert the in-memory name and abort with
-        // a message rather than a raw exception. KNOWN LIMITATION: SaveCategory adds the new index
-        // entry before DeleteCategory removes the old, and these aren't a single transaction — if
-        // the delete fails on a locked sync drive, index.json is left listing BOTH names (a
-        // duplicate category appears on the next reload). A transactional store would be needed to
-        // prevent it; not worth it for this rare case.
-        AppState.Current.MarkSelfWrite();
-        try
-        {
-            AppState.Current.Store.SaveCategory(c);
-            AppState.Current.MarkSelfWrite();
-            AppState.Current.Store.DeleteCategory(oldName);
-        }
-        catch { c.Name = oldName; AlertSaveFailed(); return; }
-        Load();                                    // one disk read instead of ReloadData + Load
-        AppState.Current.ApplyCategories(_cats);
-        _loadedVersion = AppState.Current.DataVersion;
-        SelectCategoryByName(name);
-    }
-
-    private void OnDeleteCategory(object s, RoutedEventArgs e)
-    {
-        if (!EnsureFreshForWrite()) return;
-        if (SelectedCategory is not { } c) return;
-        if (!AppDialog.Confirm(this, L("App.Name"),
-                string.Format(L("Manager.DeleteCategoryConfirm"), c.Name), L("Manager.Delete"))) return;
-        _dirty.Remove(c);   // don't bother persisting a category we're about to delete
-        int idx = Categories.SelectedIndex;
-        if (!PersistDirty()) { _dirty.Add(c); AlertSaveFailed(); return; }
-        // Copy the snippets to the trash and delete the category on disk, BEFORE mutating the model:
-        // on failure abort with a message rather than a raw exception, and re-add c to _dirty so its
-        // own unsaved edits (dropped above) aren't lost. The snippets live on in the trash 30 days.
-        // KNOWN LIMITATION: if MoveToTrash succeeds but DeleteCategory fails, the snippets sit in
-        // the trash while still live in the library (a duplicate on restore, and a retry appends
-        // another copy) — a non-transactional artifact not worth undoing here (the undo is itself a
-        // write that can fail).
-        try
-        {
-            if (c.Snippets.Count > 0) MoveToTrash(c.Name, c.Snippets.ToArray());
-            AppState.Current.MarkSelfWrite();
-            AppState.Current.Store.DeleteCategory(c.Name);
-        }
-        catch { _dirty.Add(c); AlertSaveFailed(); return; }
-        if (_editingCategory == c) { _editing = null; _editingCategory = null; }
-        Load();                                    // one disk read instead of ReloadData + Load
-        AppState.Current.ApplyCategories(_cats);
-        _loadedVersion = AppState.Current.DataVersion;
-        if (_cats.Count > 0) Categories.SelectedIndex = Math.Min(idx, _cats.Count - 1);
     }
 
     private void OnAddSnippet(object s, RoutedEventArgs e)
@@ -1076,7 +977,7 @@ public partial class ManagerWindow : Window
     }
 
     /// <summary>--shots only: focus the tiny ghost "+" — the hardest focus target to make visible.</summary>
-    internal void ShotsFocusGhost() => System.Windows.Input.Keyboard.Focus(AddCategoryButton);
+    internal void ShotsFocusGhost() => System.Windows.Input.Keyboard.Focus(OpenCategoryManagerButton);
 
     /// <summary>--shots only: load a snippet whose abbreviation collides with another's, so the
     /// red inline conflict hint has a fixture (it only ever appears from live typing otherwise).</summary>
@@ -1241,6 +1142,10 @@ public partial class ManagerWindow : Window
         if (Math.Abs(pos.X - _dragStart.X) < SystemParameters.MinimumHorizontalDragDistance &&
             Math.Abs(pos.Y - _dragStart.Y) < SystemParameters.MinimumVerticalDragDistance) return;
         var item = _dragItem;
+        // Auto-sorted categories: display order is derived — dragging would fight the rule.
+        // Move-to-category still works via the snippets context menu.
+        if (item is Snippet && SelectedCategory is { } sc && !SnippetOrder.IsManual(sc.SortMode))
+            return;
         _dragItem = null;
         DragDrop.DoDragDrop((DependencyObject)sender, item, DragDropEffects.Move);
     }
@@ -1254,6 +1159,7 @@ public partial class ManagerWindow : Window
     {
         if (!EnsureFreshForWrite()) return;
         if (SelectedCategory is not { } c) return;
+        if (!SnippetOrder.IsManual(c.SortMode)) return;   // auto sort: display-only, keep array order
         if (e.Data.GetData(typeof(Snippet)) is not Snippet dragged) return;
         if (!string.IsNullOrEmpty(_filter)) return;   // reordering a filtered view is ambiguous
         int from = c.Snippets.IndexOf(dragged);
@@ -1352,5 +1258,13 @@ public partial class ManagerWindow : Window
         Load();   // one disk read: restored snippets should appear immediately
         AppState.Current.ApplyCategories(_cats);
         _loadedVersion = AppState.Current.DataVersion;
+    }
+
+    private void OnOpenCategoryManager(object s, RoutedEventArgs e)
+    {
+        if (!TryLeaveEditor()) return;
+        if (!PersistDirty()) { AlertSaveFailed(); return; }
+        App.ShowSingleton(() => new CategoryManagerWindow());
+        // Category manager ReloadData notifies us; if it closed without writes, stay put.
     }
 }

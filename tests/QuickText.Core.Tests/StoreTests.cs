@@ -27,6 +27,70 @@ public class StoreTests : IDisposable
     }
 
     [Fact]
+    public void SaveCategory_persists_SortMode_and_LoadAll_backfills_CreatedAt()
+    {
+        var store = new Store(_root);
+        var updated = DateTimeOffset.Parse("2022-06-01T00:00:00Z");
+        File.WriteAllText(Path.Combine(_root, "旧.json"),
+            """[{"Id":"1","Name":"旧条","Body":"x","UpdatedAt":"2022-06-01T00:00:00+00:00"}]""");
+        var idx = new LibraryIndex
+        {
+            Categories = { new CategoryRef { Name = "旧", File = "旧.json", SortMode = "name" } },
+        };
+        File.WriteAllText(Path.Combine(_root, "index.json"),
+            System.Text.Json.JsonSerializer.Serialize(idx, JsonConfig.Write));
+
+        var loaded = store.LoadAll();
+        var one = Assert.Single(loaded);
+        Assert.Equal("name", one.SortMode);
+        Assert.Equal(updated, one.Snippets[0].CreatedAt);
+
+        one.SortMode = "usage";
+        store.SaveCategory(one);
+        var again = Assert.Single(store.LoadAll());
+        Assert.Equal("usage", again.SortMode);
+    }
+
+    [Fact]
+    public void SaveCategory_persists_SortMode_on_the_index()
+    {
+        var store = new Store(_root);
+        var cat = new Category { Name = "常用", SortMode = "usage" };
+        cat.Snippets.Add(new Snippet { Id = "1", Name = "a", Body = "x" });
+        store.SaveCategory(cat);
+
+        var loaded = Assert.Single(store.LoadAll());
+        Assert.Equal("usage", loaded.SortMode);
+
+        loaded.SortMode = "name";
+        store.SaveCategory(loaded);
+        Assert.Equal("name", Assert.Single(store.LoadAll()).SortMode);
+    }
+
+    [Fact]
+    public void LoadAll_backfills_CreatedAt_from_UpdatedAt_for_legacy_snippets()
+    {
+        var store = new Store(_root);
+        store.SaveCategory(new Category { Name = "旧库" });
+        var updated = DateTimeOffset.Parse("2021-08-01T00:00:00+00:00");
+        File.WriteAllText(Path.Combine(_root, "旧库.json"),
+            """[{"Id":"1","Name":"n","Body":"b","UpdatedAt":"2021-08-01T00:00:00+00:00"}]""");
+
+        var sn = Assert.Single(Assert.Single(store.LoadAll()).Snippets);
+        Assert.Equal(updated, sn.CreatedAt);
+        Assert.Equal(updated, sn.UpdatedAt);
+    }
+
+    [Fact]
+    public void LoadAll_legacy_index_without_SortMode_is_manual()
+    {
+        var store = new Store(_root);
+        store.SaveCategory(new Category { Name = "常用" });
+        // Strip any SortMode the write may have omitted already — just assert load.
+        Assert.Equal("", Assert.Single(store.LoadAll()).SortMode);
+    }
+
+    [Fact]
     public void LoadAll_skips_corrupt_category_file()
     {
         var store = new Store(_root);
@@ -271,6 +335,48 @@ public class StoreTests : IDisposable
             WriteIndex(("evil", Path.Combine("..", Path.GetFileName(outside))));
             new Store(_root).DeleteCategory("evil");
             Assert.True(File.Exists(outside));
+        }
+        finally { File.Delete(outside); }
+    }
+
+    [Fact]
+    public void ClearLibrary_removes_categories_trash_and_images_but_keeps_the_index()
+    {
+        var store = new Store(_root);
+        var cat = new Category { Name = "常用" };
+        cat.Snippets.Add(new Snippet { Id = "1", Name = "a", Body = "x" });
+        store.SaveCategory(cat);
+        var imgRel = store.SaveImage(new byte[] { 1, 2, 3 }, ".png");
+        store.SaveTrash(new List<TrashEntry>
+        {
+            new()
+            {
+                Snippet = new Snippet { Id = "t", Name = "gone", Body = "y", ImagePath = imgRel },
+                DeletedAt = DateTimeOffset.UtcNow,
+            },
+        });
+
+        store.ClearLibrary();
+
+        Assert.True(store.HasLibrary);
+        Assert.Empty(store.LoadAll());
+        Assert.Empty(store.LoadIndex().Categories);
+        Assert.Empty(store.LoadTrash());
+        Assert.False(File.Exists(Path.Combine(_root, "常用.json")));
+        Assert.Empty(Directory.GetFiles(Path.Combine(_root, "images")));
+    }
+
+    [Fact]
+    public void ClearLibrary_never_deletes_a_category_file_outside_the_library()
+    {
+        var outside = OutsidePath(".json");
+        File.WriteAllText(outside, "keep me");
+        try
+        {
+            WriteIndex(("evil", Path.Combine("..", Path.GetFileName(outside))));
+            new Store(_root).ClearLibrary();
+            Assert.True(File.Exists(outside));
+            Assert.Empty(new Store(_root).LoadIndex().Categories);
         }
         finally { File.Delete(outside); }
     }

@@ -182,8 +182,7 @@ public partial class SearchPanel : Window
         Results.Visibility = Visibility.Collapsed;
         HintCat.Visibility = Visibility.Collapsed;
         ShowEmpty(loc["Search.Empty.Title"], loc["Search.Empty.Sub"]);
-        CreateButton.Content = loc["Search.Empty.Action"];
-        CreateButton.Visibility = Visibility.Visible;
+        ShowEmptyActions(loc);
         CountText.Text = "";
         SetHints(hasRows: false, canCreate: false);   // nothing saved yet: Enter does nothing
     }
@@ -239,7 +238,20 @@ public partial class SearchPanel : Window
     /// send falls back to the clipboard instead of typing into the launcher's window.</param>
     public void ShowForCurrentForeground(bool captureTarget = true)
     {
-        _target = captureTarget ? NativeMethods.GetForegroundWindow() : IntPtr.Zero;
+        // Paste destination: never the taskbar / our own windows (those make every send look like
+        // "only copied"). PasteTarget keeps the last real app window across tray / re-summon.
+        // captureTarget=false (exe launch) clears on purpose — Explorer-from-double-click is not
+        // a place to Ctrl+V into.
+        if (!captureTarget)
+            _target = IntPtr.Zero;
+        else
+        {
+            var captured = PasteTarget.Capture();
+            if (captured != IntPtr.Zero)
+                _target = captured;
+            else if (!PasteTarget.IsPasteable(_target))
+                _target = IntPtr.Zero;
+        }
         _suppressQueryNotify = true;
         try { Query.Text = ""; }
         finally { _suppressQueryNotify = false; }
@@ -567,9 +579,9 @@ public partial class SearchPanel : Window
             ShowEmpty(loc["Search.Empty.Title"], loc["Search.Empty.Sub"]);
             // The first-run screen used to send the user to the tray menu while its own header
             // carried the + button; give the empty state the CTA the no-match state already had
-            // Same CreateNew the + button runs — empty query lands the default name.
-            CreateButton.Content = loc["Search.Empty.Action"];
-            CreateButton.Visibility = Visibility.Visible;
+            // Same CreateNew the + button runs — empty query lands the default name. Also offer
+            // loading the built-in categories+snippets (after Clear Library, auto-seed won't re-run).
+            ShowEmptyActions(loc);
             CountText.Text = "";
             SetHints(hasRows: false, canCreate: false);   // nothing saved yet: Enter does nothing
             return;
@@ -727,10 +739,14 @@ public partial class SearchPanel : Window
             CountText.Text = "";
             return;
         }
-        // Virtual categories (recents/favorites) show each snippet's real category as a
-        // chip; normal categories keep the user's manual (file) order and hide the chip.
+        // Virtual categories (recents/favorites) keep their own order and show each snippet's
+        // real category as a chip; normal categories follow that category's SortMode.
         bool isVirtual = ReferenceEquals(cat, _recents) || ReferenceEquals(cat, _favorites);
-        var hits = cat.Snippets.Select(s => new SearchHit(s, isVirtual ? AppState.Current.CategoryOf(s.Id) : "", 0)).ToList();
+        IEnumerable<Snippet> ordered = isVirtual
+            ? cat.Snippets
+            : SnippetOrder.Apply(cat.Snippets, cat.SortMode,
+                AppState.Current.Usage.CountOf, AppState.Current.Usage.LastUsedOf);
+        var hits = ordered.Select(s => new SearchHit(s, isVirtual ? AppState.Current.CategoryOf(s.Id) : "", 0)).ToList();
         BrowseList.ItemsSource = hits;
         BrowseList.SelectedIndex = hits.Count > 0 ? 0 : -1;
         CountText.Text = hits.Count == 0 ? "" : string.Format(LocalizationService.Instance["Search.Count.Browse"], hits.Count);
@@ -809,11 +825,35 @@ public partial class SearchPanel : Window
         _previewWanted = false;
         CapPreview();   // through the arbiter, so the lists lose the padding they reserved
         CreateButton.Visibility = Visibility.Collapsed;
+        InitSeedButton.Visibility = Visibility.Collapsed;
         EmptyText.Text = title;
         EmptySub.Text = sub;
     }
 
+    private void ShowEmptyActions(LocalizationService loc)
+    {
+        CreateButton.Content = loc["Search.Empty.Action"];
+        CreateButton.Visibility = Visibility.Visible;
+        InitSeedButton.Content = loc["Search.Empty.InitSeed"];
+        InitSeedButton.Visibility = Visibility.Visible;
+    }
+
     private void OnCreateFromQuery(object sender, RoutedEventArgs e) => CreateNew();
+
+    private void OnInitBuiltinSeed(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var (added, _) = AppState.Current.SeedBuiltinCategories();
+            if (added == 0) return;
+            ShowBrowse();
+        }
+        catch
+        {
+            AppDialog.Alert(this, LocalizationService.Instance["App.Name"],
+                LocalizationService.Instance["Manager.SaveFailed"]);
+        }
+    }
 
     private void OnNewSnippet(object sender, RoutedEventArgs e) => CreateNew();
 
@@ -1047,17 +1087,17 @@ public partial class SearchPanel : Window
             var settings = AppState.Current.Settings;
             var pinned = _pinned;
 
-            // Per-snippet output override beats the global settings ("" = follow global). No paste target
-            // (the panel was opened BY launching the app, so the "previous window" is just whatever the
-            // user double-clicked from — typically an Explorer window) degrades to copy: pasting there
-            // types into the file list or, worse, into an open rename box.
-            var mode = sn.OutputMode ?? "";
+            // Per-snippet OutputMode vs global — shared with abbreviation expand (OutputModeRules).
+            // No paste target (launch-opened panel, shell chrome, dead HWND) degrades to copy.
+            if (!PasteTarget.IsPasteable(_target)) _target = IntPtr.Zero;
             bool noTarget = _target == IntPtr.Zero;
-            bool copyOnly = mode == "copy" || (mode.Length == 0 && settings.CopyToClipboardOnly)
-                            || noTarget;
+            var (modeCopyOnly, autoSend) = OutputModeRules.Resolve(
+                sn.OutputMode, settings.CopyToClipboardOnly, settings.AutoSend, hasCursor);
+            bool copyOnly = modeCopyOnly || noTarget;
             // Only the implicit no-target fallback is surprising: the footer says "send", but
             // there is nowhere to paste. It gets Msg.NoTarget with the direct-paste recovery;
             // a real paste failure below keeps Msg.TargetLost. Explicit copy needs no explanation.
+            var mode = sn.OutputMode ?? "";
             bool explainCopy = noTarget && mode != "copy"
                                && !(mode.Length == 0 && settings.CopyToClipboardOnly);
 
@@ -1077,12 +1117,7 @@ public partial class SearchPanel : Window
                 return;
             }
 
-            NativeMethods.ForceForeground(_target);   // robust handoff — the panel just Hid and may have lost foreground
             var restore = settings.RestoreClipboard;
-            // A {光标} token means "keep typing here" — never auto-Enter, even when the marker is
-            // trailing (caret 0). PasteEngine can't tell that case apart, so decide it here.
-            var autoSend = mode switch { "paste-enter" => true, "paste" => false, _ => settings.AutoSend }
-                           && !hasCursor;
 
             void CopyInstead()
             {
@@ -1092,6 +1127,8 @@ public partial class SearchPanel : Window
                 if (pinned) ReactivatePinned();
             }
 
+            // WhenForeground re-asserts ForceForeground on every poll — a one-shot call here used
+            // to race the Hide() handoff and was redundant with the poll loop.
             ForegroundTarget.WhenForeground(_target, () =>
             {
                 bool pasted = image != null

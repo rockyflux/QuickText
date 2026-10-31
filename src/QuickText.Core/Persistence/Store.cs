@@ -1,5 +1,6 @@
 using System.Text.Json;
 using QuickText.Core.Models;
+using QuickText.Core.Snippets;
 
 namespace QuickText.Core.Persistence;
 
@@ -171,7 +172,14 @@ public sealed class Store
                 }
                 var snippets = JsonSerializer.Deserialize<List<Snippet>>(File.ReadAllText(path), JsonConfig.Read)
                                ?? new List<Snippet>();
-                result.Add(new Category { Name = refi.Name, Color = refi.Color, Snippets = snippets });
+                SnippetOrder.BackfillCreatedAt(snippets);
+                result.Add(new Category
+                {
+                    Name = refi.Name,
+                    Color = refi.Color,
+                    SortMode = refi.SortMode ?? "",
+                    Snippets = snippets,
+                });
             }
             catch (Exception ex)
             {
@@ -202,16 +210,26 @@ public sealed class Store
                 repaired = true;
             }
         }
+        SnippetOrder.BackfillCreatedAt(c.Snippets);
         AtomicWrite(Path.Combine(_root, file),
             JsonSerializer.Serialize(c.Snippets, JsonConfig.Write));
+        // Null (not "") so WhenWritingNull omits the field for manual / legacy indexes.
+        string? sortMode = string.IsNullOrEmpty(c.SortMode) ? null : c.SortMode;
         if (existing == null)
         {
-            idx.Categories.Add(new CategoryRef { Name = c.Name, File = file, Color = c.Color });
+            idx.Categories.Add(new CategoryRef
+            {
+                Name = c.Name,
+                File = file,
+                Color = c.Color,
+                SortMode = sortMode,
+            });
             SaveIndex(idx);
         }
-        else if (existing.Color != c.Color || repaired)
+        else if (existing.Color != c.Color || (existing.SortMode ?? "") != (sortMode ?? "") || repaired)
         {
             existing.Color = c.Color;
+            existing.SortMode = sortMode;
             SaveIndex(idx);
         }
     }
@@ -291,6 +309,48 @@ public sealed class Store
 
     public void SaveTrash(List<TrashEntry> entries) =>
         AtomicWrite(TrashPath, JsonSerializer.Serialize(entries, JsonConfig.Write));
+
+    /// <summary>Delete every category file, empty the index, purge trash and remove files under
+    /// <c>images/</c>. Keeps <c>index.json</c> so a later launch does not re-seed the starter
+    /// library. Settings and usage stats are outside the text library and are left alone.</summary>
+    public void ClearLibrary()
+    {
+        Directory.CreateDirectory(_root);
+        var idx = LoadIndex();
+        foreach (var refi in idx.Categories)
+        {
+            if (TryResolveCategoryFile(refi.File, out var path) && File.Exists(path))
+            {
+                try { File.Delete(path); } catch { /* index still cleared below */ }
+            }
+        }
+        idx.Categories.Clear();
+        SaveIndex(idx);
+
+        // Persist empty trash first (same order as expiry purge): if the write fails, entries and
+        // their images are still on disk for a retry instead of becoming image-less ghosts.
+        List<TrashEntry> trash;
+        try
+        {
+            trash = File.Exists(TrashPath)
+                ? JsonSerializer.Deserialize<List<TrashEntry>>(File.ReadAllText(TrashPath), JsonConfig.Read) ?? new()
+                : new();
+        }
+        catch { trash = new(); }
+        SaveTrash(new List<TrashEntry>());
+        foreach (var t in trash)
+            if (t.Snippet.IsImage) DeleteImage(t.Snippet.ImagePath);
+
+        try
+        {
+            if (!Directory.Exists(ImagesDir)) return;
+            foreach (var f in Directory.EnumerateFiles(ImagesDir))
+            {
+                try { File.Delete(f); } catch { }
+            }
+        }
+        catch { }
+    }
 
     public IReadOnlyList<string> FindConflictFiles()
     {

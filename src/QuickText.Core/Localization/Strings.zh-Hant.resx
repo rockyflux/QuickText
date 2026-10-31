@@ -60,6 +60,7 @@
   </resheader>
   <data name="App.Name"><value>QuickText</value></data>
   <data name="Tray.OpenManager"><value>開啟管理</value></data>
+  <data name="Tray.OpenCategories"><value>分類管理</value></data>
   <data name="Tray.OpenSearch"><value>開啟搜尋</value></data>
   <data name="Tray.Settings"><value>設定</value></data>
   <data name="Tray.Autostart"><value>開機自動啟動</value></data>
@@ -149,6 +150,10 @@
   <data name="Msg.ImportConfirm"><value>匯入將覆蓋目前文字庫，確定繼續？</value></data>
   <data name="Msg.ImportInvalid"><value>不是有效的備份檔案</value></data>
   <data name="Msg.Imported"><value>備份已匯入</value></data>
+  <data name="Settings.ClearLibrary"><value>清空所有資料</value></data>
+  <data name="Msg.ClearLibraryConfirm"><value>將刪除全部分類和文字（含回收桶），無法復原。建議先匯出備份。確定繼續？</value></data>
+  <data name="Msg.ClearLibraryConfirmAgain"><value>再次確認：文字庫將被清空且無法復原。</value></data>
+  <data name="Msg.Cleared"><value>已清空文字庫</value></data>
   <data name="Search.CreateNew"><value>建立「{0}」</value></data>
   <data name="Search.Hint.New"><value>新增</value></data>
   <data name="Search.Hint.Create"><value>建立</value></data>
@@ -167,6 +172,21 @@
   <data name="Settings.NavData"><value>資料與備份</value></data>
   <data name="Settings.NavGeneral"><value>語言與主題</value></data>
   <data name="Manager.Color"><value>顏色</value></data>
+  <data name="Manager.Sort"><value>排序</value></data>
+  <data name="Manager.SortManual"><value>手動</value></data>
+  <data name="Manager.SortCreated"><value>建立時間</value></data>
+  <data name="Manager.SortName"><value>名稱</value></data>
+  <data name="Manager.SortUsage"><value>使用次數</value></data>
+  <data name="Manager.SortLastUsed"><value>最後使用</value></data>
+  <data name="CatMgr.Title"><value>分類管理</value></data>
+  <data name="CatMgr.Hint"><value>拖曳可調整分類順序。批量新增時一行一個名稱；已存在的同名會跳過。</value></data>
+  <data name="CatMgr.DoubleClickRename"><value>雙擊項目可重新命名。</value></data>
+  <data name="CatMgr.Empty"><value>還沒有分類</value></data>
+  <data name="CatMgr.BatchAdd"><value>批量新增</value></data>
+  <data name="CatMgr.BatchHint"><value>每行一個分類名稱</value></data>
+  <data name="CatMgr.Initialize"><value>初始化內建分類</value></data>
+  <data name="CatMgr.InitHint"><value>依目前語言寫入內建分類與範例文字（資料資訊、開發類/其他類提示詞、Skills）。已有同名分類不會覆蓋。</value></data>
+  <data name="CatMgr.BatchResult"><value>已新增 {0} 個，跳過 {1} 個同名</value></data>
   <data name="Manager.DuplicateCategory"><value>已存在同名分類</value></data>
   <data name="Manager.SaveFailed"><value>儲存失敗：資料夾唯讀，或正被其他程式占用。請解除占用，或在設定裡換一個資料夾。</value></data>
   <data name="Manager.DeleteCategoryConfirm"><value>刪除分類「{0}」？其中的文字會一併刪除。</value></data>
@@ -209,6 +229,7 @@
   <data name="Search.Empty.Title"><value>還沒有內容</value></data>
   <data name="Search.Empty.Sub"><value>新增第一條文字，隨時按熱鍵呼叫</value></data>
   <data name="Search.Empty.Action"><value>新增文字</value></data>
+  <data name="Search.Empty.InitSeed"><value>初始化內建分類資料</value></data>
   <data name="Search.NoMatch"><value>沒有符合「{0}」的內容</value></data>
   <data name="Search.NoMatch.Sub"><value>換個關鍵字，或用拼音 / 首字母 / 縮寫試試</value></data>
   <data name="Search.Count.Browse"><value>{0} 條</value></data>

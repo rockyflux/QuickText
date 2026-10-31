@@ -27,6 +27,12 @@ public sealed class Snippet
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? CodeFormat { get; set; }
 
+    /// <summary>When the snippet was first created. Edits bump <see cref="UpdatedAt"/> only.
+    /// No property initializer: System.Text.Json keeps initializers when a field is missing, so
+    /// <c>= UtcNow</c> would make every legacy snippet look brand-new. Load/save backfill
+    /// <see cref="default"/> from <see cref="UpdatedAt"/> instead.</summary>
+    public DateTimeOffset CreatedAt { get; set; }
+
     public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
 
     public bool IsImage => !string.IsNullOrEmpty(ImagePath);
@@ -44,6 +50,9 @@ public sealed class Category
 {
     public string Name { get; set; } = "";
     public string Color { get; set; } = "";   // optional #RRGGBB accent
+    /// <summary>Snippet list order: "" / "manual" = array order; "created" / "name" / "usage" /
+    /// "lastused" = display-only sort (see <c>SnippetOrder</c>). Stored on the index entry.</summary>
+    public string SortMode { get; set; } = "";
     public List<Snippet> Snippets { get; set; } = new();
 }
 
@@ -60,6 +69,10 @@ public sealed class CategoryRef
     public string Name { get; set; } = "";
     public string File { get; set; } = "";
     public string Color { get; set; } = "";
+    /// <summary>See <see cref="Category.SortMode"/>. Null/omitted = manual. WhenWritingNull (not
+    /// WhenWritingDefault): default(string) is null, so "" would still be written and thrash sync.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? SortMode { get; set; }
 }
 
 public sealed class LibraryIndex

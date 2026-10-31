@@ -257,9 +257,12 @@
                                     <Button Style="{StaticResource DarkButton}" Padding="12,6" Margin="0,0,8,0"
                                             Content="{Binding [Settings.ImportBackup], Source={x:Static app:LocProxy.Instance}}"
                                             Click="OnImportBackup"/>
-                                    <Button Style="{StaticResource DarkButton}" Padding="12,6"
+                                    <Button Style="{StaticResource DarkButton}" Padding="12,6" Margin="0,0,8,0"
                                             Content="{Binding [Settings.OpenBackups], Source={x:Static app:LocProxy.Instance}}"
                                             Click="OnOpenBackups"/>
+                                    <Button Style="{StaticResource DarkButtonDanger}" Padding="12,6"
+                                            Content="{Binding [Settings.ClearLibrary], Source={x:Static app:LocProxy.Instance}}"
+                                            Click="OnClearLibrary"/>
                                 </WrapPanel>
                                 <TextBlock Style="{StaticResource SetHint}"
                                            Text="{Binding [Settings.AutoBackupHint], Source={x:Static app:LocProxy.Instance}}"/>

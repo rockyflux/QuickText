@@ -60,6 +60,7 @@
   </resheader>
   <data name="App.Name"><value>QuickText</value></data>
   <data name="Tray.OpenManager"><value>मैनेजर खोलें</value></data>
+  <data name="Tray.OpenCategories"><value>श्रेणियाँ</value></data>
   <data name="Tray.OpenSearch"><value>खोज खोलें</value></data>
   <data name="Tray.Settings"><value>सेटिंग्स</value></data>
   <data name="Tray.Autostart"><value>Windows के साथ शुरू करें</value></data>
@@ -149,6 +150,10 @@
   <data name="Msg.ImportConfirm"><value>आयात करने से वर्तमान लाइब्रेरी अधिलेखित हो जाएगी। जारी रखें?</value></data>
   <data name="Msg.ImportInvalid"><value>मान्य बैकअप फ़ाइल नहीं है</value></data>
   <data name="Msg.Imported"><value>बैकअप आयात किया गया</value></data>
+  <data name="Settings.ClearLibrary"><value>सभी डेटा साफ़ करें</value></data>
+  <data name="Msg.ClearLibraryConfirm"><value>सभी श्रेणियाँ और पाठ (ट्रैश सहित) हट जाएँगे। इसे पूर्ववत नहीं किया जा सकता। ज़रूरत हो तो पहले बैकअप निर्यात करें। जारी रखें?</value></data>
+  <data name="Msg.ClearLibraryConfirmAgain"><value>फिर पुष्टि करें: लाइब्रेरी स्थायी रूप से खाली हो जाएगी।</value></data>
+  <data name="Msg.Cleared"><value>लाइब्रेरी साफ़ हो गई</value></data>
   <data name="Search.CreateNew"><value>“{0}” बनाएँ</value></data>
   <data name="Search.Hint.New"><value>नया</value></data>
   <data name="Search.Hint.Create"><value>बनाएँ</value></data>
@@ -167,6 +172,21 @@
   <data name="Settings.NavData"><value>डेटा और बैकअप</value></data>
   <data name="Settings.NavGeneral"><value>भाषा और थीम</value></data>
   <data name="Manager.Color"><value>रंग</value></data>
+  <data name="Manager.Sort"><value>क्रम</value></data>
+  <data name="Manager.SortManual"><value>मैन्युअल</value></data>
+  <data name="Manager.SortCreated"><value>बनाने की तिथि</value></data>
+  <data name="Manager.SortName"><value>नाम</value></data>
+  <data name="Manager.SortUsage"><value>उपयोग संख्या</value></data>
+  <data name="Manager.SortLastUsed"><value>अंतिम उपयोग</value></data>
+  <data name="CatMgr.Title"><value>श्रेणियाँ</value></data>
+  <data name="CatMgr.Hint"><value>क्रम बदलने के लिए खींचें। बैच: प्रति पंक्ति एक नाम; मौजूदा छोड़ दिए जाते हैं।</value></data>
+  <data name="CatMgr.DoubleClickRename"><value>नाम बदलने के लिए डबल-क्लिक करें।</value></data>
+  <data name="CatMgr.Empty"><value>अभी कोई श्रेणी नहीं</value></data>
+  <data name="CatMgr.BatchAdd"><value>बैच जोड़ें</value></data>
+  <data name="CatMgr.BatchHint"><value>प्रति पंक्ति एक श्रेणी नाम</value></data>
+  <data name="CatMgr.Initialize"><value>डिफ़ॉल्ट श्रेणियाँ</value></data>
+  <data name="CatMgr.InitHint"><value>आपकी भाषा के अंतर्निहित श्रेणियाँ और नमूने (Profile / Prompts / Skills) जोड़ता है। मौजूदा नाम नहीं बदले जाएँगे।</value></data>
+  <data name="CatMgr.BatchResult"><value>{0} जोड़ीं, {1} डुप्लिकेट छोड़ीं</value></data>
   <data name="Manager.DuplicateCategory"><value>इस नाम की श्रेणी पहले से मौजूद है</value></data>
   <data name="Manager.SaveFailed"><value>सहेजा नहीं जा सका: डेटा फ़ोल्डर केवल-पढ़ने योग्य है या कोई दूसरा प्रोग्राम उसे इस्तेमाल कर रहा है। उसे मुक्त करें, या सेटिंग्स में दूसरा फ़ोल्डर चुनें।</value></data>
   <data name="Manager.DeleteCategoryConfirm"><value>श्रेणी “{0}” हटाएँ? इसके स्निपेट भी हट जाएँगे।</value></data>
@@ -209,6 +229,7 @@
   <data name="Search.Empty.Title"><value>अभी कोई स्निपेट नहीं</value></data>
   <data name="Search.Empty.Sub"><value>अपना पहला स्निपेट जोड़ें — फिर हॉटकी से पैनल कभी भी बुलाएँ</value></data>
   <data name="Search.Empty.Action"><value>स्निपेट जोड़ें</value></data>
+  <data name="Search.Empty.InitSeed"><value>अंतर्निहित श्रेणियाँ प्रारंभ करें</value></data>
   <data name="Search.NoMatch"><value>“{0}” से मेल खाता कोई स्निपेट नहीं</value></data>
   <data name="Search.NoMatch.Sub"><value>कोई अन्य कीवर्ड या संक्षिप्त रूप आज़माएँ</value></data>
   <data name="Search.Count.Browse"><value>{0} आइटम</value></data>

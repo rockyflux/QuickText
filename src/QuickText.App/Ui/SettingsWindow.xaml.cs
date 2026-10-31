@@ -545,10 +545,48 @@ public partial class SettingsWindow : Window
     }
 
     private bool _importing;
+    private bool _clearing;
+
+    private async void OnClearLibrary(object sender, RoutedEventArgs e)
+    {
+        if (_clearing || _importing) return;
+        var loc = LocalizationService.Instance;
+        // Two confirms: wiping the whole library is more destructive than emptying trash or
+        // importing over it, and a single OK click is too easy to mis-confirm.
+        if (!AppDialog.Confirm(this, loc["App.Name"], loc["Msg.ClearLibraryConfirm"],
+                loc["Settings.ClearLibrary"])) return;
+        if (!AppDialog.Confirm(this, loc["App.Name"], loc["Msg.ClearLibraryConfirmAgain"],
+                loc["Settings.ClearLibrary"])) return;
+
+        // Same as import: an open Manager holds a whole-category model and would overwrite the
+        // cleared files on its next save.
+        var manager = Application.Current.Windows.OfType<ManagerWindow>().FirstOrDefault();
+        if (manager != null)
+        {
+            manager.Close();
+            if (manager.IsVisible) return;
+        }
+
+        _clearing = true;
+        try
+        {
+            AppState.Current.MarkSelfWrite(60_000);
+            await Task.Run(() => AppState.Current.Store.ClearLibrary());
+            AppState.Current.MarkSelfWrite();
+            await AppState.Current.ReloadDataAsync();
+            AppDialog.Alert(this, loc["App.Name"], loc["Msg.Cleared"]);
+        }
+        catch (Exception ex)
+        {
+            AppState.Current.MarkSelfWrite(0);
+            AppDialog.Alert(this, loc["App.Name"], ex.Message);
+        }
+        finally { _clearing = false; }
+    }
 
     private async void OnImportBackup(object sender, RoutedEventArgs e)
     {
-        if (_importing) return;
+        if (_importing || _clearing) return;
         _importing = true;
         var loc = LocalizationService.Instance;
         // Extract to a temp dir first so a bad zip never touches the live library.

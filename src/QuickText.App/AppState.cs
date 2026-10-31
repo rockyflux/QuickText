@@ -3,6 +3,7 @@ using QuickText.Core.Models;
 using QuickText.Core.Persistence;
 using QuickText.Core.Pinyin;
 using QuickText.Core.Search;
+using QuickText.Core.Seed;
 using QuickText.Core.Settings;
 
 namespace QuickText.App;
@@ -140,104 +141,32 @@ public sealed class AppState
         finally { _captureGate.Release(); }
     }
 
-    /// <summary>On a fresh install (no library yet), seed a small starter set so the tool is usable immediately.</summary>
+    /// <summary>Default category names for the current UI language (from embedded builtin JSON).</summary>
+    public static IReadOnlyList<string> SuggestedCategoryNames() =>
+        BuiltinSeed.CategoryNames(BuiltinSeed.LangFor(Core.Localization.LocalizationService.Instance.Culture));
+
+    /// <summary>On a fresh install (no library yet), seed the built-in set so the tool is usable immediately.
+    /// Content lives in <c>Seed/builtin-categories.json</c>; a later ClearLibrary keeps index.json so this
+    /// does not re-run — the empty panel / category-manager initialize buttons call
+    /// <see cref="SeedBuiltinCategories"/> instead.</summary>
     public void SeedStarterLibraryIfEmpty()
     {
         var store = new Store(ResolveDataFolder());
         if (store.HasLibrary) return;
-
-        // Seed in the user's UI language (SetCulture already ran at startup); non-CJK locales fall
-        // back to English. The STRUCTURE — which snippets, their category, and which bodies use
-        // {variables} — lives HERE, once; only the translated strings vary per language (in
-        // SeedContentFor). Abbreviations are stored bare; the trigger prefix (default ";") is
-        // prepended when matching and when the search panel renders the keycap, so they fire and
-        // read as ";yx", ";em", … The meeting body uses a plain
-        // {开始时间} variable — NOT the built-in {时间}, which would auto-fill the current clock time
-        // instead of asking for the meeting's start.
-        var t = SeedContentFor(SeedLang(Core.Localization.LocalizationService.Instance.Culture));
-
-        Snippet Snip(string key, bool vars = false)
-        {
-            var (name, abbr, body) = t.Texts[key];
-            return new Snippet { Name = name, Abbr = abbr, Body = body, UseVariables = vars };
-        }
-        Category Cat(string name, params Snippet[] snips)
-        {
-            var cat = new Category { Name = name };
-            foreach (var s in snips) cat.Snippets.Add(s);
-            return cat;
-        }
-
-        store.SaveCategory(Cat(t.Common,
-            Snip("email"),
-            Snip("greeting",  vars: true),
-            Snip("signature", vars: true)));
-        store.SaveCategory(Cat(t.Templates,
-            Snip("meeting", vars: true),
-            Snip("reply")));
+        var lang = BuiltinSeed.LangFor(Core.Localization.LocalizationService.Instance.Culture);
+        BuiltinSeed.WriteMissing(store, lang);
     }
 
-    /// <summary>Which of the four seeded languages fits a UI culture (non-CJK → English).</summary>
-    private static string SeedLang(System.Globalization.CultureInfo c)
+    /// <summary>Add built-in categories and sample snippets from the embedded JSON for the current
+    /// UI language. Skips category names that already exist. Reloads the in-memory library when
+    /// anything was added. Returns (added, skipped).</summary>
+    public (int Added, int Skipped) SeedBuiltinCategories()
     {
-        if (c.TwoLetterISOLanguageName == "ja") return "ja";
-        if (c.TwoLetterISOLanguageName != "zh") return "en";
-        // Traditional Chinese: modern zh-Hant / zh-Hant-*, region-only zh-TW/HK/MO, legacy zh-CHT;
-        // every other zh culture is Simplified.
-        var n = c.Name;
-        bool traditional = n.Contains("Hant", StringComparison.OrdinalIgnoreCase)
-            || n.Equals("zh-TW", StringComparison.OrdinalIgnoreCase)
-            || n.Equals("zh-HK", StringComparison.OrdinalIgnoreCase)
-            || n.Equals("zh-MO", StringComparison.OrdinalIgnoreCase)
-            || n.Equals("zh-CHT", StringComparison.OrdinalIgnoreCase);
-        return traditional ? "zh-Hant" : "zh-Hans";
-    }
-
-    /// <summary>Category display names + each starter snippet's (name, abbr, body), keyed by the
-    /// structural keys used in <see cref="SeedStarterLibraryIfEmpty"/> (email / greeting / signature
-    /// / meeting / reply). One flat table per language — add a snippet key here for every language.</summary>
-    private sealed record SeedContent(
-        string Common, string Templates,
-        Dictionary<string, (string Name, string Abbr, string Body)> Texts);
-
-    private static SeedContent SeedContentFor(string lang)
-    {
-        const string email = "your.name@example.com";
-        return lang switch
-        {
-            "en" => new("Common", "Templates", new()
-            {
-                ["email"]     = ("Email",            "em",  email),
-                ["greeting"]  = ("Greeting",         "hi",  "Hi {name}, "),
-                ["signature"] = ("Signature",        "sig", "Best regards,\n{name}"),
-                ["meeting"]   = ("Meeting reminder", "mtg", "Reminder: {meeting} starts at {start time}. Please join on time."),
-                ["reply"]     = ("Reply later",      "re",  "Got it — let me take a look and get back to you shortly."),
-            }),
-            "ja" => new("よく使う", "テンプレート", new()
-            {
-                ["email"]     = ("メール",         "ml",  email),
-                ["greeting"]  = ("あいさつ",       "ai",  "こんにちは、{名前}さん。"),
-                ["signature"] = ("署名",           "sig", "よろしくお願いいたします。\n{名前}"),
-                ["meeting"]   = ("会議リマインド", "mtg", "リマインド：{会議}は{開始時間}に始まります。時間どおりにご参加ください。"),
-                ["reply"]     = ("後で返信",       "re",  "承知しました。確認して、のちほど返信します。"),
-            }),
-            "zh-Hant" => new("常用", "範本", new()
-            {
-                ["email"]     = ("郵箱",     "yx", email),
-                ["greeting"]  = ("打招呼",   "nh", "你好 {暱稱}，"),
-                ["signature"] = ("簽名",     "qm", "此致\n敬禮\n{姓名}"),
-                ["meeting"]   = ("會議提醒", "hy", "提醒：{會議} 將於 {開始時間} 開始，請準時參加。"),
-                ["reply"]     = ("稍後回覆", "sh", "收到，我看一下，稍後回覆你~"),
-            }),
-            _ => new("常用", "模板", new()   // zh-Hans (the app's primary language)
-            {
-                ["email"]     = ("邮箱",     "yx", email),
-                ["greeting"]  = ("打招呼",   "nh", "你好 {昵称}，"),
-                ["signature"] = ("签名",     "qm", "此致\n敬礼\n{姓名}"),
-                ["meeting"]   = ("会议提醒", "hy", "提醒：{会议} 将于 {开始时间} 开始，请准时参加。"),
-                ["reply"]     = ("稍后回复", "sh", "收到，我看一下，稍后回复你~"),
-            }),
-        };
+        var lang = BuiltinSeed.LangFor(Core.Localization.LocalizationService.Instance.Culture);
+        MarkSelfWrite();
+        var (added, skipped) = BuiltinSeed.WriteMissing(Store, lang);
+        if (added > 0) ReloadData();
+        return (added, skipped);
     }
 
     /// <summary>
@@ -348,11 +277,13 @@ public sealed class AppState
         {
             Name = c.Name,
             Color = c.Color,
+            SortMode = c.SortMode,
             Snippets = c.Snippets.Select(s => new Snippet
             {
                 Id = s.Id, Name = s.Name, Abbr = s.Abbr, Body = s.Body,
                 UseVariables = s.UseVariables, OutputMode = s.OutputMode,
-                ImagePath = s.ImagePath, UpdatedAt = s.UpdatedAt, CodeFormat = s.CodeFormat
+                ImagePath = s.ImagePath, CreatedAt = s.CreatedAt, UpdatedAt = s.UpdatedAt,
+                CodeFormat = s.CodeFormat
             }).ToList()
         }).ToList();
 
