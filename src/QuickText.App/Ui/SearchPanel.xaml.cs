@@ -325,7 +325,7 @@ public partial class SearchPanel : Window
                 // parked it on and pinned it to the primary's left edge.
                 var wa = remembered
                     ? WindowTheming.MonitorWorkAreaDipAt(s.PanelX, s.PanelY)
-                    : SystemParameters.WorkArea;
+                    : PreferredWorkArea();
                 if (remembered)
                 {
                     Left = Math.Max(wa.Left, Math.Min(s.PanelX, wa.Right - 120));
@@ -336,13 +336,41 @@ public partial class SearchPanel : Window
 
             case "caret":
                 if (TryPlaceAtCaret(estH)) break;
-                PlaceTopCenter(WorkAreaOf(_target));   // no caret info → active window's monitor
+                PlaceTopCenter(PreferredWorkArea());
                 break;
 
-            default:   // "window": the monitor the active window is on
-                PlaceTopCenter(WorkAreaOf(_target));
+            default:   // "window": prefer the monitor the user is looking at (cursor), see PreferredWorkArea
+                PlaceTopCenter(PreferredWorkArea());
                 break;
         }
+    }
+
+    /// <summary>True when this panel's centre sits on the monitor under the mouse — used so a
+    /// toggle-summon on another monitor repositions instead of hiding an off-screen panel.</summary>
+    internal bool IsOnCursorMonitor()
+    {
+        var wa = WindowTheming.CursorWorkArea(this);
+        return wa.Contains(new Point(Left + Width / 2, Top + Math.Min(Height, 80) / 2));
+    }
+
+    /// <summary>
+    /// Monitor to park the panel on. Follow the paste-target window when the cursor is already on
+    /// that window's monitor (hotkey while typing). When the cursor is elsewhere — float ball or
+    /// tray click on a secondary display while the last typed-in window is still on the primary —
+    /// follow the cursor, otherwise the panel opens on the "wrong" screen and looks like a no-op.
+    /// No paste target → cursor monitor (never bare primary: that was the old secondary-monitor miss).
+    /// Rects are in this panel's current DIP space (see <see cref="WindowTheming.MonitorWorkAreaFor"/>).
+    /// </summary>
+    private Rect PreferredWorkArea()
+    {
+        var cursor = WindowTheming.CursorWorkArea(this);
+        if (_target == IntPtr.Zero) return cursor;
+        var target = WorkAreaOf(_target);
+        // Same monitor: centres land inside each other's work area (handles equal rects).
+        if (target.Contains(new Point(cursor.Left + cursor.Width / 2, cursor.Top + cursor.Height / 2))
+            || cursor.Contains(new Point(target.Left + target.Width / 2, target.Top + target.Height / 2)))
+            return target;
+        return cursor;
     }
 
     /// <summary>The preview OVERLAYS the list's bottom (XAML: it lives inside BodyRow) instead of
@@ -466,12 +494,19 @@ public partial class SearchPanel : Window
         Top = wa.Top + wa.Height * 0.16;
     }
 
-    /// <summary>Monitor handle hosting the given window; the null handle (→ primary) if unknown.</summary>
+    /// <summary>Monitor handle hosting the given window; the null handle if unknown.</summary>
     private static IntPtr MonitorOf(IntPtr hwnd) =>
         hwnd != IntPtr.Zero ? NativeMethods.MonitorFromWindow(hwnd, NativeMethods.MONITOR_DEFAULTTONEAREST) : IntPtr.Zero;
 
-    /// <summary>Work area (in DIPs) of the monitor hosting the given window; primary if unknown.</summary>
-    private static Rect WorkAreaOf(IntPtr hwnd) => WindowTheming.MonitorWorkAreaDip(MonitorOf(hwnd));
+    /// <summary>Work area of the monitor hosting <paramref name="hwnd"/>; cursor's monitor when
+    /// unknown (not primary — a zero target used to pin the panel to the primary forever).</summary>
+    private Rect WorkAreaOf(IntPtr hwnd)
+    {
+        var mon = MonitorOf(hwnd);
+        return mon != IntPtr.Zero
+            ? WindowTheming.MonitorWorkAreaFor(this, mon)
+            : WindowTheming.CursorWorkArea(this);
+    }
 
     /// <summary>Place the panel just below the target window's text caret. False if the app exposes no caret.</summary>
     private bool TryPlaceAtCaret(double estHeight)
@@ -484,17 +519,18 @@ public partial class SearchPanel : Window
         var pt = new NativeMethods.POINT { X = gti.rcCaret.Left, Y = gti.rcCaret.Bottom };
         if (!NativeMethods.ClientToScreen(gti.hwndCaret, ref pt)) return false;
 
-        // The caret rect is raw Win32 px from the TARGET window's process — convert it with that
-        // window's OWN monitor DPI (not a global factor), the same monitor the work-area clamp
-        // below already uses, so a caret on a non-primary monitor at a different scale still lands
-        // at the right DIP position.
+        // Caret is Win32 px — convert through THIS panel's TransformFromDevice (same as work-area
+        // placement). Destination-monitor DPI alone is wrong when the panel still carries another
+        // monitor's scale (mixed-DPI: primary 200% + secondary 100%).
         var monitor = MonitorOf(_target);
-        double k = WindowTheming.PxToDipFactor(monitor);
-        var wa = WindowTheming.MonitorWorkAreaDip(monitor);
-        double left = Math.Max(wa.Left, Math.Min(pt.X * k, wa.Right - Width));
-        double top = pt.Y * k + 8;
+        var wa = WindowTheming.MonitorWorkAreaFor(this, monitor);
+        if (!WindowTheming.TryDeviceToDip(this, pt.X, pt.Y, out var caretBottom)) return false;
+        int caretTopPx = pt.Y - (gti.rcCaret.Bottom - gti.rcCaret.Top);
+        if (!WindowTheming.TryDeviceToDip(this, pt.X, caretTopPx, out var caretTop)) return false;
+        double left = Math.Max(wa.Left, Math.Min(caretBottom.X, wa.Right - Width));
+        double top = caretBottom.Y + 8;
         if (top + estHeight > wa.Bottom)   // no room below → open above the caret
-            top = Math.Max(wa.Top, gti.rcCaret.Top * k + (pt.Y - gti.rcCaret.Bottom) * k - estHeight - 8);
+            top = Math.Max(wa.Top, caretTop.Y - estHeight - 8);
         Left = left;
         Top = Math.Max(wa.Top, Math.Min(top, wa.Bottom - 120));
         return true;

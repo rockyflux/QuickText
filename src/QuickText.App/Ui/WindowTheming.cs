@@ -1,6 +1,7 @@
 using System;
 using System.Windows;
 using System.Windows.Interop;
+using System.Windows.Media;
 using QuickText.App.Interop;
 
 namespace QuickText.App.Ui;
@@ -105,6 +106,8 @@ internal static class WindowTheming
     /// CenterOwner / CenterScreen window has not been positioned yet.</para></summary>
     internal static Rect OwnerOrCursorWorkArea(Window w)
     {
+        // Destination-monitor DIP (not TransformFromDevice): callers use .Height for MaxHeight
+        // caps that must remain correct after WM_DPICHANGED on the landing monitor.
         if (w.Owner is { } owner)
         {
             var oh = new WindowInteropHelper(owner).Handle;
@@ -113,6 +116,30 @@ internal static class WindowTheming
                     NativeMethods.MonitorFromWindow(oh, NativeMethods.MONITOR_DEFAULTTONEAREST));
         }
         return CursorWorkArea();
+    }
+
+    /// <summary>Maximize on the cursor's monitor without the top-offset used by
+    /// <see cref="PlaceOnActiveMonitor"/> (that offset leaves a gap under a maximized window).</summary>
+    public static void MaximizeOnActiveMonitor(Window w)
+    {
+        w.WindowStartupLocation = WindowStartupLocation.Manual;
+        // Loaded (not SourceInitialized): --smoke parks with ShowActivated=false, which WPF forbids
+        // combining with Maximized at Show time. Loaded runs after Show has begun safely.
+        w.Loaded += (_, _) =>
+        {
+            if (App.InSmoke || !w.ShowActivated) return;
+            if (w.WindowState == WindowState.Maximized) return;
+            var wa = CursorWorkArea(w);
+            // Park on the target monitor first — Maximized alone can stick to the primary display.
+            w.WindowState = WindowState.Normal;
+            w.MaxHeight = double.PositiveInfinity;
+            w.MaxWidth = double.PositiveInfinity;
+            w.Left = wa.Left;
+            w.Top = wa.Top;
+            w.Width = Math.Max(w.MinWidth, wa.Width);
+            w.Height = Math.Max(w.MinHeight, wa.Height);
+            w.WindowState = WindowState.Maximized;
+        };
     }
 
     /// <summary>
@@ -145,12 +172,11 @@ internal static class WindowTheming
         }
         w.SourceInitialized += (_, _) =>
         {
-            wa = CursorWorkArea();
-            // Cap HEIGHT only — a too-tall window pushes the Save button under the taskbar (the
-            // card area scrolls instead). NOT width: clamping a fixed-width / MinWidth window below
-            // its design width would clip content (there's no horizontal scroll), so a slightly-too-
-            // wide window that the Place() clamp keeps left-aligned on-screen is the lesser evil.
-            w.MaxHeight = wa.Height;
+            // Position in THIS window's current DIP space (TransformFromDevice). MaxHeight uses the
+            // destination monitor's own DIP height so the cap stays correct after WM_DPICHANGED.
+            var mon = CursorMonitor();
+            wa = MonitorWorkAreaFor(w, mon);
+            w.MaxHeight = MonitorWorkAreaDip(mon).Height;
             Place();   // position pre-paint so there's no origin→final flash
         };
         // Re-assert once the real size is known (pulls a very tall window up to fit); stop after the
@@ -180,22 +206,50 @@ internal static class WindowTheming
     }
 
     /// <summary>Work area (DIPs) of the given monitor, converted with THAT monitor's own DPI; the
-    /// primary work area if the handle is null or unavailable. The one place the monitor-rcWork→DIP
-    /// conversion lives (dialogs + panel).</summary>
+    /// primary work area if the handle is null or unavailable.
+    /// <para>Use for <b>sizes</b> (MaxHeight caps) that must match the destination monitor after
+    /// <c>WM_DPICHANGED</c>. For <see cref="Window.Left"/>/<see cref="Window.Top"/>, prefer
+    /// <see cref="MonitorWorkAreaFor"/> — mixed-DPI desktops need the window's current
+    /// <c>TransformFromDevice</c>, not the destination monitor's scale alone.</para></summary>
     internal static Rect MonitorWorkAreaDip(IntPtr monitor)
     {
-        if (monitor != IntPtr.Zero)
+        if (TryMonitorWorkAreaPx(monitor, out var rc))
         {
-            var mi = new NativeMethods.MONITORINFO
-                { cbSize = System.Runtime.InteropServices.Marshal.SizeOf<NativeMethods.MONITORINFO>() };
-            if (NativeMethods.GetMonitorInfo(monitor, ref mi))
-            {
-                double k = PxToDipFactor(monitor);
-                return new Rect(mi.rcWork.Left * k, mi.rcWork.Top * k,
-                    (mi.rcWork.Right - mi.rcWork.Left) * k, (mi.rcWork.Bottom - mi.rcWork.Top) * k);
-            }
+            double k = PxToDipFactor(monitor);
+            return new Rect(rc.Left * k, rc.Top * k,
+                (rc.Right - rc.Left) * k, (rc.Bottom - rc.Top) * k);
         }
         return SystemParameters.WorkArea;
+    }
+
+    /// <summary>
+    /// Work area in the DIP space of <paramref name="w"/>'s current composition transform — safe to
+    /// assign to <see cref="Window.Left"/>/<see cref="Window.Top"/> under PerMonitorV2.
+    /// <para>Measured: with primary @200% and secondary @100%, converting secondary <c>rcWork</c>
+    /// by secondary DPI alone and writing that into Left while the window still carried the
+    /// primary scale landed the panel at ~2× physical X (past the desktop edge) — hotkey on the
+    /// secondary looked like a no-op. <c>TransformFromDevice</c> of the window being moved is the
+    /// same path floating-ball drag already uses.</para>
+    /// </summary>
+    internal static Rect MonitorWorkAreaFor(Window w, IntPtr monitor)
+    {
+        if (TryMonitorWorkAreaPx(monitor, out var rc) && TryTransformFromDevice(w, out var tfd))
+        {
+            var tl = tfd.Transform(new Point(rc.Left, rc.Top));
+            var br = tfd.Transform(new Point(rc.Right, rc.Bottom));
+            return new Rect(tl, br);
+        }
+        return MonitorWorkAreaDip(monitor);
+    }
+
+    /// <summary>Device px → DIP via <paramref name="w"/>'s composition transform; false when the
+    /// window has no source yet and <c>EnsureHandle</c> cannot create one.</summary>
+    internal static bool TryDeviceToDip(Window w, double xPx, double yPx, out Point dip)
+    {
+        dip = default;
+        if (!TryTransformFromDevice(w, out var tfd)) return false;
+        dip = tfd.Transform(new Point(xPx, yPx));
+        return true;
     }
 
     /// <summary>
@@ -240,15 +294,52 @@ internal static class WindowTheming
         return SystemParameters.WorkArea;
     }
 
-    /// <summary>Work area (DIPs) of the monitor under the mouse cursor; primary as a fallback.</summary>
-    private static Rect CursorWorkArea()
+    /// <summary>Work area of the monitor under the mouse, in <paramref name="w"/>'s DIP space.
+    /// Used so a float-ball / tray / hotkey summon on a secondary monitor opens there.</summary>
+    internal static Rect CursorWorkArea(Window w) => MonitorWorkAreaFor(w, CursorMonitor());
+
+    /// <summary>Destination-monitor DIP work area under the cursor (sizes / MaxHeight). Prefer
+    /// <see cref="CursorWorkArea(Window)"/> when assigning Left/Top.</summary>
+    internal static Rect CursorWorkArea() => MonitorWorkAreaDip(CursorMonitor());
+
+    private static IntPtr CursorMonitor()
     {
         try
         {
             if (NativeMethods.GetCursorPos(out var pt))
-                return MonitorWorkAreaDip(NativeMethods.MonitorFromPoint(pt, NativeMethods.MONITOR_DEFAULTTONEAREST));
+                return NativeMethods.MonitorFromPoint(pt, NativeMethods.MONITOR_DEFAULTTONEAREST);
         }
-        catch { /* fall through to the primary work area */ }
-        return SystemParameters.WorkArea;
+        catch { /* fall through */ }
+        return IntPtr.Zero;
+    }
+
+    private static bool TryMonitorWorkAreaPx(IntPtr monitor, out NativeMethods.RECT rcWork)
+    {
+        rcWork = default;
+        if (monitor == IntPtr.Zero) return false;
+        var mi = new NativeMethods.MONITORINFO
+            { cbSize = System.Runtime.InteropServices.Marshal.SizeOf<NativeMethods.MONITORINFO>() };
+        if (!NativeMethods.GetMonitorInfo(monitor, ref mi)) return false;
+        rcWork = mi.rcWork;
+        return true;
+    }
+
+    private static bool TryTransformFromDevice(Window w, out Matrix tfd)
+    {
+        tfd = default;
+        try
+        {
+            // Pre-created panels call PositionAndSize before Show — EnsureHandle builds the source
+            // so TransformFromDevice is available without a visible flash.
+            if (new WindowInteropHelper(w).EnsureHandle() == IntPtr.Zero) return false;
+            var src = PresentationSource.FromVisual(w);
+            if (src?.CompositionTarget is null) return false;
+            tfd = src.CompositionTarget.TransformFromDevice;
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 }

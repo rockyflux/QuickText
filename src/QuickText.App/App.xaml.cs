@@ -1337,7 +1337,15 @@ public partial class App : Application
     /// double-clicked in, not a place to paste into. See SearchPanel.ShowForCurrentForeground.</param>
     private void ShowSearch(bool toggle = true, bool captureTarget = true)
     {
-        if (toggle && _panel is { IsVisible: true }) { _panel.Hide(); return; }
+        // Toggle-hide only when the panel is already on the monitor the user is looking at.
+        // Otherwise a panel left on the primary while the user clicks the float ball on a
+        // secondary looks like "no reaction" (hide happens off-screen from their POV) — bring
+        // it over instead.
+        if (toggle && _panel is { IsVisible: true } p && p.IsOnCursorMonitor())
+        {
+            p.Hide();
+            return;
+        }
         _panel ??= new SearchPanel();
         _panel.ShowForCurrentForeground(captureTarget);
     }
