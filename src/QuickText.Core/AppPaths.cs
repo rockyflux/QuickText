@@ -28,6 +28,7 @@ public static class AppPaths
     /// <summary>Machine-state file names (one place, so a rename can't miss the portable seed).</summary>
     public const string SettingsFileName = "settings.json";
     public const string UsageFileName = "usage.stats";
+    public const string SkillsFavoritesFileName = "skills-favorites.json";
 
     /// <summary>Marker inside Data\ recording that the one-time portable carry-over already ran.</summary>
     public const string SeededMarkerName = ".seeded";
@@ -86,6 +87,7 @@ public static class AppPaths
     public static string MachineStateDir => MachineStateDirFor(IsPortable, _exeDir);
     public static string DefaultDataFolder => DefaultDataFolderFor(IsPortable, _exeDir);
     public static string SettingsPath => Path.Combine(MachineStateDir, SettingsFileName);
+    public static string SkillsFavoritesPath => Path.Combine(MachineStateDir, SkillsFavoritesFileName);
     public static string BackupDir => Path.Combine(MachineStateDir, "backups");
 
     /// <summary>Where downloaded updates are unpacked. Portable mode keeps them inside Data so the
@@ -135,7 +137,7 @@ public static class AppPaths
     public static void SeedStateFiles(string fromDir, string toDir)
     {
         Directory.CreateDirectory(toDir);
-        foreach (var name in new[] { SettingsFileName, UsageFileName })
+        foreach (var name in new[] { SettingsFileName, UsageFileName, SkillsFavoritesFileName })
         {
             var src = Path.Combine(fromDir, name);
             var dst = Path.Combine(toDir, name);
@@ -144,7 +146,9 @@ public static class AppPaths
     }
 
     private static bool HasStateFiles(string dir) =>
-        File.Exists(Path.Combine(dir, SettingsFileName)) || File.Exists(Path.Combine(dir, UsageFileName));
+        File.Exists(Path.Combine(dir, SettingsFileName))
+        || File.Exists(Path.Combine(dir, UsageFileName))
+        || File.Exists(Path.Combine(dir, SkillsFavoritesFileName));
 
     /// <summary>Carry the machine-state files from <paramref name="fromDir"/> into
     /// <paramref name="toDir"/> exactly ONCE: no-op (returns false) if the <c>.seeded</c> marker is

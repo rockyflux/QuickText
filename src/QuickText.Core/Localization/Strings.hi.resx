@@ -262,4 +262,74 @@
   <data name="Tray.FloatBall"><value>फ़्लोटिंग बॉल</value></data>
   <data name="Tray.HideFloatBall"><value>फ़्लोटिंग बॉल छिपाएँ</value></data>
   <data name="Tray.ShowFloatBall"><value>फ़्लोटिंग बॉल दिखाएँ</value></data>
+  <data name="CatMgr.OpenJson"><value>Open JSON</value></data>
+  <data name="CatJson.Title"><value>Category JSON: {0}</value></data>
+  <data name="CatJson.Hint"><value>Edit this category’s snippet JSON. Saves are validated against the schema; you can also open it in the default editor or copy an AI prompt that includes the file path.</value></data>
+  <data name="CatJson.Path"><value>File path</value></data>
+  <data name="CatJson.Save"><value>Save</value></data>
+  <data name="CatJson.OpenExternal"><value>Open in default editor</value></data>
+  <data name="CatJson.CopyAiPrompt"><value>Copy AI prompt</value></data>
+  <data name="CatJson.InvalidJson"><value>Invalid JSON: {0}</value></data>
+  <data name="CatJson.NotArray"><value>Root must be a JSON array (list of snippets)</value></data>
+  <data name="CatJson.InvalidName"><value>Item {0}: name must not be empty</value></data>
+  <data name="CatJson.InvalidId"><value>Item {0}: id is invalid (must be a GUID)</value></data>
+  <data name="CatJson.InvalidOutputMode"><value>Item {0}: invalid outputMode (allowed: empty, paste, paste-enter, copy)</value></data>
+  <data name="CatJson.Saved"><value>Saved</value></data>
+  <data name="CatJson.Reloaded"><value>Reloaded</value></data>
+  <data name="CatJson.PromptCopied"><value>AI prompt copied</value></data>
+  <data name="CatJson.OpenFailed"><value>Could not open the external editor</value></data>
+  <data name="CatJson.FileMissing"><value>File does not exist yet; it will be created on save</value></data>
+  <data name="CatJson.AiPrompt" xml:space="preserve"><value>Please modify this category snippet library file according to the rules below (change only this file; keep valid JSON):
+Path: {0}
+
+Rules:
+1. Root must be a JSON array; each element is one snippet.
+2. Required per item: id (GUID, e.g. 32 hex digits), name (non-empty).
+3. Common fields: abbr (abbreviation, may be empty), body, useVariables (whether {{variable}} placeholders are processed), outputMode ("" | "paste" | "paste-enter" | "copy"; empty follows global settings).
+4. Optional: imagePath, codeFormat, createdAt, updatedAt.
+5. Do not change index.json or other category files.
+
+Example:
+[
+  {{
+    "id": "0123456789abcdef0123456789abcdef",
+    "name": "Example",
+    "abbr": "ex",
+    "body": "Hello",
+    "useVariables": false,
+    "outputMode": ""
+  }}
+]
+</value></data>
+  <data name="Manager.ImportSkills"><value>Import from Skills</value></data>
+  <data name="Skills.AliasPrompt"><value>Display alias (leave empty to clear)</value></data>
+  <data name="Skills.Title"><value>Skills</value></data>
+  <data name="Skills.Favorite"><value>Favorite</value></data>
+  <data name="Skills.ImportHint"><value>Multi-select favorited Skills to import into the current category. Snippet name and body come from the favorites JSON (body is the full SKILL.md path).</value></data>
+  <data name="Skills.Alias"><value>Alias</value></data>
+  <data name="Skills.ImportNone"><value>Select Skills to import first</value></data>
+  <data name="Skills.Hint"><value>Browse Agent Skills under %USERPROFILE%\.agents\skills (tree). Favorites are saved to skills-favorites.json (name + full SKILL.md path); aliases are display-only. Import favorites as snippets from the Manager.</value></data>
+  <data name="Skills.ImportSelected"><value>Import selected</value></data>
+  <data name="Tray.OpenSkills"><value>Skills</value></data>
+  <data name="Skills.NoFavorites"><value>No favorited Skills yet</value></data>
+  <data name="Skills.SelectHint"><value>Select a Skill in the list</value></data>
+  <data name="Skills.MissingFolder"><value>Skills folder not found (%USERPROFILE%\.agents\skills)</value></data>
+  <data name="Skills.Unfavorite"><value>Unfavorite</value></data>
+  <data name="Skills.Refresh"><value>Refresh</value></data>
+  <data name="Skills.Empty"><value>No matching Skills</value></data>
+  <data name="Skills.FavoritesOnly"><value>Favorites only</value></data>
+  <data name="Skills.FavoriteChecked"><value>Favorite checked</value></data>
+  <data name="Skills.UnfavoriteChecked"><value>Unfavorite checked</value></data>
+  <data name="Skills.CheckedCount"><value>{0} checked</value></data>
+  <data name="Skills.RemoveFavorite"><value>Remove</value></data>
+  <data name="Skills.RenamePrompt"><value>Favorite name</value></data>
+  <data name="Skills.RenameFailed"><value>Name cannot be empty</value></data>
+  <data name="Skills.FavoritedTip"><value>Favorited {0}</value></data>
+  <data name="Skills.RemovedTip"><value>Removed {0}</value></data>
+  <data name="Skills.RenamedTip"><value>Renamed</value></data>
+  <data name="Skills.FavoritesHeader"><value>Favorites</value></data>
+  <data name="Skills.Loading"><value>Scanning Skills…</value></data>
+  <data name="Skills.OpenFolder"><value>Open Skills folder</value></data>
+  <data name="Skills.OpenLocal"><value>Open locally</value></data>
+  <data name="Skills.OpenFailed"><value>Could not open that path</value></data>
 </root>

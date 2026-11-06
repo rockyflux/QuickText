@@ -58,6 +58,9 @@
                                     Style="{StaticResource SetHeader}"
                                     Content="{Binding [Manager.Snippets], Source={x:Static app:LocProxy.Instance}}"/>
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button Style="{StaticResource GhostIconButton}" Content="&#xE7BE;" Click="OnImportSkills"
+                                AutomationProperties.Name="{Binding [Manager.ImportSkills], Source={x:Static app:LocProxy.Instance}}"
+                                ToolTip="{Binding [Manager.ImportSkills], Source={x:Static app:LocProxy.Instance}}"/>
                         <Button Style="{StaticResource GhostIconButton}" Content="&#xE710;" Click="OnAddSnippet"
                                 AutomationProperties.Name="{Binding [Manager.AddSnippet], Source={x:Static app:LocProxy.Instance}}"
                                 ToolTip="{Binding [Manager.AddSnippet], Source={x:Static app:LocProxy.Instance}}"/>

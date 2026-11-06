@@ -34,6 +34,10 @@
                     <Button Style="{StaticResource GhostIconButton}" Content="&#xE70F;" Click="OnRename"
                             AutomationProperties.Name="{Binding [Manager.Rename], Source={x:Static app:LocProxy.Instance}}"
                             ToolTip="{Binding [Manager.Rename], Source={x:Static app:LocProxy.Instance}}"/>
+                    <Button x:Name="OpenJsonButton" Style="{StaticResource GhostIconButton}" Content="&#xE8A5;"
+                            Click="OnOpenJson"
+                            AutomationProperties.Name="{Binding [CatMgr.OpenJson], Source={x:Static app:LocProxy.Instance}}"
+                            ToolTip="{Binding [CatMgr.OpenJson], Source={x:Static app:LocProxy.Instance}}"/>
                     <Button Style="{StaticResource GhostIconButton}" Content="&#xE738;" Click="OnDelete"
                             AutomationProperties.Name="{Binding [Manager.Delete], Source={x:Static app:LocProxy.Instance}}"
                             ToolTip="{Binding [Manager.Delete], Source={x:Static app:LocProxy.Instance}}"/>

@@ -854,13 +854,48 @@ public partial class ManagerWindow : Window
         SnippetName.SelectAll();
     }
 
+    private void OnImportSkills(object s, RoutedEventArgs e)
+    {
+        if (!TryLeaveEditor()) return;
+        if (!EnsureFreshForWrite()) return;
+        if (SelectedCategory is not { } c) return;
+
+        var picker = new SkillsWindow(importMode: true) { Owner = this };
+        if (picker.ShowDialog() != true || picker.Imported.Count == 0) return;
+
+        Snippet? last = null;
+        foreach (var item in picker.Imported)
+        {
+            last = new Snippet
+            {
+                Name = string.IsNullOrWhiteSpace(item.Name) ? L("Manager.NewSnippetName") : item.Name,
+                Body = item.Body ?? "",
+                Description = string.IsNullOrWhiteSpace(item.Description) ? null : item.Description.Trim(),
+                OutputMode = "paste",
+            };
+            c.Snippets.Add(last);
+        }
+        _dirty.Add(c);
+        if (FilterBox.Text.Length > 0) FilterBox.Text = "";
+        RefreshSnippets(last);
+        Body.Rescan();
+    }
+
     private void OnDuplicateSnippet(object s, RoutedEventArgs e)
     {
         if (!TryLeaveEditor()) return;
         if (!EnsureFreshForWrite()) return;
         if (SelectedCategory is not { } c || SelectedSnippet is not { } sn) return;
         // Abbr stays empty: two snippets with the same abbreviation would be ambiguous.
-        var copy = new Snippet { Name = sn.Name + " (2)", Body = sn.Body, UseVariables = sn.UseVariables, OutputMode = sn.OutputMode, CodeFormat = sn.CodeFormat };
+        var copy = new Snippet
+        {
+            Name = sn.Name + " (2)",
+            Body = sn.Body,
+            Description = sn.Description,
+            UseVariables = sn.UseVariables,
+            OutputMode = sn.OutputMode,
+            CodeFormat = sn.CodeFormat,
+        };
         if (sn.IsImage)
         {
             // Copy the image file — sharing one file would break when either snippet is deleted.

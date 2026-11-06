@@ -250,6 +250,18 @@ public sealed class Store
         }
     }
 
+    /// <summary>Absolute path of the category's snippet JSON, when the index entry resolves
+    /// inside the library. The file may not exist yet for a brand-new category that was never saved.</summary>
+    public bool TryGetCategoryFilePath(string categoryName, out string fullPath)
+    {
+        fullPath = "";
+        if (string.IsNullOrWhiteSpace(categoryName)) return false;
+        var idx = LoadIndexCore(reportWarnings: false) ?? new LibraryIndex();
+        var refi = idx.Categories.FirstOrDefault(r => r.Name == categoryName);
+        if (refi == null) return false;
+        return TryResolveCategoryFile(refi.File, out fullPath);
+    }
+
     /// <summary>Persist a new category display order (index.json order == display order).</summary>
     public void ReorderCategories(List<string> orderedNames)
     {

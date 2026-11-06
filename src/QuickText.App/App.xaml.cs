@@ -560,19 +560,20 @@ public partial class App : Application
         ((MenuItem)menu.Items[0]).Header = loc["Tray.OpenSearch"];
         ((MenuItem)menu.Items[1]).Header = loc["Tray.OpenManager"];
         ((MenuItem)menu.Items[2]).Header = loc["Tray.OpenCategories"];
-        ((MenuItem)menu.Items[3]).Header = loc["Tray.NewFromClipboard"];
-        ((MenuItem)menu.Items[4]).Header = loc["Tray.Settings"];
-        var pauseItem = (MenuItem)menu.Items[5];
+        ((MenuItem)menu.Items[3]).Header = loc["Tray.OpenSkills"];
+        ((MenuItem)menu.Items[4]).Header = loc["Tray.NewFromClipboard"];
+        ((MenuItem)menu.Items[5]).Header = loc["Tray.Settings"];
+        var pauseItem = (MenuItem)menu.Items[6];
         pauseItem.Header = loc[paused ? "Tray.ResumeAbbr" : "Tray.PauseAbbr"];
         // The icon follows the ACTION: offering "resume" while still showing the pause bars
         // contradicted the label one pixel away. E769 pause, E768 play.
         if (pauseItem.Icon is System.Windows.Controls.TextBlock ico)
             ico.Text = paused ? "\uE768" : "\uE769";
-        // Items[6] = separator; [7] = show floating ball (only while session-hidden); [8] = Exit.
-        var showBall = (MenuItem)menu.Items[7];
+        // Items[7] = separator; [8] = show floating ball (only while session-hidden); [9] = Exit.
+        var showBall = (MenuItem)menu.Items[8];
         showBall.Header = loc["Tray.ShowFloatBall"];
         showBall.Visibility = _floatBallHidden ? Visibility.Visible : Visibility.Collapsed;
-        ((MenuItem)menu.Items[8]).Header = loc["Tray.Exit"];
+        ((MenuItem)menu.Items[9]).Header = loc["Tray.Exit"];
         _tray.ToolTipText = paused ? loc["App.Name"] + " — " + loc["Tray.PausedTip"] : loc["App.Name"];
         _floatBall?.ApplyMenuLabels();
     }
@@ -732,6 +733,7 @@ public partial class App : Application
             {
                 w.WindowStartupLocation = WindowStartupLocation.Manual;
                 w.Left = -32000; w.Top = -32000;
+                w.WindowState = WindowState.Normal;   // MaximizeOnActiveMonitor must not win under --smoke
                 w.ShowActivated = false;
                 w.Show();
                 w.UpdateLayout();
@@ -742,7 +744,10 @@ public partial class App : Application
             Exercise(panel);         // ...and lay the panel out, like the other windows
             Exercise(new ManagerWindow());
             Exercise(new CategoryManagerWindow());
+            Exercise(new SkillsWindow());
+            Exercise(new SkillsWindow(importMode: true));
             Exercise(new CategoryBatchDialog());
+            Exercise(new CategoryJsonWindow());
             var settings = new SettingsWindow();
             // The blank-data-folder field now carries a placeholder showing the resolved default —
             // if the box is empty and the placeholder isn't up, the user sees a broken-looking hole.
@@ -1130,6 +1135,8 @@ public partial class App : Application
 
             Shot(t + "manager", () => new ManagerWindow());
             Shot(t + "manager-narrow", () => new ManagerWindow(), w => { w.Width = w.MinWidth; }, allHeights: false);
+            Shot(t + "skills", () => new SkillsWindow(), allHeights: false);
+            Shot(t + "skills-import", () => new SkillsWindow(importMode: true), allHeights: false);
             // Re-apply AFTER Show: the window's theme radio applies the saved theme on init.
             Shot(t + "settings", () => new SettingsWindow(), _ => Ui.ThemeService.Apply(activeTheme));
             Shot(t + "trash", () => new TrashDialog(), allHeights: false);
@@ -1353,6 +1360,7 @@ public partial class App : Application
     private void OnOpenSearch(object s, RoutedEventArgs e) => ShowSearch(toggle: false);
     private void OnOpenManager(object s, RoutedEventArgs e) => ShowSingleton(() => new ManagerWindow());
     private void OnOpenCategoryManager(object s, RoutedEventArgs e) => ShowSingleton(() => new CategoryManagerWindow());
+    private void OnOpenSkills(object s, RoutedEventArgs e) => ShowSingleton(() => new SkillsWindow());
     private void OnShowFloatBall(object s, RoutedEventArgs e) => ShowFloatBall();
 
     /// <summary>Double-clicking the tray icon opens search — the app's primary action, and the same
@@ -1371,6 +1379,7 @@ public partial class App : Application
     internal void OpenSearchFromMenu() => ShowSearch(toggle: false);
     internal void OpenManagerFromMenu() => ShowSingleton(() => new ManagerWindow());
     internal void OpenCategoryManagerFromMenu() => ShowSingleton(() => new CategoryManagerWindow());
+    internal void OpenSkillsFromMenu() => ShowSingleton(() => new SkillsWindow());
     internal void NewFromClipboardFromMenu() => OnNewFromClipboard(this, new RoutedEventArgs());
     internal void OpenSettingsFromMenu() => OnSettings(this, new RoutedEventArgs());
     internal void TogglePauseFromMenu() => OnTogglePause(this, new RoutedEventArgs());

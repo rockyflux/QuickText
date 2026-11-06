@@ -70,7 +70,7 @@ public sealed class SearchIndex
     private sealed record Entry(
         Snippet Snippet, string Category,
         string NameLower, string PinyinFull, string Initials, string AbbrLower, string BodyLower,
-        PinyinMap Map);
+        string DescriptionLower, PinyinMap Map);
 
     /// <summary>
     /// Index the given library. The work happens on a BACKGROUND thread and every reader
@@ -146,6 +146,7 @@ public sealed class SearchIndex
                 map.Initials,
                 s.Abbr.ToLowerInvariant(),
                 s.Body.ToLowerInvariant(),
+                (s.Description ?? "").ToLowerInvariant(),
                 map));
         }
     }
@@ -241,6 +242,8 @@ public sealed class SearchIndex
             return (400, MatchKind.Pinyin, -1, 0);
         }
 
+        if (!string.IsNullOrEmpty(e.DescriptionLower) && e.DescriptionLower.Contains(q))
+            return (120, MatchKind.Body, -1, 0);
         if (e.BodyLower.Contains(q)) return (100, MatchKind.Body, -1, 0);
         return (0, MatchKind.None, -1, 0);
     }

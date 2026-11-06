@@ -254,19 +254,39 @@
                         </Border>
                     </StackPanel>
                 </Grid>
+                <!-- Optional description (e.g. imported Agent Skill); Manager does not edit it. -->
+                <TextBlock Margin="0,2,0,0" FontFamily="{StaticResource Font.Ui}" FontSize="12"
+                           Foreground="{DynamicResource Brush.TextMuted}" TextWrapping="NoWrap"
+                           TextTrimming="CharacterEllipsis"
+                           Text="{Binding Snippet.Description}"
+                           Visibility="{Binding Snippet.Description, Converter={StaticResource EmptyToCollapsed}}"/>
                 <Grid Margin="0,3,0,0">
                     <Image ui:AsyncImage.DecodeWidth="320"
                            ui:AsyncImage.Path="{Binding Snippet.ImagePath}"
                            Height="30" Stretch="Uniform" HorizontalAlignment="Left"
                            Visibility="{Binding Snippet.ImagePath, Converter={StaticResource EmptyToCollapsed}}"/>
                     <!-- Body-only hits report no name span, so the query is accented here instead —
-                         otherwise a row whose name has nothing to do with the query looks arbitrary. -->
+                         otherwise a row whose name has nothing to do with the query looks arbitrary.
+                         When a description is present it already fills the subtitle slot above. -->
                     <TextBlock FontFamily="{StaticResource Font.Ui}" FontSize="12.5"
                                Foreground="{DynamicResource Brush.TextMuted}" TextWrapping="NoWrap"
                                TextTrimming="CharacterEllipsis"
                                ui:Highlight.Text="{Binding Snippet.Body, Converter={StaticResource FirstLine}}"
-                               ui:Highlight.Query="{Binding HighlightQuery, RelativeSource={RelativeSource AncestorType=Window}}"
-                               Visibility="{Binding Snippet.ImagePath, Converter={StaticResource NonEmptyToCollapsed}}"/>
+                               ui:Highlight.Query="{Binding HighlightQuery, RelativeSource={RelativeSource AncestorType=Window}}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Snippet.ImagePath, Converter={StaticResource NonEmptyToCollapsed}}" Value="Collapsed">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Snippet.Description, Converter={StaticResource EmptyToCollapsed}}" Value="Visible">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
                 </Grid>
             </StackPanel>
 

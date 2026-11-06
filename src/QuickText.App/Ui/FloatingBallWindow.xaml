@@ -23,6 +23,9 @@
             <MenuItem Click="OnOpenCategoryManager">
                 <MenuItem.Icon><TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" FontSize="14" Foreground="{DynamicResource Brush.TextMuted}"/></MenuItem.Icon>
             </MenuItem>
+            <MenuItem Click="OnOpenSkills">
+                <MenuItem.Icon><TextBlock Text="&#xE7BE;" FontFamily="Segoe MDL2 Assets" FontSize="14" Foreground="{DynamicResource Brush.TextMuted}"/></MenuItem.Icon>
+            </MenuItem>
             <MenuItem Click="OnNewFromClipboard">
                 <MenuItem.Icon><TextBlock Text="&#xE77F;" FontFamily="Segoe MDL2 Assets" FontSize="14" Foreground="{DynamicResource Brush.TextMuted}"/></MenuItem.Icon>
             </MenuItem>

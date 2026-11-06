@@ -69,6 +69,7 @@ public partial class CategoryManagerWindow : Window
         else if (_cats.Count > 0) Categories.SelectedIndex = 0;
         Categories.Items.Refresh();
         SyncSortCombo();
+        OpenJsonButton.IsEnabled = Selected != null;
     }
 
     private void SyncIndexes(string? selectName = null)
@@ -81,7 +82,31 @@ public partial class CategoryManagerWindow : Window
     private void AlertSaveFailed() =>
         AppDialog.Alert(this, L("App.Name"), L("Manager.SaveFailed"));
 
-    private void OnCategorySelected(object s, SelectionChangedEventArgs e) => SyncSortCombo();
+    private void OnCategorySelected(object s, SelectionChangedEventArgs e)
+    {
+        SyncSortCombo();
+        OpenJsonButton.IsEnabled = Selected != null;
+    }
+
+    private void OnOpenJson(object s, RoutedEventArgs e)
+    {
+        if (Selected is not { } c) return;
+        if (!AppState.Current.Store.TryGetCategoryFilePath(c.Name, out var path))
+        {
+            // Brand-new category: ensure the snippet file exists so the editor / AI prompt have a path.
+            AppState.Current.MarkSelfWrite();
+            try { AppState.Current.Store.SaveCategory(c); }
+            catch { AlertSaveFailed(); return; }
+            if (!AppState.Current.Store.TryGetCategoryFilePath(c.Name, out path))
+            {
+                AlertSaveFailed();
+                return;
+            }
+        }
+        var w = new CategoryJsonWindow(c.Name, path) { Owner = this };
+        w.ShowDialog();
+        Reload(c.Name);
+    }
 
     private void OnCategoryDoubleClick(object s, MouseButtonEventArgs e)
     {

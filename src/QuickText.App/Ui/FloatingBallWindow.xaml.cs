@@ -56,14 +56,16 @@ public partial class FloatingBallWindow : Window
         ((MenuItem)menu.Items[0]).Header = loc["Tray.OpenSearch"];
         ((MenuItem)menu.Items[1]).Header = loc["Tray.OpenManager"];
         ((MenuItem)menu.Items[2]).Header = loc["Tray.OpenCategories"];
-        ((MenuItem)menu.Items[3]).Header = loc["Tray.NewFromClipboard"];
-        ((MenuItem)menu.Items[4]).Header = loc["Tray.Settings"];
-        var pauseItem = (MenuItem)menu.Items[5];
+        ((MenuItem)menu.Items[3]).Header = loc["Tray.OpenSkills"];
+        ((MenuItem)menu.Items[4]).Header = loc["Tray.NewFromClipboard"];
+        ((MenuItem)menu.Items[5]).Header = loc["Tray.Settings"];
+        var pauseItem = (MenuItem)menu.Items[6];
         pauseItem.Header = loc[paused ? "Tray.ResumeAbbr" : "Tray.PauseAbbr"];
         if (pauseItem.Icon is TextBlock ico)
             ico.Text = paused ? "\uE768" : "\uE769";
-        ((MenuItem)menu.Items[7]).Header = loc["Tray.HideFloatBall"];
-        ((MenuItem)menu.Items[9]).Header = loc["Tray.Exit"];
+        // Items[7] = separator; [8] = hide ball; [9] = separator; [10] = Exit.
+        ((MenuItem)menu.Items[8]).Header = loc["Tray.HideFloatBall"];
+        ((MenuItem)menu.Items[10]).Header = loc["Tray.Exit"];
     }
 
     private void OnMenuOpened(object sender, RoutedEventArgs e) => ApplyMenuLabels();
@@ -144,6 +146,7 @@ public partial class FloatingBallWindow : Window
     private void OnOpenSearch(object s, RoutedEventArgs e) => AppHost.OpenSearchFromMenu();
     private void OnOpenManager(object s, RoutedEventArgs e) => AppHost.OpenManagerFromMenu();
     private void OnOpenCategoryManager(object s, RoutedEventArgs e) => AppHost.OpenCategoryManagerFromMenu();
+    private void OnOpenSkills(object s, RoutedEventArgs e) => AppHost.OpenSkillsFromMenu();
     private void OnNewFromClipboard(object s, RoutedEventArgs e) => AppHost.NewFromClipboardFromMenu();
     private void OnSettings(object s, RoutedEventArgs e) => AppHost.OpenSettingsFromMenu();
     private void OnTogglePause(object s, RoutedEventArgs e) => AppHost.TogglePauseFromMenu();

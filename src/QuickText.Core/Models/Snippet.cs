@@ -6,6 +6,10 @@ public sealed class Snippet
 {
     public string Id { get; set; } = Guid.NewGuid().ToString("N");
     public string Name { get; set; } = "";
+    /// <summary>Optional short blurb (e.g. Agent Skill frontmatter). Not edited in the Manager;
+    /// omitted from JSON when null so legacy libraries stay untouched.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? Description { get; set; }
     public string Abbr { get; set; } = "";
     public string Body { get; set; } = "";
     // Opt-in per snippet: only when set are {变量}/{剪贴板}/{光标}/{日期} tokens processed on

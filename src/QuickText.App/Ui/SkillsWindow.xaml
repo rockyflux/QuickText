@@ -1,0 +1,206 @@
+<Window x:Class="QuickText.App.Ui.SkillsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:app="clr-namespace:QuickText.App"
+        Title="{Binding [Skills.Title], Source={x:Static app:LocProxy.Instance}}"
+        Width="960" Height="640" MinWidth="640" MinHeight="420"
+        ResizeMode="CanResize" ShowInTaskbar="True"
+        Background="{DynamicResource Brush.WinBg}" FontFamily="{StaticResource Font.Ui}">
+    <Grid Margin="20,16,20,16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="TitleText" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"
+                       Foreground="{DynamicResource Brush.TextPrimary}"/>
+            <ComboBox Grid.Column="1" x:Name="RootCombo" Style="{StaticResource DarkComboBox}"
+                      MinWidth="200" Margin="14,0,0,0" VerticalAlignment="Center" FontSize="13"
+                      SelectionChanged="OnRootChanged"/>
+            <Grid Grid.Column="2" Margin="14,0,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="PathText" VerticalAlignment="Center"
+                           FontSize="12.5" FontFamily="{StaticResource Font.Mono}"
+                           Foreground="{DynamicResource Brush.TextFaint}"
+                           TextTrimming="CharacterEllipsis" TextAlignment="Right"
+                           ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
+                <Button Grid.Column="1" x:Name="OpenRootButton" Style="{StaticResource GhostIconButton}"
+                        Content="&#xE8B7;" Margin="6,0,0,0" Click="OnOpenRoot"
+                        ToolTip="{Binding [Skills.OpenFolder], Source={x:Static app:LocProxy.Instance}}"
+                        AutomationProperties.Name="{Binding [Skills.OpenFolder], Source={x:Static app:LocProxy.Instance}}"/>
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="0,0,0,8" x:Name="ToolbarRow">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0">
+                <TextBox x:Name="FilterBox" Style="{StaticResource DarkTextBox}" FontSize="13.5" Padding="8,6"
+                         TextChanged="OnFilterChanged"/>
+                <TextBlock x:Name="FilterPlaceholder" FontSize="13.5" Margin="10,0,0,0"
+                           VerticalAlignment="Center" IsHitTestVisible="False"
+                           Foreground="{DynamicResource Brush.TextFaint}">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Text, ElementName=FilterBox}" Value="">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
+            <Button Grid.Column="1" x:Name="FavoriteSelectedButton" Style="{StaticResource DarkButton}"
+                    Padding="12,6" Margin="10,0,0,0" FontSize="13.5" Click="OnFavoriteSelected"/>
+            <Button Grid.Column="2" x:Name="RefreshButton" Style="{StaticResource GhostIconButton}"
+                    Content="&#xE72C;" Margin="6,0,0,0" Click="OnRefresh"
+                    ToolTip="{Binding [Skills.Refresh], Source={x:Static app:LocProxy.Instance}}"
+                    AutomationProperties.Name="{Binding [Skills.Refresh], Source={x:Static app:LocProxy.Instance}}"/>
+        </Grid>
+
+        <Grid Grid.Row="2" x:Name="BodyGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="TreeColumn" Width="3*"/>
+                <ColumnDefinition x:Name="SplitColumn" Width="10"/>
+                <ColumnDefinition x:Name="FavColumn" Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border x:Name="TreePane" Grid.Row="0" Grid.Column="0" Style="{StaticResource SetCard}" Padding="8,8,8,8" Margin="0">
+                <Grid>
+                    <TreeView x:Name="SkillTree" Background="Transparent" BorderThickness="0" FontSize="14.5"
+                              PreviewMouseLeftButtonDown="OnTreeLeftDown"
+                              PreviewMouseRightButtonDown="OnTreeRightDown"
+                              VirtualizingStackPanel.IsVirtualizing="True"
+                              VirtualizingStackPanel.VirtualizationMode="Recycling"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <TreeView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel/>
+                            </ItemsPanelTemplate>
+                        </TreeView.ItemsPanel>
+                        <TreeView.ContextMenu>
+                            <ContextMenu Style="{StaticResource DarkContextMenu}" Opened="OnTreeMenuOpened">
+                                <ContextMenu.Resources>
+                                    <Style TargetType="MenuItem" BasedOn="{StaticResource DarkMenuItem}"/>
+                                    <Style TargetType="Separator" BasedOn="{StaticResource DarkMenuSeparator}"/>
+                                </ContextMenu.Resources>
+                                <MenuItem x:Name="CtxFavorite" Click="OnCtxFavorite"/>
+                                <Separator/>
+                                <MenuItem x:Name="CtxOpenTree" Click="OnOpenTreeLocal"/>
+                                <MenuItem x:Name="CtxOpenRoot" Click="OnOpenRoot"/>
+                            </ContextMenu>
+                        </TreeView.ContextMenu>
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="TreeViewItem">
+                                <Setter Property="IsExpanded" Value="False"/>
+                                <Setter Property="Padding" Value="2,4"/>
+                                <Setter Property="FontSize" Value="14.5"/>
+                                <Setter Property="Foreground" Value="{DynamicResource Brush.TextPrimary}"/>
+                            </Style>
+                        </TreeView.ItemContainerStyle>
+                    </TreeView>
+                    <TextBlock x:Name="TreeEmptyText" HorizontalAlignment="Center" VerticalAlignment="Center"
+                               FontSize="14" Foreground="{DynamicResource Brush.TextFaint}"
+                               Visibility="Collapsed" IsHitTestVisible="False"/>
+                    <TextBlock x:Name="TreeLoadingText" HorizontalAlignment="Center" VerticalAlignment="Center"
+                               FontSize="14" Foreground="{DynamicResource Brush.TextFaint}"
+                               Visibility="Collapsed" IsHitTestVisible="False"/>
+                </Grid>
+            </Border>
+
+            <Border x:Name="FavPane" Grid.Row="0" Grid.Column="2" Style="{StaticResource SetCard}" Padding="8,8,8,8" Margin="0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0" Margin="0,0,0,8" x:Name="FavToolbar">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="FavHeader" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource Brush.TextPrimary}"/>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <Button x:Name="OpenFavButton" Style="{StaticResource GhostIconButton}" Content="&#xE8B7;"
+                                    Click="OnOpenFavoriteLocal"
+                                    ToolTip="{Binding [Skills.OpenFolder], Source={x:Static app:LocProxy.Instance}}"
+                                    AutomationProperties.Name="{Binding [Skills.OpenFolder], Source={x:Static app:LocProxy.Instance}}"/>
+                            <Button x:Name="RenameFavButton" Style="{StaticResource GhostIconButton}" Content="&#xE70F;"
+                                    Click="OnRenameFavorite"
+                                    ToolTip="{Binding [Manager.Rename], Source={x:Static app:LocProxy.Instance}}"
+                                    AutomationProperties.Name="{Binding [Manager.Rename], Source={x:Static app:LocProxy.Instance}}"/>
+                            <Button x:Name="RemoveFavButton" Style="{StaticResource GhostIconButton}" Content="&#xE738;"
+                                    Click="OnRemoveFavorites"
+                                    ToolTip="{Binding [Skills.RemoveFavorite], Source={x:Static app:LocProxy.Instance}}"
+                                    AutomationProperties.Name="{Binding [Skills.RemoveFavorite], Source={x:Static app:LocProxy.Instance}}"/>
+                        </StackPanel>
+                    </Grid>
+                    <ListBox Grid.Row="1" x:Name="FavoriteList" SelectionMode="Extended" FontSize="14.5"
+                             Background="Transparent" BorderThickness="0"
+                             VirtualizingStackPanel.IsVirtualizing="True"
+                             ItemContainerStyle="{StaticResource DarkListItem}"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             MouseDoubleClick="OnFavoriteDoubleClick">
+                        <ListBox.ContextMenu>
+                            <ContextMenu Style="{StaticResource DarkContextMenu}" Opened="OnFavMenuOpened">
+                                <ContextMenu.Resources>
+                                    <Style TargetType="MenuItem" BasedOn="{StaticResource DarkMenuItem}"/>
+                                    <Style TargetType="Separator" BasedOn="{StaticResource DarkMenuSeparator}"/>
+                                </ContextMenu.Resources>
+                                <MenuItem x:Name="CtxOpenFav" Click="OnOpenFavoriteLocal"/>
+                                <MenuItem x:Name="CtxRenameFav" Click="OnRenameFavorite"/>
+                                <Separator/>
+                                <MenuItem x:Name="CtxRemoveFav" Click="OnRemoveFavorites"/>
+                            </ContextMenu>
+                        </ListBox.ContextMenu>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="2,4">
+                                    <TextBlock Text="{Binding Label}" FontSize="14.5"
+                                               Foreground="{DynamicResource Brush.TextPrimary}"
+                                               TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="{Binding Subtitle}" FontSize="12.5" Margin="0,3,0,0"
+                                               Foreground="{DynamicResource Brush.TextFaint}"
+                                               TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <TextBlock Grid.Row="1" x:Name="FavEmptyText" HorizontalAlignment="Center" VerticalAlignment="Center"
+                               FontSize="14" Foreground="{DynamicResource Brush.TextFaint}"
+                               Visibility="Collapsed" IsHitTestVisible="False"/>
+                </Grid>
+            </Border>
+
+            <!-- Import-only action; Collapsed so manage mode keeps zero footer height. -->
+            <Button Grid.Row="1" Grid.Column="2" x:Name="ImportButton" Style="{StaticResource DarkButtonPrimary}"
+                    Padding="14,7" MinWidth="100" Margin="0,10,0,0" FontSize="13.5"
+                    HorizontalAlignment="Right" Click="OnImport" IsDefault="True" Visibility="Collapsed"/>
+            <!-- Tip overlays the content panels; does not reserve layout space when idle. -->
+            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" x:Name="TipText"
+                       Margin="12,0,12,10" VerticalAlignment="Bottom" HorizontalAlignment="Left"
+                       Opacity="0" IsHitTestVisible="False" FontSize="13.5"
+                       Foreground="{DynamicResource Brush.Accent}"/>
+        </Grid>
+    </Grid>
+</Window>

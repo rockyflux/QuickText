@@ -312,4 +312,74 @@
   <data name="Tray.FloatBall"><value>悬浮球</value></data>
   <data name="Tray.HideFloatBall"><value>隐藏悬浮球</value></data>
   <data name="Tray.ShowFloatBall"><value>显示悬浮球</value></data>
+  <data name="CatMgr.OpenJson"><value>打开 JSON</value></data>
+  <data name="CatJson.Title"><value>分类 JSON：{0}</value></data>
+  <data name="CatJson.Hint"><value>编辑该分类的文本库 JSON。保存前会校验格式与字段规则；也可用默认编辑器打开，或复制带路径的 AI 提示词。</value></data>
+  <data name="CatJson.Path"><value>文件路径</value></data>
+  <data name="CatJson.Save"><value>保存</value></data>
+  <data name="CatJson.OpenExternal"><value>用默认编辑器打开</value></data>
+  <data name="CatJson.CopyAiPrompt"><value>复制 AI 提示词</value></data>
+  <data name="CatJson.InvalidJson"><value>JSON 格式无效：{0}</value></data>
+  <data name="CatJson.NotArray"><value>根节点必须是 JSON 数组（文本条目列表）</value></data>
+  <data name="CatJson.InvalidName"><value>第 {0} 条：名称不能为空</value></data>
+  <data name="CatJson.InvalidId"><value>第 {0} 条：id 无效（需为 GUID）</value></data>
+  <data name="CatJson.InvalidOutputMode"><value>第 {0} 条：outputMode 无效（允许：空、paste、paste-enter、copy）</value></data>
+  <data name="CatJson.Saved"><value>已保存</value></data>
+  <data name="CatJson.Reloaded"><value>已重新加载</value></data>
+  <data name="CatJson.PromptCopied"><value>已复制 AI 提示词</value></data>
+  <data name="CatJson.OpenFailed"><value>无法打开外部编辑器</value></data>
+  <data name="CatJson.FileMissing"><value>文件尚不存在，保存后会写入</value></data>
+  <data name="CatJson.AiPrompt" xml:space="preserve"><value>请按下列规则修改这个分类文本库文件（只改该文件，保持合法 JSON）：
+路径：{0}
+
+规则：
+1. 根节点必须是 JSON 数组，每个元素是一条文本。
+2. 每条必填：id（GUID，如 32 位十六进制）、name（非空名称）。
+3. 常用字段：abbr（缩写，可空）、body（正文）、useVariables（是否启用 {{变量}} 占位符）、outputMode（"" | "paste" | "paste-enter" | "copy"；空表示跟随全局设置）。
+4. 可选字段：imagePath、codeFormat、createdAt、updatedAt。
+5. 不要改动 index.json 或其他分类文件。
+
+参考示例：
+[
+  {{
+    "id": "0123456789abcdef0123456789abcdef",
+    "name": "示例",
+    "abbr": "sl",
+    "body": "你好",
+    "useVariables": false,
+    "outputMode": ""
+  }}
+]
+</value></data>
+  <data name="Manager.ImportSkills"><value>从 Skills 导入</value></data>
+  <data name="Skills.AliasPrompt"><value>显示别名（可留空清除）</value></data>
+  <data name="Skills.Title"><value>Skills</value></data>
+  <data name="Skills.Favorite"><value>收藏</value></data>
+  <data name="Skills.ImportHint"><value>从已收藏的 Skills 多选，导入到当前分类。文本的名称与正文取自收藏 JSON（正文为 SKILL.md 全路径）。</value></data>
+  <data name="Skills.Alias"><value>别名</value></data>
+  <data name="Skills.ImportNone"><value>请先选择要导入的 Skills</value></data>
+  <data name="Skills.Hint"><value>浏览本机 %USERPROFILE%\.agents\skills 下的 Agent Skills（树形）。收藏写入 skills-favorites.json（名称 + SKILL.md 全路径）；别名仅用于显示。可在管理器批量导入为文本。</value></data>
+  <data name="Skills.ImportSelected"><value>导入所选</value></data>
+  <data name="Tray.OpenSkills"><value>Skills</value></data>
+  <data name="Skills.NoFavorites"><value>还没有收藏的 Skills</value></data>
+  <data name="Skills.SelectHint"><value>在列表中选择一个 Skill</value></data>
+  <data name="Skills.MissingFolder"><value>未找到 Skills 目录（%USERPROFILE%\.agents\skills）</value></data>
+  <data name="Skills.Unfavorite"><value>取消收藏</value></data>
+  <data name="Skills.Refresh"><value>刷新</value></data>
+  <data name="Skills.Empty"><value>没有匹配的 Skills</value></data>
+  <data name="Skills.FavoritesOnly"><value>仅收藏</value></data>
+  <data name="Skills.FavoriteChecked"><value>收藏所选</value></data>
+  <data name="Skills.UnfavoriteChecked"><value>取消所选</value></data>
+  <data name="Skills.CheckedCount"><value>已勾选 {0} 项</value></data>
+  <data name="Skills.RemoveFavorite"><value>移除收藏</value></data>
+  <data name="Skills.RenamePrompt"><value>收藏名称</value></data>
+  <data name="Skills.RenameFailed"><value>名称不能为空</value></data>
+  <data name="Skills.FavoritedTip"><value>已收藏 {0} 项</value></data>
+  <data name="Skills.RemovedTip"><value>已移除 {0} 项</value></data>
+  <data name="Skills.RenamedTip"><value>已重命名</value></data>
+  <data name="Skills.FavoritesHeader"><value>已收藏</value></data>
+  <data name="Skills.Loading"><value>正在扫描 Skills…</value></data>
+  <data name="Skills.OpenFolder"><value>打开 Skills 目录</value></data>
+  <data name="Skills.OpenLocal"><value>本地打开</value></data>
+  <data name="Skills.OpenFailed"><value>无法打开该路径</value></data>
 </root>
