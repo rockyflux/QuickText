@@ -12,7 +12,7 @@ Lives in the tray. Store email, signatures, templates, replies, prompts, Skills,
 
 ## Download
 
-**[⬇ Get the latest release](https://github.com/rockyflux/QuickText/releases)** — Windows x64, no installer.
+Site: [rockyflux.github.io/QuickText](https://rockyflux.github.io/QuickText/) · **[⬇ Get the latest release](https://github.com/rockyflux/QuickText/releases)** — Windows x64, no installer.
 
 | File | Needs | Notes |
 | --- | --- | --- |

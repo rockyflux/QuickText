@@ -12,7 +12,7 @@
 
 ## 下载
 
-**[⬇ 下载最新版](https://github.com/rockyflux/QuickText/releases)** — Windows x64，免安装。
+官网：[rockyflux.github.io/QuickText](https://rockyflux.github.io/QuickText/) · **[⬇ 下载最新版](https://github.com/rockyflux/QuickText/releases)** — Windows x64，免安装。
 
 | 文件 | 前提 | 说明 |
 | --- | --- | --- |

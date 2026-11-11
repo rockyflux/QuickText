@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>QuickText · Windows 托盘速贴 · 常用文本几键贴到光标处</title>
+<meta name="description" content="QuickText 是免费开源的 Windows 托盘速贴工具：常驻托盘，邮箱、签名、模板、回复存一次，在任意输入框里搜拼音或打缩写，贴到光标处。单文件绿色版，默认不联网。">
+<link rel="canonical" href="https://rockyflux.github.io/QuickText/">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="QuickText">
+<meta property="og:title" content="QuickText · 常用文本，几键贴到光标处">
+<meta property="og:description" content="Windows 托盘速贴：搜拼音或打缩写，把存好的文本贴到任意输入框。免费开源，单文件绿色版。">
+<meta property="og:url" content="https://rockyflux.github.io/QuickText/">
+<meta property="og:image" content="https://rockyflux.github.io/QuickText/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://rockyflux.github.io/QuickText/assets/og.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon-256.png">
+<link rel="stylesheet" href="styles.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "QuickText",
+  "operatingSystem": "Windows 10+, Windows 11",
+  "applicationCategory": "ProductivityApplication",
+  "softwareVersion": "1.1.0",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "downloadUrl": "https://github.com/rockyflux/QuickText/releases/latest",
+  "url": "https://rockyflux.github.io/QuickText/",
+  "image": "https://rockyflux.github.io/QuickText/assets/og.png",
+  "license": "https://opensource.org/licenses/MIT",
+  "description": "Windows 托盘速贴：常用文本与图片，几键贴到光标处。单文件绿色版，默认不联网。"
+}
+</script>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="qg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#57DFB8"/><stop offset="1" stop-color="#22997C"/></linearGradient>
+    <symbol id="appicon" viewBox="0 0 64 64">
+      <rect x="5" y="5" width="54" height="54" rx="15" fill="url(#qg)"/>
+      <rect x="5.75" y="5.75" width="52.5" height="52.5" rx="14.25" fill="none" stroke="#fff" stroke-opacity=".22" stroke-width="1.5"/>
+      <rect x="14" y="26" width="20" height="13" rx="4" fill="#F2B457"/>
+      <g fill="#0F1D19"><rect x="40" y="16" width="7" height="32" rx="3.5"/><rect x="34" y="16" width="19" height="5" rx="2.5"/><rect x="34" y="43" width="19" height="5" rx="2.5"/></g>
+    </symbol>
+    <symbol id="i-windows" viewBox="0 0 24 24"><path fill="currentColor" d="M3 5.1 10.4 4v7.1H3zM11.3 3.9 21 2.5v8.6h-9.7zM3 12h7.4v7.1L3 18zM11.3 12H21v8.6l-9.7-1.4z"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 15V3M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-3.5-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-gh" viewBox="0 0 24 24"><path fill="currentColor" d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 0-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.3-3.1-.2-.4-.6-1.6 0-3.2 0 0 1-.3 3.4 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8 0 3.2.9.8 1.3 1.9 1.3 3.2 0 4.6-2.8 5.6-5.5 5.9.5.4.9 1 .9 2.2v3.3c0 .3.1.7.8.6A12 12 0 0 0 12 .3"/></symbol>
+  </defs>
+</svg>
+
+<header class="nav" id="top">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top" aria-label="QuickText 首页">
+      <svg class="brand-icon" aria-hidden="true"><use href="#appicon"/></svg>
+      <span>QuickText</span>
+    </a>
+    <nav class="nav-links" aria-label="页面导航">
+      <a href="#how">怎么用</a>
+      <a href="#features">能力</a>
+      <a href="#privacy">隐私</a>
+      <a href="#faq">问答</a>
+    </nav>
+    <div class="nav-cta">
+      <button class="lang-btn" type="button" id="lang-toggle" aria-label="语言：中文，英文即将推出" title="English coming soon">
+        <span class="on">中</span> / <span>EN</span>
+      </button>
+      <a class="icon-btn" href="https://github.com/rockyflux/QuickText" aria-label="GitHub 源代码" title="GitHub 源代码"><svg><use href="#i-gh"/></svg></a>
+      <a class="btn btn-sm btn-primary" href="#download">下载</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<section class="hero">
+  <div class="wrap hero-copy">
+    <a class="pill" href="https://github.com/rockyflux/QuickText/releases/tag/v1.1.0"><span class="pill-dot"></span>v1.1.0 已发布<svg><use href="#i-arrow"/></svg></a>
+    <h1>常用文本，<br class="br-sm">几键贴到光标处。</h1>
+    <p class="lede">常驻托盘。邮箱、签名、模板、回复存一次，<br class="br-lg">在任意输入框里搜拼音或打缩写，贴到光标处。</p>
+    <div class="hero-actions">
+      <a class="btn btn-lg btn-primary" href="https://github.com/rockyflux/QuickText/releases/latest" data-os="win"><svg><use href="#i-windows"/></svg>下载 Windows 版</a>
+      <a class="btn btn-lg btn-ghost" href="https://github.com/rockyflux/QuickText/releases/latest">全部版本</a>
+    </div>
+    <p class="hero-meta">免费 · MIT 开源 · Windows x64 · 单文件绿色版 · 默认不联网</p>
+  </div>
+
+  <div class="wrap">
+    <div class="stage-shell" id="stage-shell">
+      <div class="stage" id="stage" aria-label="QuickText 演示：热键呼出面板，搜拼音，回车贴到光标处">
+        <div class="win win-host">
+          <div class="win-bar">
+            <i class="tl r"></i><i class="tl y"></i><i class="tl g"></i>
+            <div class="tab">邮件 · 新邮件</div>
+          </div>
+          <div class="host-body">
+            <div class="host-label">正文</div>
+            <div class="host-field" id="host-field">你好，关于上周提到的方案，我想补充几点：<span class="caret" id="host-caret"></span></div>
+          </div>
+        </div>
+        <div class="win win-palette" id="palette">
+          <div class="palette-pin"><span class="lens"><svg><use href="#i-search"/></svg></span><span class="q" id="pq">hf<span class="cur" id="pcur"></span></span></div>
+          <div class="palette-rows" id="prows">
+            <div class="palette-row on"><span class="nm">回复模板</span><span class="bd">你好，这是我常用的一段话…</span><span class="kc">↵</span></div>
+            <div class="palette-row"><span class="nm">邮箱</span><span class="bd">your.name@example.com</span></div>
+            <div class="palette-row"><span class="nm">签名</span><span class="bd">此致 敬礼 {姓名}</span></div>
+          </div>
+          <div class="palette-hints"><span><b>↑↓</b>选择</span><span><b>↵</b>贴到光标</span><span><b>esc</b>关闭</span></div>
+        </div>
+        <div class="toast" id="toast" role="status" aria-live="polite">
+          <span class="toast-ok"><svg><use href="#i-check"/></svg></span>
+          <b>已贴到光标处</b>
+          <span class="toast-note">回复模板</span>
+        </div>
+        <div class="keys" id="keys" aria-hidden="true"><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>8</kbd></div>
+      </div>
+    </div>
+    <div class="stage-hint">
+      <span><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>8</kbd> 呼出面板</span>
+      <span>搜拼音 / 名称 → 回车粘贴</span>
+      <button class="btn btn-sm btn-ghost" type="button" id="try">重播演示<svg><use href="#i-arrow"/></svg></button>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="why">
+  <div class="wrap">
+    <div class="eyebrow">为什么做它</div>
+    <h2>找常用话最难的不是写，<br>是翻找。</h2>
+    <p class="sub">邮箱、地址、客服话术、提示词……散落在记事本、聊天记录和旧邮件里。等你翻完，思路已经断了。</p>
+    <div class="versus">
+      <div class="vs-card vs-old">
+        <div class="vs-label">以前</div>
+        <ol class="steps">
+          <li><span>1</span>切到别的窗口找那段话</li>
+          <li><span>2</span>打开记事本或旧邮件</li>
+          <li><span>3</span>复制</li>
+          <li><span>4</span>切回来粘贴</li>
+          <li><span>5</span>发现版本不对，再翻一次</li>
+        </ol>
+        <div class="vs-foot"><b>约半分钟</b>，打断手头的事</div>
+      </div>
+      <div class="vs-card vs-new">
+        <div class="vs-label">现在</div>
+        <div class="vs-keys"><kbd>Ctrl</kbd><kbd>⇧</kbd><kbd>8</kbd></div>
+        <p>敲两三个拼音字母，回车 —— 文本落在你正在打字的地方。</p>
+        <div class="vs-foot"><b>不到 1 秒</b>，手不离键盘</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="how">
+  <div class="wrap">
+    <div class="eyebrow">怎么用</div>
+    <h2>面板搜索，或缩写一触即发。</h2>
+    <div class="duo">
+      <article class="duo-card">
+        <div class="duo-keys"><kbd>Ctrl</kbd><kbd>⇧</kbd><kbd>8</kbd></div>
+        <h3>呼出面板</h3>
+        <p>全局热键唤起搜索面板。拼音、首字母、缩写、正文 —— 怎么记得住怎么搜，回车贴到光标处。</p>
+        <ul class="ticks">
+          <li>分类浏览、收藏与最近常用</li>
+          <li>文本与图片条目都能贴</li>
+          <li>热键可在设置里改成任意组合</li>
+        </ul>
+      </article>
+      <article class="duo-card">
+        <div class="duo-keys"><kbd>缩写</kbd><kbd>触发</kbd></div>
+        <h3>文本指令</h3>
+        <p>给条目设一个缩写，在任意输入框打出触发序列，直接展开 —— 不用打开面板。</p>
+        <ul class="ticks">
+          <li>适合签名、地址、固定回复</li>
+          <li>支持 <code>{变量}</code> 模板占位符</li>
+          <li>与面板搜索共用同一本地库</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="features">
+  <div class="wrap">
+    <div class="eyebrow">能力</div>
+    <h2>小工具，该有的都有。</h2>
+    <div class="feat-grid">
+      <article class="feat-card">
+        <span class="tag">搜索</span>
+        <h3>拼音直呼</h3>
+        <p>名称、拼音、缩写、正文全文；分类浏览；收藏与最近常用。</p>
+      </article>
+      <article class="feat-card">
+        <span class="tag">内容</span>
+        <h3>文本与图片</h3>
+        <p>按条目启用变量占位符；可选代码语法高亮。</p>
+      </article>
+      <article class="feat-card">
+        <span class="tag">扩展</span>
+        <h3>剪贴板历史</h3>
+        <p>可选开启文本历史（默认 3 天），热键 <kbd class="ik">Ctrl</kbd><kbd class="ik">Shift</kbd><kbd class="ik">V</kbd>。</p>
+      </article>
+      <article class="feat-card">
+        <span class="tag">扩展</span>
+        <h3>Skills 与 AI</h3>
+        <p>导入 Skills；管理器里用 AI 生成起草条目（自备 Key，可选联网）。</p>
+      </article>
+      <article class="feat-card">
+        <span class="tag">数据</span>
+        <h3>本地 JSON</h3>
+        <p>导出/导入备份、每日自动备份；便携模式让数据跟 exe 走。</p>
+      </article>
+      <article class="feat-card">
+        <span class="tag">界面</span>
+        <h3>18 种语言</h3>
+        <p>深色 / 浅色 / 跟随系统；设置即时生效。</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="privacy">
+  <div class="wrap">
+    <div class="privacy">
+      <div>
+        <div class="eyebrow">隐私</div>
+        <h2>你的文本，只在你的电脑上。</h2>
+        <p class="sub">不注册、不同步、不上传、不统计。QuickText 默认离线；检查更新与 AI 生成需你主动开启。</p>
+      </div>
+      <ul class="priv-list">
+        <li><b>默认不联网</b><span>日常搜索与粘贴全部本机完成。</span></li>
+        <li><b>可选网络</b><span>仅「检查更新」与「AI 生成」会联网，可随时关掉。</span></li>
+        <li><b>明文本地库</b><span>数据是你文件夹里的 JSON；机密请用密码管理器。</span></li>
+        <li><b>可放同步盘</b><span>想跨机器同步，把库目录丢进你习惯的网盘即可。</span></li>
+        <li><b>便携模式</b><span>旁放 <code>QuickText.portable</code>，一切数据跟 exe 走。</span></li>
+        <li><b>代码公开</b><span>MIT 开源，每一行都能在 GitHub 上看到。</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="start">
+  <div class="wrap">
+    <div class="eyebrow">开始</div>
+    <h2>三步，一分钟。</h2>
+    <ol class="start">
+      <li><span class="n">1</span><b>下载并解压</b><p>解压 zip，双击 <code>QuickText.exe</code>。托盘常驻，首次带示例库。</p></li>
+      <li><span class="n">2</span><b>呼出面板</b><p>按 <kbd class="ik">Ctrl</kbd><kbd class="ik">Shift</kbd><kbd class="ik">8</kbd>，搜拼音或名称，回车贴到光标处。</p></li>
+      <li><span class="n">3</span><b>维护你的库</b><p>托盘右键打开管理，增删条目；设置里改热键、主题、语言。</p></li>
+    </ol>
+    <div class="cta" id="download">
+      <svg class="cta-icon" aria-hidden="true"><use href="#appicon"/></svg>
+      <h2>常用文本，几键贴到光标处。</h2>
+      <p>免费、开源，Windows 单文件绿色版。</p>
+      <div class="dl-grid single">
+        <a class="dl-card primary" href="https://github.com/rockyflux/QuickText/releases/latest" data-os="win">
+          <svg class="dl-os"><use href="#i-windows"/></svg>
+          <b>Windows</b>
+          <span>v1.1.0 · x64 · 自带运行时</span>
+          <span>免安装，解压即用。拿不准就下这个。</span>
+          <span class="dl-btn"><svg><use href="#i-download"/></svg>下载 .zip</span>
+        </a>
+      </div>
+      <p class="hero-meta">未代码签名：首次运行若出现 SmartScreen，点「更多信息 → 仍要运行」。另有需已装 .NET 10 的精简包与裸 <code>QuickText.exe</code>，见 <a href="https://github.com/rockyflux/QuickText/releases">全部版本</a>。</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="faq">
+  <div class="wrap faq-wrap">
+    <div>
+      <div class="eyebrow">问答</div>
+      <h2>常见问题</h2>
+    </div>
+    <div class="faq">
+      <details><summary>真的免费吗？</summary><p>是的。QuickText 以 MIT 协议开源，没有付费版，没有广告，也不收集数据。</p></details>
+      <details><summary>需要安装 .NET 吗？</summary><p>默认下载的 <code>win-x64.zip</code> 自带运行时，不需要。若已安装 .NET 10 桌面运行时，可选用体积更小的 <code>needs-dotnet10</code> 包或裸 exe。</p></details>
+      <details><summary>会上传我的内容吗？</summary><p>不会。搜索与粘贴全程本机。只有你主动「检查更新」或使用「AI 生成」时才会联网。</p></details>
+      <details><summary>数据存在哪？</summary><p>默认在 <code>%APPDATA%\QuickText\</code>，条目库默认在「文档\QuickText」。便携模式则全部在 exe 旁的 <code>Data\</code> 下。</p></details>
+      <details><summary>怎么更新？</summary><p>应用内可检查 GitHub Releases；也可到本页或 <a href="https://github.com/rockyflux/QuickText/releases">发布页</a> 下载覆盖。</p></details>
+      <details><summary>快捷键冲突了怎么办？</summary><p>在设置里点一下快捷键，按下新的组合即可。</p></details>
+      <details><summary>支持 Mac 或手机吗？</summary><p>目前仅 Windows。Mac / 移动端暂无计划在本仓库内交付。</p></details>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap foot-in">
+    <div class="foot-brand">
+      <a class="brand" href="#top"><svg class="brand-icon" aria-hidden="true"><use href="#appicon"/></svg><span>QuickText</span></a>
+      <p>Windows 托盘速贴：常用文本 / 图片，几键贴到光标处。MIT 开源。</p>
+    </div>
+    <div class="foot-cols">
+      <div>
+        <b>产品</b>
+        <a href="#download">下载</a>
+        <a href="https://github.com/rockyflux/QuickText/releases">更新日志</a>
+        <a href="https://github.com/rockyflux/QuickText#readme">使用说明</a>
+        <a href="https://github.com/rockyflux/QuickText/issues">反馈问题</a>
+      </div>
+      <div>
+        <b>源码</b>
+        <a href="https://github.com/rockyflux/QuickText">GitHub</a>
+        <a href="https://github.com/rockyflux/QuickText/blob/main/LICENSE">MIT License</a>
+      </div>
+    </div>
+    <div class="foot-actions">
+      <a class="icon-btn" href="https://github.com/rockyflux/QuickText" aria-label="GitHub" title="GitHub"><svg><use href="#i-gh"/></svg></a>
+    </div>
+  </div>
+  <div class="wrap foot-legal">MIT © 2026 Rocky · 字体 Geist（OFL）</div>
+</footer>
+
+<div id="lang-toast" class="toast" role="status" aria-live="polite" style="position:fixed;left:50%;top:72px;z-index:80;transform:translate(-50%,-12px);pointer-events:none">
+  <span class="toast-ok"><svg><use href="#i-check"/></svg></span>
+  <b>English coming soon</b>
+  <span class="toast-note">英文版即将推出</span>
+</div>
+
+<script src="app.js" defer></script>
+</body>
+</html>
