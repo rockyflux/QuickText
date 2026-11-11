@@ -1,0 +1,71 @@
+<Window x:Class="QuickText.App.Ui.ClipboardHistoryPanel"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:app="clr-namespace:QuickText.App"
+        Title="{Binding [Clipboard.Title], Source={x:Static app:LocProxy.Instance}}"
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        WindowStartupLocation="Manual" Topmost="True" ShowInTaskbar="False"
+        Width="420" SizeToContent="Height" MinWidth="320" MinHeight="160" MaxHeight="480"
+        ResizeMode="NoResize" Deactivated="OnDeactivated">
+    <Border Margin="14" CornerRadius="14" Background="{DynamicResource Brush.Surface}"
+            BorderBrush="{DynamicResource Brush.Stroke}" BorderThickness="1">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="28" ShadowDepth="8" Direction="270" Opacity="0.45" Color="#FF000000"/>
+        </Border.Effect>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*" MaxHeight="360"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Margin="16,14,16,8"
+                       Text="{Binding [Clipboard.Title], Source={x:Static app:LocProxy.Instance}}"
+                       FontSize="14" FontWeight="SemiBold"
+                       Foreground="{DynamicResource Brush.TextPrimary}"/>
+
+            <Grid Grid.Row="1" Margin="8,0,8,0">
+                <ListBox x:Name="ItemList" Background="Transparent" BorderThickness="0"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         ItemContainerStyle="{StaticResource DarkListItem}"
+                         PreviewKeyDown="OnListKeyDown"
+                         MouseLeftButtonUp="OnListClick"
+                         MouseDoubleClick="OnListClick">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Preview}" TextWrapping="Wrap" MaxHeight="44"
+                                       TextTrimming="CharacterEllipsis" Margin="8,6"
+                                       FontFamily="{StaticResource Font.Ui}" FontSize="13"
+                                       Foreground="{DynamicResource Brush.TextPrimary}"
+                                       AutomationProperties.Name="{Binding Preview}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <TextBlock x:Name="EmptyText" HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Margin="16" TextWrapping="Wrap" TextAlignment="Center"
+                           Foreground="{DynamicResource Brush.TextFaint}"
+                           Text="{Binding [Clipboard.Empty], Source={x:Static app:LocProxy.Instance}}"
+                           Visibility="Collapsed"/>
+            </Grid>
+
+            <Border Grid.Row="2" Background="{DynamicResource Brush.FooterBg}"
+                    CornerRadius="0,0,14,14" Padding="14,8">
+                <WrapPanel Orientation="Horizontal" Margin="0,0,0,-4">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,16,4">
+                        <Border Style="{StaticResource HintKey}"><TextBlock Text="↑↓" Style="{StaticResource HintKeyText}"/></Border>
+                        <TextBlock Text="{Binding [Search.Hint.Nav], Source={x:Static app:LocProxy.Instance}}" Style="{StaticResource HintLabel}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,16,4">
+                        <Border Style="{StaticResource HintKey}"><TextBlock Text="↵" Style="{StaticResource HintKeyText}"/></Border>
+                        <TextBlock Text="{Binding [Search.Hint.Send], Source={x:Static app:LocProxy.Instance}}" Style="{StaticResource HintLabel}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                        <Border Style="{StaticResource HintKey}"><TextBlock Text="esc" Style="{StaticResource HintKeyText}"/></Border>
+                        <TextBlock Text="{Binding [Search.Hint.Close], Source={x:Static app:LocProxy.Instance}}" Style="{StaticResource HintLabel}"/>
+                    </StackPanel>
+                </WrapPanel>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

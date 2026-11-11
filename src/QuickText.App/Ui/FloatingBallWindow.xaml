@@ -55,9 +55,13 @@
             MouseLeftButtonDown="OnBallMouseDown"
             MouseMove="OnBallMouseMove"
             MouseLeftButtonUp="OnBallMouseUp">
-        <Image Source="pack://application:,,,/Assets/quicktext.ico"
+        <!-- PNG, not the multi-size .ico: WPF Image often picks a tiny ICO frame and
+             upscales it, which is what made the ball look soft. -->
+        <Image Source="pack://application:,,,/Assets/quicktext-float.png"
                Width="28" Height="28"
                Stretch="Uniform"
+               RenderOptions.BitmapScalingMode="HighQuality"
+               SnapsToDevicePixels="True"
                HorizontalAlignment="Center" VerticalAlignment="Center"
                IsHitTestVisible="False"/>
     </Border>

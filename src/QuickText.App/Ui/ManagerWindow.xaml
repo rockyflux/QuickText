@@ -24,7 +24,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- categories: CRUD / color / sort live in Category Manager -->
+                <!-- categories: + quick-adds a name; CRUD / color / sort live in Category Manager -->
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -34,9 +34,12 @@
                                     Style="{StaticResource SetHeader}"
                                     Content="{Binding [Manager.Categories], Source={x:Static app:LocProxy.Instance}}"/>
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
-                        <Button x:Name="OpenCategoryManagerButton" Style="{StaticResource GhostIconButton}" Content="&#xE710;" Click="OnOpenCategoryManager"
+                        <Button x:Name="OpenCategoryManagerButton" Style="{StaticResource GhostIconButton}" Content="&#xE8F1;" Click="OnOpenCategoryManager"
                                 AutomationProperties.Name="{Binding [CatMgr.Title], Source={x:Static app:LocProxy.Instance}}"
                                 ToolTip="{Binding [CatMgr.Title], Source={x:Static app:LocProxy.Instance}}"/>
+                        <Button Style="{StaticResource GhostIconButton}" Content="&#xE710;" Click="OnAddCategory"
+                                AutomationProperties.Name="{Binding [Manager.NewCategory], Source={x:Static app:LocProxy.Instance}}"
+                                ToolTip="{Binding [Manager.NewCategory], Source={x:Static app:LocProxy.Instance}}"/>
                         <Button Style="{StaticResource GhostIconButton}" Content="&#xE81C;" Click="OnOpenTrash"
                                 AutomationProperties.Name="{Binding [Manager.Trash], Source={x:Static app:LocProxy.Instance}}"
                                 ToolTip="{Binding [Manager.Trash], Source={x:Static app:LocProxy.Instance}}"/>
@@ -108,7 +111,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition x:Name="BodyEditorRow" Height="*"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -116,28 +119,43 @@
 
             <TextBlock Grid.Row="0" x:Name="NameLabel" Style="{StaticResource FieldLabel}"
                        Text="{Binding [Manager.Name], Source={x:Static app:LocProxy.Instance}}"/>
-            <TextBox Grid.Row="1" x:Name="SnippetName" Style="{StaticResource DarkTextBox}" FontSize="14"
-                     AutomationProperties.LabeledBy="{Binding ElementName=NameLabel}"/>
+            <!-- AI chip sits inside the name field (right). Extra Padding keeps typed text clear of the button. -->
+            <Grid Grid.Row="1">
+                <TextBox x:Name="SnippetName" Style="{StaticResource DarkTextBox}" FontSize="14"
+                         Padding="9,7,34,7"
+                         AutomationProperties.LabeledBy="{Binding ElementName=NameLabel}"/>
+                <Button x:Name="AiGenerateButton" Style="{StaticResource GhostIconButton}"
+                        HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                        FontFamily="{StaticResource Font.Ui}" FontSize="11" FontWeight="SemiBold"
+                        Content="AI" Click="OnAiGenerate"
+                        AutomationProperties.Name="{Binding [Manager.AiGenerate], Source={x:Static app:LocProxy.Instance}}"
+                        ToolTip="{Binding [Manager.AiGenerate], Source={x:Static app:LocProxy.Instance}}"/>
+            </Grid>
 
             <TextBlock Grid.Row="2" x:Name="AbbrLabel" Style="{StaticResource FieldLabel}" Margin="2,18,0,6"
                        Text="{Binding [Manager.Abbr], Source={x:Static app:LocProxy.Instance}}"/>
             <!-- The conflict hint is error text — it must never lose a word to the card edge. A
                  horizontal StackPanel measures children at INFINITE width, so at MinWidth the hint
-                 was sliced mid-sentence with no ellipsis; it now gets its own row and
-                 wraps. The prefix+box pair stays on line one. -->
+                 was sliced mid-sentence with no ellipsis; it now gets its own row and wraps.
+                 The box stays on line one; the live trigger tip sits beside it and may wrap. -->
             <Grid Grid.Row="3">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left">
-                    <TextBlock x:Name="AbbrPrefixText" VerticalAlignment="Center" Margin="0,0,3,0"
-                               FontFamily="{StaticResource Font.Mono}" FontSize="14" Foreground="{DynamicResource Brush.TextMuted}"
-                               ToolTip="{Binding [Settings.AbbrPrefixHint], Source={x:Static app:LocProxy.Instance}}"/>
-                    <TextBox x:Name="Abbr" Style="{StaticResource DarkTextBox}" Width="180"
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0" x:Name="Abbr" Style="{StaticResource DarkTextBox}" Width="180"
                              AutomationProperties.LabeledBy="{Binding ElementName=AbbrLabel}"
                              FontFamily="{StaticResource Font.Mono}" TextChanged="OnAbbrChanged"/>
-                </StackPanel>
+                    <!-- Live tip when a command is set: prefix + command + first terminator. Empty command clears it. -->
+                    <TextBlock Grid.Column="1" x:Name="AbbrTriggerHint" VerticalAlignment="Center"
+                               Margin="12,0,0,0" FontSize="12.5" TextWrapping="Wrap"
+                               Foreground="{DynamicResource Brush.TextMuted}"/>
+                </Grid>
                 <TextBlock Grid.Row="1" x:Name="AbbrConflict" Margin="2,6,0,0" FontSize="12.5" TextWrapping="Wrap"
                            Foreground="{DynamicResource Brush.Error}" Visibility="Collapsed"/>
             </Grid>
@@ -145,8 +163,9 @@
             <!-- Was a DockPanel with LastChildFill="False": every Right-docked child takes its
                  desired width and the LAST one absorbs whatever remains — which in French was
                  nothing, so the line-numbers checkbox rendered as a box with no label. A label
-                 column plus a WrapPanel lets the controls drop to a second line instead. -->
-            <Grid Grid.Row="4" Margin="2,18,0,6">
+                 column plus a WrapPanel lets the controls drop to a second line instead.
+                 Hidden entirely on image snippets (body is unused on send). -->
+            <Grid x:Name="BodyHeader" Grid.Row="4" Margin="2,18,0,6">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
@@ -172,31 +191,35 @@
             <ui:BodyEditor Grid.Row="5" x:Name="Body" MinHeight="120" ShowStatusBar="True"
                            AutomationProperties.LabeledBy="{Binding ElementName=BodyLabel}"/>
 
-            <!-- WrapPanel, not a horizontal StackPanel: a StackPanel measures its children at
-                 INFINITE width, so at the window's own MinWidth this row simply overflowed and the
-                 output-mode combo (and the Save button below it) were clipped by the card. Wrapping
-                 drops the output-mode pair onto its own line instead. The label and combo are one
-                 inner group so they can only wrap together. -->
-            <WrapPanel Grid.Row="6" Margin="2,12,0,0">
-                <CheckBox x:Name="UseVars" Style="{StaticResource DarkCheckBox}" VerticalAlignment="Center"
-                          Margin="0,0,28,4"
-                          Checked="OnUseVarsToggled" Unchecked="OnUseVarsToggled"
-                          Content="{Binding [Manager.UseVars], Source={x:Static app:LocProxy.Instance}}"
-                          ToolTip="{Binding [Manager.UseVarsHint], Source={x:Static app:LocProxy.Instance}}"/>
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
-                    <TextBlock x:Name="OutputModeLabel" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="13"
-                               Foreground="{DynamicResource Brush.TextMuted}"
-                               Text="{Binding [Manager.OutputMode], Source={x:Static app:LocProxy.Instance}}"/>
-                    <!-- MinWidth, not Width: the items are translated, and the longest ("Suivre les
-                         réglages globaux", fr) needs ~205 DIP against a hard 140. A ComboBox with no
-                         Width measures to its widest item, so every language gets the room it needs
-                         and 140 only sets the floor for the short ones. The WrapPanel above absorbs
-                         the extra width at narrow window sizes. -->
-                    <ComboBox x:Name="OutputMode" MinWidth="140" VerticalAlignment="Center" Style="{StaticResource DarkComboBox}"
-                              AutomationProperties.LabeledBy="{Binding ElementName=OutputModeLabel}"
-                              ToolTip="{Binding [Manager.OutputModeHint], Source={x:Static app:LocProxy.Instance}}"/>
-                </StackPanel>
-            </WrapPanel>
+            <!-- Text snippets: UseVars + OutputMode share one WrapPanel row (inline label).
+                 Image snippets: body/UseVars hide, OutputMode switches to the Abbr-style stack
+                 (FieldLabel above, combo below) so it doesn't sit alone as a sideways pair. -->
+            <StackPanel x:Name="OptionsRow" Grid.Row="6" Margin="2,12,0,0">
+                <TextBlock x:Name="OutputModeFieldLabel" Style="{StaticResource FieldLabel}"
+                           Margin="0,0,0,6" Visibility="Collapsed"
+                           Text="{Binding [Manager.OutputMode], Source={x:Static app:LocProxy.Instance}}"/>
+                <!-- WrapPanel, not a horizontal StackPanel: a StackPanel measures its children at
+                     INFINITE width, so at the window's own MinWidth this row simply overflowed and the
+                     output-mode combo (and the Save button below it) were clipped by the card. -->
+                <WrapPanel>
+                    <CheckBox x:Name="UseVars" Style="{StaticResource DarkCheckBox}" VerticalAlignment="Center"
+                              Margin="0,0,28,4"
+                              Checked="OnUseVarsToggled" Unchecked="OnUseVarsToggled"
+                              Content="{Binding [Manager.UseVars], Source={x:Static app:LocProxy.Instance}}"
+                              ToolTip="{Binding [Manager.UseVarsHint], Source={x:Static app:LocProxy.Instance}}"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                        <TextBlock x:Name="OutputModeInlineLabel" VerticalAlignment="Center" Margin="0,0,8,0"
+                                   FontSize="13" Foreground="{DynamicResource Brush.TextMuted}"
+                                   Text="{Binding [Manager.OutputMode], Source={x:Static app:LocProxy.Instance}}"/>
+                        <!-- MinWidth, not Width: the items are translated, and the longest ("Suivre les
+                             réglages globaux", fr) needs ~205 DIP against a hard 140. -->
+                        <ComboBox x:Name="OutputMode" MinWidth="180" VerticalAlignment="Center"
+                                  Style="{StaticResource DarkComboBox}"
+                                  AutomationProperties.LabeledBy="{Binding ElementName=OutputModeFieldLabel}"
+                                  ToolTip="{Binding [Manager.OutputModeHint], Source={x:Static app:LocProxy.Instance}}"/>
+                    </StackPanel>
+                </WrapPanel>
+            </StackPanel>
 
             <StackPanel Grid.Row="7" Margin="0,12,0,0">
                 <StackPanel Orientation="Horizontal">

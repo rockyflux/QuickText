@@ -43,11 +43,17 @@
                     <ListBoxItem Tag="SectionOutput"
                                  Content="{Binding [Settings.NavOutput], Source={x:Static app:LocProxy.Instance}}"
                                  AutomationProperties.Name="{Binding Content, RelativeSource={RelativeSource Self}}"/>
+                    <ListBoxItem Tag="SectionClipboard"
+                                 Content="{Binding [Settings.NavClipboard], Source={x:Static app:LocProxy.Instance}}"
+                                 AutomationProperties.Name="{Binding Content, RelativeSource={RelativeSource Self}}"/>
                     <ListBoxItem Tag="SectionData"
                                  Content="{Binding [Settings.NavData], Source={x:Static app:LocProxy.Instance}}"
                                  AutomationProperties.Name="{Binding Content, RelativeSource={RelativeSource Self}}"/>
                     <ListBoxItem Tag="SectionGeneral"
                                  Content="{Binding [Settings.NavGeneral], Source={x:Static app:LocProxy.Instance}}"
+                                 AutomationProperties.Name="{Binding Content, RelativeSource={RelativeSource Self}}"/>
+                    <ListBoxItem Tag="SectionAi"
+                                 Content="{Binding [Settings.NavAi], Source={x:Static app:LocProxy.Instance}}"
                                  AutomationProperties.Name="{Binding Content, RelativeSource={RelativeSource Self}}"/>
                 </ListBox>
             </DockPanel>
@@ -151,7 +157,7 @@
                             </StackPanel>
                         </StackPanel>
 
-                        <!-- section · 缩写 -->
+                        <!-- section · 文本指令 -->
                         <StackPanel x:Name="SectionAbbr" Visibility="Collapsed">
                             <ContentControl Margin="0,0,0,10" Style="{StaticResource SetHeader}"
                                             Content="{Binding [Settings.SectionAbbr], Source={x:Static app:LocProxy.Instance}}"/>
@@ -161,11 +167,35 @@
                             </StackPanel>
                             <StackPanel IsEnabled="{Binding IsChecked, ElementName=AbbrEnabled}">
                                 <StackPanel Style="{StaticResource SetField}">
+                                    <TextBlock x:Name="AbbrTerminatorsLabel" Text="{Binding [Settings.AbbrTerminators], Source={x:Static app:LocProxy.Instance}}"
+                                               Style="{StaticResource SetFieldLabel}"/>
+                                    <WrapPanel x:Name="AbbrTerminatorsPanel"
+                                               AutomationProperties.LabeledBy="{Binding ElementName=AbbrTerminatorsLabel}">
+                                        <CheckBox x:Name="TermSpace" Style="{StaticResource DarkCheckBox}" Margin="0,0,16,4"
+                                                  Content="{Binding [Settings.AbbrTermSpace], Source={x:Static app:LocProxy.Instance}}"
+                                                  Unchecked="OnTerminatorUnchecked"/>
+                                        <CheckBox x:Name="TermTab" Style="{StaticResource DarkCheckBox}" Margin="0,0,16,4"
+                                                  Content="{Binding [Settings.AbbrTermTab], Source={x:Static app:LocProxy.Instance}}"
+                                                  Unchecked="OnTerminatorUnchecked"/>
+                                        <CheckBox x:Name="TermEnter" Style="{StaticResource DarkCheckBox}" Margin="0,0,16,4"
+                                                  Content="{Binding [Settings.AbbrTermEnter], Source={x:Static app:LocProxy.Instance}}"
+                                                  Unchecked="OnTerminatorUnchecked"/>
+                                    </WrapPanel>
+                                    <TextBlock Style="{StaticResource SetHint}"
+                                               Text="{Binding [Settings.AbbrTerminatorsHint], Source={x:Static app:LocProxy.Instance}}"/>
+                                </StackPanel>
+                                <StackPanel Style="{StaticResource SetField}">
                                     <TextBlock x:Name="AbbrPrefixLabel" Text="{Binding [Settings.AbbrPrefix], Source={x:Static app:LocProxy.Instance}}"
                                                Style="{StaticResource SetFieldLabel}"/>
-                                    <TextBox x:Name="AbbrPrefixBox" Style="{StaticResource DarkTextBox}" HorizontalAlignment="Left" Width="90"
-                                             AutomationProperties.LabeledBy="{Binding ElementName=AbbrPrefixLabel}"
-                                             FontFamily="{StaticResource Font.Mono}" FontSize="14"/>
+                                    <ComboBox x:Name="AbbrPrefixCombo" Style="{StaticResource DarkComboBox}"
+                                              AutomationProperties.LabeledBy="{Binding ElementName=AbbrPrefixLabel}"
+                                              HorizontalAlignment="Left" MinWidth="160">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Label}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
                                     <TextBlock Style="{StaticResource SetHint}"
                                                Text="{Binding [Settings.AbbrPrefixHint], Source={x:Static app:LocProxy.Instance}}"/>
                                     <TextBlock Style="{StaticResource SetHint}" Margin="2,2,0,0"
@@ -210,6 +240,36 @@
                                           Content="{Binding [Settings.RestoreClipboard], Source={x:Static app:LocProxy.Instance}}"/>
                                 <TextBlock Style="{StaticResource SetHintIndent}"
                                            Text="{Binding [Settings.RestoreClipboardHint], Source={x:Static app:LocProxy.Instance}}"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- section · 剪贴板历史 -->
+                        <StackPanel x:Name="SectionClipboard" Visibility="Collapsed">
+                            <ContentControl Margin="0,0,0,10" Style="{StaticResource SetHeader}"
+                                            Content="{Binding [Settings.SectionClipboard], Source={x:Static app:LocProxy.Instance}}"/>
+                            <StackPanel Style="{StaticResource SetField}">
+                                <CheckBox x:Name="ClipboardHistoryEnabled" Style="{StaticResource DarkCheckBox}"
+                                          Content="{Binding [Settings.ClipboardHistoryEnabled], Source={x:Static app:LocProxy.Instance}}"/>
+                                <TextBlock Style="{StaticResource SetHintIndent}"
+                                           Text="{Binding [Settings.ClipboardHistoryHint], Source={x:Static app:LocProxy.Instance}}"/>
+                            </StackPanel>
+                            <StackPanel Style="{StaticResource SetField}">
+                                <TextBlock Text="{Binding [Settings.ClipboardHistoryHotkey], Source={x:Static app:LocProxy.Instance}}"
+                                           Style="{StaticResource SetFieldLabel}"/>
+                                <ui:AccessibleHotkeyBox x:Name="ClipboardHistoryHotkeyBox" Background="{DynamicResource Brush.InputBg}" BorderBrush="{DynamicResource Brush.InputBorder}"
+                                        BorderThickness="1" CornerRadius="7" Padding="12,9" Focusable="True" Cursor="Hand" FocusVisualStyle="{StaticResource AppFocusVisual}"
+                                        AutomationProperties.Name="{Binding [Settings.ClipboardHistoryHotkey], Source={x:Static app:LocProxy.Instance}}"
+                                        AutomationProperties.HelpText="{Binding [Settings.HotkeyHint], Source={x:Static app:LocProxy.Instance}}"
+                                        MouseLeftButtonDown="OnClipboardHistoryHotkeyClick" PreviewKeyDown="OnHotkeyKeyDown"
+                                        LostKeyboardFocus="OnHotkeyLostFocus">
+                                    <TextBlock x:Name="ClipboardHistoryHotkeyText" FontFamily="{StaticResource Font.Ui}" FontSize="14"
+                                               Foreground="{DynamicResource Brush.TextPrimary}"/>
+                                </ui:AccessibleHotkeyBox>
+                            </StackPanel>
+                            <StackPanel Style="{StaticResource SetField}" Margin="0">
+                                <Button x:Name="ClipboardHistoryClear" Style="{StaticResource DarkButton}" HorizontalAlignment="Left"
+                                        Content="{Binding [Settings.ClipboardHistoryClear], Source={x:Static app:LocProxy.Instance}}"
+                                        Click="OnClipboardHistoryClear"/>
                             </StackPanel>
                         </StackPanel>
 
@@ -317,6 +377,66 @@
                                 <Button x:Name="CheckNowButton" HorizontalAlignment="Left" Style="{StaticResource DarkButton}" Padding="12,6" Margin="24,4,0,0"
                                         Content="{Binding [Settings.CheckNow], Source={x:Static app:LocProxy.Instance}}" Click="OnCheckUpdatesNow"/>
                             </StackPanel>
+                        </StackPanel>
+
+                        <!-- section · AI -->
+                        <StackPanel x:Name="SectionAi" Visibility="Collapsed">
+                            <ContentControl Margin="0,0,0,10" Style="{StaticResource SetHeader}"
+                                            Content="{Binding [Settings.SectionAi], Source={x:Static app:LocProxy.Instance}}"/>
+                            <TextBlock Style="{StaticResource SetHint}" Margin="0,0,0,10"
+                                       Text="{Binding [Settings.AiHint], Source={x:Static app:LocProxy.Instance}}"/>
+                            <ListBox x:Name="AiList" MinHeight="120" MaxHeight="280"
+                                     Background="{DynamicResource Brush.InputBg}"
+                                     BorderBrush="{DynamicResource Brush.InputBorder}" BorderThickness="1"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                     SelectionMode="Single" MouseDoubleClick="OnAiEdit"
+                                     AutomationProperties.Name="{Binding [Settings.SectionAi], Source={x:Static app:LocProxy.Instance}}">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource DarkListItem}">
+                                        <Setter Property="AutomationProperties.Name" Value="{Binding AutomationName}"/>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <DockPanel Margin="4,2">
+                                            <Border DockPanel.Dock="Right" Padding="7,2" CornerRadius="4" Margin="8,0,0,0"
+                                                    Background="{DynamicResource Brush.Amber}"
+                                                    Visibility="{Binding DefaultVis}"
+                                                    VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding [Settings.AiDefaultBadge], Source={x:Static app:LocProxy.Instance}}"
+                                                           FontSize="11" FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource Brush.WinBg}"/>
+                                            </Border>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Name}" FontSize="13.5"
+                                                           Foreground="{DynamicResource Brush.TextPrimary}"
+                                                           TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock FontSize="11.5" Margin="0,1,0,0"
+                                                           Foreground="{DynamicResource Brush.TextFaint}"
+                                                           TextTrimming="CharacterEllipsis">
+                                                    <Run Text="{Binding ProviderLabel, Mode=OneWay}"/>
+                                                    <Run Text=" · "/>
+                                                    <Run Text="{Binding ModelSummary, Mode=OneWay}"/>
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <WrapPanel Margin="0,10,0,0">
+                                <Button Style="{StaticResource DarkButton}" Padding="12,6" Margin="0,0,8,0"
+                                        Content="{Binding [Settings.AiAdd], Source={x:Static app:LocProxy.Instance}}"
+                                        Click="OnAiAdd"/>
+                                <Button Style="{StaticResource DarkButton}" Padding="12,6" Margin="0,0,8,0"
+                                        Content="{Binding [Settings.AiEdit], Source={x:Static app:LocProxy.Instance}}"
+                                        Click="OnAiEdit"/>
+                                <Button Style="{StaticResource DarkButton}" Padding="12,6" Margin="0,0,8,0"
+                                        Content="{Binding [Settings.AiSetDefault], Source={x:Static app:LocProxy.Instance}}"
+                                        Click="OnAiSetDefault"/>
+                                <Button Style="{StaticResource DarkButtonDanger}" Padding="12,6"
+                                        Content="{Binding [Settings.AiDelete], Source={x:Static app:LocProxy.Instance}}"
+                                        Click="OnAiDelete"/>
+                            </WrapPanel>
                         </StackPanel>
                     </Grid>
                 </ScrollViewer>

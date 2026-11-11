@@ -10,8 +10,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Brand icon lives once under assets/branding; linked in as the tray/window resource. -->
+    <!-- Brand icon lives once under assets/branding; linked in as the tray/window resource.
+         Float ball uses a dedicated PNG — WPF Image upscales the wrong .ico frame. -->
     <Resource Include="..\..\assets\branding\quicktext.ico" Link="Assets\quicktext.ico" />
+    <Resource Include="..\..\assets\branding\quicktext-float.png" Link="Assets\quicktext-float.png" />
   </ItemGroup>
 
   <ItemGroup>

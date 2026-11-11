@@ -268,6 +268,12 @@
                             <Border Style="{StaticResource HintKey}"><TextBlock Text="↵" Style="{StaticResource HintKeyText}"/></Border>
                             <TextBlock Text="{Binding [Search.Hint.Create], Source={x:Static app:LocProxy.Instance}}" Style="{StaticResource HintLabel}"/>
                         </StackPanel>
+                        <StackPanel x:Name="HintClipboard" Orientation="Horizontal" Margin="0,0,16,4" Visibility="Collapsed">
+                            <Border Style="{StaticResource HintKey}">
+                                <TextBlock x:Name="HintClipboardKey" FlowDirection="LeftToRight" Style="{StaticResource HintKeyText}"/>
+                            </Border>
+                            <TextBlock Text="{Binding [Search.Hint.Clipboard], Source={x:Static app:LocProxy.Instance}}" Style="{StaticResource HintLabel}"/>
+                        </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                             <Border Style="{StaticResource HintKey}"><TextBlock Text="esc" Style="{StaticResource HintKeyText}"/></Border>
                             <TextBlock Text="{Binding [Search.Hint.Close], Source={x:Static app:LocProxy.Instance}}" Style="{StaticResource HintLabel}"/>

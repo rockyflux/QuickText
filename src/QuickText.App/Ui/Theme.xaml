@@ -413,7 +413,7 @@
                         </Trigger>
                         <!-- Every custom-template interactive style in this file carries the same
                              IsEnabled dimming: replacing Template drops the stock control's built-in
-                             disabled look, and the settings "启用缩写" gate disables a whole panel of
+                             disabled look, and the settings "启用文本指令" gate disables a whole panel of
                              these — without the trigger they stay bright while ignoring every click.
                              RunSmoke enforces the rule; see RequireDisabledState. -->
                         <Trigger Property="IsEnabled" Value="False">

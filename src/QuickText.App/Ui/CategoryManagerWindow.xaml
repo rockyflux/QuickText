@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:app="clr-namespace:QuickText.App"
         Title="{Binding [CatMgr.Title], Source={x:Static app:LocProxy.Instance}}"
-        Width="480" Height="520" MinWidth="400" MinHeight="360" MaxHeight="900"
+        Width="620" Height="680" MinWidth="520" MinHeight="440" MaxHeight="900"
         ResizeMode="CanResize" ShowInTaskbar="True"
         Background="{DynamicResource Brush.WinBg}" FontFamily="{StaticResource Font.Ui}">
     <Grid Margin="20,16,20,16">
@@ -53,41 +53,37 @@
                 <TextBlock Grid.Row="1" x:Name="EmptyText" HorizontalAlignment="Center" VerticalAlignment="Center"
                            FontSize="13" Foreground="{DynamicResource Brush.TextFaint}" Visibility="Collapsed"
                            IsHitTestVisible="False"/>
-                <StackPanel Grid.Row="2" Margin="4,10,0,0">
-                    <WrapPanel>
-                        <TextBlock Style="{StaticResource FieldLabel}" Margin="0,0,9,0" VerticalAlignment="Center"
-                                   Text="{Binding [Manager.Color], Source={x:Static app:LocProxy.Instance}}"/>
-                        <Button Style="{StaticResource ColorSwatch}" Background="Transparent" Tag="" Click="OnColor"/>
-                        <Button Style="{StaticResource ColorSwatch}" Background="#3DC2A0" Tag="#3DC2A0" Click="OnColor"/>
-                        <Button Style="{StaticResource ColorSwatch}" Background="#5B9BD5" Tag="#5B9BD5" Click="OnColor"/>
-                        <Button Style="{StaticResource ColorSwatch}" Background="#A98CE8" Tag="#A98CE8" Click="OnColor"/>
-                        <Button Style="{StaticResource ColorSwatch}" Background="#FF8A5B" Tag="#FF8A5B" Click="OnColor"/>
-                        <Button Style="{StaticResource ColorSwatch}" Background="#E8C264" Tag="#E8C264" Click="OnColor"/>
-                        <Button Style="{StaticResource ColorSwatch}" Background="#E87AA8" Tag="#E87AA8" Click="OnColor"/>
-                    </WrapPanel>
-                    <Grid Margin="0,10,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock x:Name="SortLabel" Grid.Column="0" Style="{StaticResource FieldLabel}"
-                                   Margin="0,0,9,0" VerticalAlignment="Center"
-                                   Text="{Binding [Manager.Sort], Source={x:Static app:LocProxy.Instance}}"/>
-                        <ComboBox x:Name="SortCombo" Grid.Column="1" Style="{StaticResource DarkComboBox}"
-                                  VerticalAlignment="Center" SelectedValuePath="Tag"
-                                  AutomationProperties.LabeledBy="{Binding ElementName=SortLabel}"
-                                  SelectionChanged="OnSortModeChanged"/>
-                    </Grid>
-                </StackPanel>
+                <!-- Color first; sort sits after the swatches (wraps on a second line when narrow). -->
+                <WrapPanel Grid.Row="2" Margin="4,10,0,0">
+                    <TextBlock Style="{StaticResource FieldLabel}" Margin="0,0,9,6" VerticalAlignment="Center"
+                               Text="{Binding [Manager.Color], Source={x:Static app:LocProxy.Instance}}"/>
+                    <Button Style="{StaticResource ColorSwatch}" Background="Transparent" Tag="" Click="OnColor" Margin="0,0,10,6"/>
+                    <Button Style="{StaticResource ColorSwatch}" Background="#3DC2A0" Tag="#3DC2A0" Click="OnColor" Margin="0,0,10,6"/>
+                    <Button Style="{StaticResource ColorSwatch}" Background="#5B9BD5" Tag="#5B9BD5" Click="OnColor" Margin="0,0,10,6"/>
+                    <Button Style="{StaticResource ColorSwatch}" Background="#A98CE8" Tag="#A98CE8" Click="OnColor" Margin="0,0,10,6"/>
+                    <Button Style="{StaticResource ColorSwatch}" Background="#FF8A5B" Tag="#FF8A5B" Click="OnColor" Margin="0,0,10,6"/>
+                    <Button Style="{StaticResource ColorSwatch}" Background="#E8C264" Tag="#E8C264" Click="OnColor" Margin="0,0,10,6"/>
+                    <Button Style="{StaticResource ColorSwatch}" Background="#E87AA8" Tag="#E87AA8" Click="OnColor" Margin="0,0,10,6"/>
+                    <TextBlock x:Name="SortLabel" Style="{StaticResource FieldLabel}"
+                               Margin="18,0,9,6" VerticalAlignment="Center"
+                               Text="{Binding [Manager.Sort], Source={x:Static app:LocProxy.Instance}}"/>
+                    <ComboBox x:Name="SortCombo" Style="{StaticResource DarkComboBox}"
+                              MinWidth="160" Margin="0,0,0,6" VerticalAlignment="Center"
+                              SelectedValuePath="Tag"
+                              AutomationProperties.LabeledBy="{Binding ElementName=SortLabel}"
+                              SelectionChanged="OnSortModeChanged"/>
+                </WrapPanel>
             </Grid>
         </Border>
 
-        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,14,0,0">
-            <Button x:Name="BatchButton" Style="{StaticResource DarkButton}" Padding="14,7" Margin="0,0,8,0"
+        <WrapPanel Grid.Row="3" Margin="0,14,0,0">
+            <Button x:Name="BatchButton" Style="{StaticResource DarkButton}" Padding="14,7" Margin="0,0,8,6"
                     Click="OnBatchAdd"/>
-            <Button x:Name="InitButton" Style="{StaticResource DarkButton}" Padding="14,7"
-                    Click="OnInitialize"/>
-        </StackPanel>
+            <Button x:Name="AiCreateButton" Style="{StaticResource DarkButton}" Padding="14,7" Margin="0,0,8,6"
+                    Click="OnAiCreate"/>
+            <Button x:Name="InitButton" Style="{StaticResource DarkButton}" Padding="14,7" Margin="0,0,0,6"
+                    Click="OnInitialize" Visibility="Collapsed"/>
+        </WrapPanel>
 
         <Button Grid.Row="4" x:Name="CloseButton" Style="{StaticResource DarkButton}"
                 HorizontalAlignment="Right" Padding="14,7" Margin="0,14,0,0" Click="OnClose"/>

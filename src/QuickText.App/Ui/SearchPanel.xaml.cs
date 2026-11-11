@@ -853,6 +853,10 @@ public partial class SearchPanel : Window
         HintNav.Visibility = HintSend.Visibility = HintQuick.Visibility =
             hasRows ? Visibility.Visible : Visibility.Collapsed;
         HintCreate.Visibility = !hasRows && canCreate ? Visibility.Visible : Visibility.Collapsed;
+        var s = AppState.Current.Settings;
+        bool showClip = s.ClipboardHistoryEnabled && !string.IsNullOrWhiteSpace(s.ClipboardHistoryHotkey);
+        HintClipboard.Visibility = showClip ? Visibility.Visible : Visibility.Collapsed;
+        if (showClip) HintClipboardKey.Text = s.ClipboardHistoryHotkey.Trim();
     }
 
     private void ShowEmpty(string title, string sub)

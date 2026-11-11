@@ -162,13 +162,13 @@
   <data name="Settings.PlaceWindow"><value>활성 창 따라가기</value></data>
   <data name="Settings.PlaceCaret"><value>텍스트 커서 따라가기</value></data>
   <data name="Settings.PlaceFixed"><value>마지막 위치 기억</value></data>
-  <data name="Settings.SectionOutput"><value>출력</value></data>
+  <data name="Settings.SectionOutput"><value>전역 기본 출력 방식</value></data>
   <data name="Settings.SectionAbbr"><value>약어</value></data>
   <data name="Settings.SectionData"><value>데이터</value></data>
   <data name="Settings.SectionGeneral"><value>일반</value></data>
   <data name="Settings.NavSummon"><value>호출 및 단축키</value></data>
   <data name="Settings.NavAbbr"><value>약어 확장</value></data>
-  <data name="Settings.NavOutput"><value>출력 방식</value></data>
+  <data name="Settings.NavOutput"><value>전역 기본 출력 방식</value></data>
   <data name="Settings.NavData"><value>데이터 및 백업</value></data>
   <data name="Settings.NavGeneral"><value>언어 및 테마</value></data>
   <data name="Manager.Color"><value>색상</value></data>
@@ -332,4 +332,106 @@ Example:
   <data name="Skills.OpenFolder"><value>Skills 폴더 열기</value></data>
   <data name="Skills.OpenLocal"><value>로컬에서 열기</value></data>
   <data name="Skills.OpenFailed"><value>경로를 열 수 없습니다</value></data>
+  <data name="Settings.ClipboardHistoryEnabled"><value>클립보드 기록 사용</value></data>
+  <data name="Settings.ClipboardHistoryHint"><value>켜면 텍스트 복사를 3일간 보관합니다. 아래 단축키로 목록을 열어 붙여넣으세요.</value></data>
+  <data name="Settings.ClipboardHistoryHotkey"><value>클립보드 기록 단축키</value></data>
+  <data name="Settings.ClipboardHistoryClear"><value>기록 비우기</value></data>
+  <data name="Clipboard.Title"><value>클립보드 기록</value></data>
+  <data name="Clipboard.Empty"><value>기록이 없습니다</value></data>
+  <data name="Search.Hint.Clipboard"><value>클립보드</value></data>
+  <data name="Settings.NavAi"><value>AI</value></data>
+  <data name="Settings.SectionAi"><value>AI</value></data>
+  <data name="Settings.AiHint"><value>The first item is the default; select another and click Set as default to switch. The AI icon in the Manager name field uses the default to generate snippets.</value></data>
+  <data name="Settings.AiDefaultBadge"><value>Default</value></data>
+  <data name="Settings.AiAdd"><value>Add</value></data>
+  <data name="Settings.AiEdit"><value>Edit</value></data>
+  <data name="Settings.AiDelete"><value>Delete</value></data>
+  <data name="Settings.AiSetDefault"><value>Set as default</value></data>
+  <data name="Settings.AiEditTitle"><value>AI configuration</value></data>
+  <data name="Settings.AiName"><value>Name</value></data>
+  <data name="Settings.AiProvider"><value>Provider</value></data>
+  <data name="Settings.AiApiKey"><value>API Key</value></data>
+  <data name="Settings.AiApiKeyHint"><value>Stored in plain text on this machine — do not share it.</value></data>
+  <data name="Settings.AiBaseUrl"><value>Base URL</value></data>
+  <data name="Settings.AiBaseUrlHint"><value>Filled for known providers; you can override it.</value></data>
+  <data name="Settings.AiModel"><value>Model</value></data>
+  <data name="Settings.AiModelHint"><value>Fetched automatically; you can also type one.</value></data>
+  <data name="Settings.AiModelsLoading"><value>Fetching model list…</value></data>
+  <data name="Settings.AiModelsLoaded"><value>Fetched {0} models</value></data>
+  <data name="Settings.AiModelsFailed"><value>Fetch failed — showing the built-in list (you can still type)</value></data>
+  <data name="Settings.AiModelsEmpty"><value>No models returned — showing the built-in list (you can still type)</value></data>
+  <data name="Settings.AiModelsNeedUrl"><value>Enter a Base URL to fetch models</value></data>
+  <data name="Settings.AiProviderMagpie"><value>magpie</value></data>
+  <data name="Settings.AiProviderOpenAi"><value>OpenAI</value></data>
+  <data name="Settings.AiProviderAnthropic"><value>Anthropic</value></data>
+  <data name="Settings.AiProviderAzure"><value>Azure OpenAI</value></data>
+  <data name="Settings.AiProviderDeepSeek"><value>DeepSeek</value></data>
+  <data name="Settings.AiProviderCustom"><value>Custom (OpenAI-compatible)</value></data>
+  <data name="Manager.AiBadResponse"><value>Could not parse the model reply. Try again or switch models.</value></data>
+  <data name="Manager.AiConfirm"><value>Confirm</value></data>
+  <data name="Manager.AiDialogTitle"><value>AI generate snippet</value></data>
+  <data name="Manager.AiFailed"><value>Generation failed: {0}</value></data>
+  <data name="Manager.AiGenerate"><value>AI generate</value></data>
+  <data name="Manager.AiGenerating"><value>Generating…</value></data>
+  <data name="Manager.AiNotConfigured"><value>Add at least one provider under Settings → AI, and set the one you want as default.</value></data>
+  <data name="Manager.AiNotConfiguredTitle"><value>AI not configured</value></data>
+  <data name="Manager.AiPrompt"><value>Describe the snippet</value></data>
+  <data name="Manager.AiTemplates"><value>Templates</value></data>
+  <data name="Manager.AiTpl.General"><value>General</value></data>
+  <data name="Manager.AiTpl.General.Prompt"><value>Write a reusable expander snippet; use {variables} for fields that change.</value></data>
+  <data name="Manager.AiTpl.Profile.Prompt"><value>Write a profile fact (phone/email/address/company) as plain text — no placeholders.</value></data>
+  <data name="Manager.AiTpl.Office"><value>Office</value></data>
+  <data name="Manager.AiTpl.Dev"><value>Dev prompt</value></data>
+  <data name="Manager.AiTpl.Profile"><value>Profile</value></data>
+  <data name="Manager.AiTpl.Dev.Prompt"><value>Write a coding AI prompt using {clipboard}, {stack}, {language}, etc. for reuse.</value></data>
+  <data name="Manager.AiTpl.Agent.Prompt"><value>Write an Agent/Skill-style prompt: role, task, constraints, output format; material via {clipboard}.</value></data>
+  <data name="Manager.AiTpl.Agent"><value>Agent prompt</value></data>
+  <data name="Manager.AiTpl.Office.Prompt"><value>Write an office snippet (report/meeting/email/requirement) with {name}, {date}, {clipboard} where useful.</value></data>
+  <data name="Manager.AbbrTriggerHint"><value>In any text field, type {0} then press {1} to expand</value></data>
+  <data name="CatMgr.AiCreate"><value>AI create categories</value></data>
+  <data name="CatMgr.AiCreateHint"><value>Opens a copyable prompt with current index.json and category-file rules. Send it to Codex / Cursor etc. to rewrite the library folder.</value></data>
+  <data name="CatMgr.AiCreatePrompt"><value>请按下列规则在 QuickText 文本库中创建/整理分类（可改 index.json，并新建或更新各分类的 JSON 文件）：
+数据文件夹：{0}
+index.json 路径：{1}
+
+当前 index.json：
+{2}
+
+规则：
+1. index.json 是库目录清单，格式：
+   {{
+     "schemaVersion": 1,
+     "categories": [
+       {{ "name": "显示名", "file": "文件名.json", "color": "#3DC2A0 或空字符串", "sortMode": "created|name|usage|lastUsed 或省略（手动）" }}
+     ]
+   }}
+   categories 数组顺序即侧栏显示顺序。file 只能是库根下的文件名（不要子目录）。
+2. 每个分类对应一个 JSON 文件；若文件不存在请创建。不要命名为 index.json / trash.json / settings.json。
+3. 分类文件根节点必须是 JSON 数组。每条文本必填：id（GUID，如 32 位十六进制）、name（非空）。
+4. 常用字段：abbr（缩写，可空）、body（正文）、useVariables（是否启用 {{{{变量}}}} 占位符）、outputMode（"" | "paste" | "paste-enter" | "copy"；空表示跟随全局）。
+5. 可选字段：imagePath、codeFormat、createdAt、updatedAt。保留已有分类与条目，除非我明确要求替换；新建 id 必须是新的 GUID。
+6. 不要改 trash.json；写完后保持合法 JSON。
+
+分类文件示例：
+[
+  {{
+    "id": "0123456789abcdef0123456789abcdef",
+    "name": "示例",
+    "abbr": "sl",
+    "body": "你好",
+    "useVariables": false,
+    "outputMode": ""
+  }}
+]
+
+请根据我的需求修改 index.json 并创建/更新分类文件。我的需求：
+</value></data>
+  <data name="Settings.AbbrTerminators"><value>Trigger keys</value></data>
+  <data name="Settings.AbbrTermSpace"><value>Space</value></data>
+  <data name="Settings.AbbrTermTab"><value>Tab</value></data>
+  <data name="Settings.AbbrTermEnter"><value>Enter</value></data>
+  <data name="Settings.AbbrTerminatorsHint"><value>Keep at least one. Expansion runs when you press one of these after the abbreviation.</value></data>
+  <data name="Settings.AbbrPrefixNone"><value>No prefix</value></data>
+  <data name="Settings.SectionClipboard"><value>클립보드 기록</value></data>
+  <data name="Settings.NavClipboard"><value>클립보드</value></data>
 </root>

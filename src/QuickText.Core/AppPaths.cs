@@ -29,6 +29,7 @@ public static class AppPaths
     public const string SettingsFileName = "settings.json";
     public const string UsageFileName = "usage.stats";
     public const string SkillsFavoritesFileName = "skills-favorites.json";
+    public const string ClipboardHistoryFileName = "clipboard-history.json";
 
     /// <summary>Marker inside Data\ recording that the one-time portable carry-over already ran.</summary>
     public const string SeededMarkerName = ".seeded";
@@ -88,6 +89,7 @@ public static class AppPaths
     public static string DefaultDataFolder => DefaultDataFolderFor(IsPortable, _exeDir);
     public static string SettingsPath => Path.Combine(MachineStateDir, SettingsFileName);
     public static string SkillsFavoritesPath => Path.Combine(MachineStateDir, SkillsFavoritesFileName);
+    public static string ClipboardHistoryPath => Path.Combine(MachineStateDir, ClipboardHistoryFileName);
     public static string BackupDir => Path.Combine(MachineStateDir, "backups");
 
     /// <summary>Where downloaded updates are unpacked. Portable mode keeps them inside Data so the

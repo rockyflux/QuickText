@@ -8,9 +8,11 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Ui/Theme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <!-- Icon is applied in code from the multi-size .ico at SM_CXSMICON.
+                 IconSource goes through WPF's single-frame decode and the tray ends up
+                 with a downscaled 256px glyph — soft and wrong. -->
             <tb:TaskbarIcon x:Key="Tray"
                         ToolTipText="QuickText"
-                        IconSource="pack://application:,,,/Assets/quicktext.ico"
                         TrayMouseDoubleClick="OnTrayDoubleClick"
                         Visibility="Visible">
             <tb:TaskbarIcon.ContextMenu>

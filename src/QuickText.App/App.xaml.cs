@@ -6,6 +6,7 @@ using H.NotifyIcon;
 using H.NotifyIcon.Core;
 using QuickText.App.Interop;
 using QuickText.App.Ui;
+using QuickText.Core.Clipboard;
 using QuickText.Core.Interop;
 using QuickText.Core.Localization;
 
@@ -17,8 +18,12 @@ public partial class App : Application
     private Window _hidden = null!;
     private GlobalHotkey _hotkey = null!;
     private GlobalHotkey? _captureHotkey;
+    private GlobalHotkey? _clipboardHotkey;
     private KeyboardHook _hook = null!;
+    private ClipboardHistoryStore _clipboardStore = null!;
+    private ClipboardHistoryWatcher? _clipboardWatcher;
     private SearchPanel? _panel;
+    private ClipboardHistoryPanel? _clipboardPanel;
     private FloatingBallWindow? _floatBall;
     // Session-only: hiding the ball does not survive a restart (every launch shows it again).
     private bool _floatBallHidden;
@@ -342,7 +347,8 @@ public partial class App : Application
         // until the dispatcher runs (after OnStartup returns), so nothing is handled half-initialized.
         CreateMessageWindow();
 
-        _tray = (TaskbarIcon)FindResource("Tray");   // icon comes from IconSource (Assets/quicktext.ico)
+        _tray = (TaskbarIcon)FindResource("Tray");
+        ApplyTrayIcon(_tray);
         // ForceCreate is REQUIRED here, unlike under the old Hardcodet package, which added the
         // shell icon from the constructor. H.NotifyIcon defers that to the Loaded event — and this
         // TaskbarIcon lives in App.xaml's resources, so it is never in a visual tree and never
@@ -377,8 +383,14 @@ public partial class App : Application
         ApplyMenu();
         LocalizationService.Instance.PropertyChanged += (_, _) => Dispatcher.Invoke(ApplyMenu);
 
+        _clipboardStore = new ClipboardHistoryStore(Core.AppPaths.ClipboardHistoryPath);
+        _clipboardWatcher = new ClipboardHistoryWatcher(
+            _hotkeyHwnd,
+            () => AppState.Current.Settings.ClipboardHistoryEnabled,
+            _clipboardStore);
         RegisterHotkey(_hotkeyHwnd);
         SetupTapHook();
+        _clipboardWatcher.Sync();
         // Remember the last real app window so a tray / ball summon (foreground = taskbar or us)
         // still has somewhere to paste into.
         Interop.PasteTarget.StartTracking();
@@ -548,6 +560,26 @@ public partial class App : Application
         base.OnExit(e);
     }
 
+    /// <summary>
+    /// Load the tray glyph from the multi-size .ico at the shell's small-icon size.
+    /// Going through <c>IconSource</c> lets WPF decode one frame (usually 256) and H.NotifyIcon
+    /// then downscales it — that is what made the tray look soft. <see cref="System.Drawing.Icon"/>
+    /// with an explicit size picks the matching 16/20/24/32 frame instead.
+    /// </summary>
+    private static void ApplyTrayIcon(TaskbarIcon tray)
+    {
+        var info = GetResourceStream(new Uri("pack://application:,,,/Assets/quicktext.ico"))
+            ?? throw new InvalidOperationException("Assets/quicktext.ico is missing from the assembly.");
+        using var copy = new System.IO.MemoryStream();
+        info.Stream.CopyTo(copy);
+        copy.Position = 0;
+        // SM_CXSMICON: 16 @100%, 20 @125%, 24 @150%, 32 @200%.
+        int side = NativeMethods.GetSystemMetrics(49);
+        if (side < 16) side = 16;
+        tray.Icon?.Dispose();
+        tray.Icon = new System.Drawing.Icon(copy, side, side);
+    }
+
     private void ApplyMenu()
     {
         var loc = LocalizationService.Instance;
@@ -616,17 +648,55 @@ public partial class App : Application
     {
         _hotkey?.Dispose(); _hotkey = null!;
         _captureHotkey?.Dispose(); _captureHotkey = null;
+        _clipboardHotkey?.Dispose(); _clipboardHotkey = null;
         _tapHook?.Dispose(); _tapHook = null;
         if (_settingsOpenCount > 0 || _hotkeyHwnd == IntPtr.Zero) return;   // suspended, or not started (--smoke)
         RegisterHotkey(_hotkeyHwnd);
         SetupTapHook();
+        _clipboardWatcher?.Sync();
     }
+
+    /// <summary>Shared store for Settings clear / history panel. Null under --smoke before startup.</summary>
+    internal ClipboardHistoryStore ClipboardHistory =>
+        _clipboardStore ??= new ClipboardHistoryStore(Core.AppPaths.ClipboardHistoryPath);
 
     /// <summary>A Settings window opened — turn summon triggers off so its capture boxes get the keys.</summary>
     public void SuspendSummonTriggers() { _settingsOpenCount++; ArmSummonTriggers(); }
 
     /// <summary>A Settings window closed — re-arm from current settings once the LAST one is gone.</summary>
     public void ResumeSummonTriggers() { if (_settingsOpenCount > 0) _settingsOpenCount--; ArmSummonTriggers(); }
+
+    /// <summary>
+    /// Run a shell common dialog (Open/Save/Folder) with our low-level input hooks down.
+    /// Those dialogs load every Explorer shell extension into THIS process; combined with
+    /// WH_KEYBOARD_LL / WH_MOUSE_LL that has been observed as a hard BEX64 exit (0xc0000409)
+    /// the moment the picker opens — WER shows comdlg32 + third-party shellext (e.g. Nutstore).
+    /// </summary>
+    internal void RunWithInputHooksSuspended(Action action)
+    {
+        _hook?.Uninstall();
+        _tapHook?.Dispose();
+        _tapHook = null;
+        try { action(); }
+        finally
+        {
+            if (AppState.Current.Settings.AbbrEnabled) _hook?.Install();
+            // Match ArmSummonTriggers: don't put the tap hook back while Settings is capturing keys.
+            if (_settingsOpenCount == 0 && _hotkeyHwnd != IntPtr.Zero) SetupTapHook();
+        }
+    }
+
+    /// <summary>Convenience for UI code that may run under --smoke (no live App hooks).</summary>
+    internal static T WithShellDialog<T>(Func<T> func)
+    {
+        if (Current is App app)
+        {
+            T result = default!;
+            app.RunWithInputHooksSuspended(() => result = func());
+            return result;
+        }
+        return func();
+    }
 
     /// <summary>(Re)install the "tap a lone modifier to summon" hook from the current settings.</summary>
     private void SetupTapHook()
@@ -697,12 +767,38 @@ public partial class App : Application
             Balloon(string.Format(LocalizationService.Instance["Msg.HotkeyInvalid"], settings.CaptureHotkey),
                 NotificationIcon.Warning);
         }
+
+        // Optional third hotkey: summon clipboard history (Task 4 wires Pressed).
+        try
+        {
+            if (settings.ClipboardHistoryEnabled
+                && !string.IsNullOrWhiteSpace(settings.ClipboardHistoryHotkey))
+            {
+                var def = HotkeyDefinition.Parse(settings.ClipboardHistoryHotkey);
+                _clipboardHotkey = new GlobalHotkey(hwnd, def, GlobalHotkey.DefaultId + 2);
+                _clipboardHotkey.Pressed += () =>
+                {
+                    Interop.PasteTarget.Remember(Interop.NativeMethods.GetForegroundWindow());
+                    ShowClipboardHistory();
+                };
+                if (!_clipboardHotkey.TryRegister(out _))
+                    Balloon(string.Format(LocalizationService.Instance["Msg.HotkeyTaken"], settings.ClipboardHistoryHotkey),
+                        NotificationIcon.Warning);
+            }
+        }
+        catch (FormatException)
+        {
+            Balloon(string.Format(LocalizationService.Instance["Msg.HotkeyInvalid"], settings.ClipboardHistoryHotkey),
+                NotificationIcon.Warning);
+        }
     }
 
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
         if (_hotkey != null && _hotkey.HandleMessage(msg, wParam)) handled = true;
         else if (_captureHotkey != null && _captureHotkey.HandleMessage(msg, wParam)) handled = true;
+        else if (_clipboardHotkey != null && _clipboardHotkey.HandleMessage(msg, wParam)) handled = true;
+        else if (_clipboardWatcher != null && _clipboardWatcher.HandleMessage(msg)) handled = true;
         else if (msg == ShowPanelMsg && ShowPanelMsg != 0)
         {
             // A second launch says "the user wants QuickText" — activate and summon the panel.
@@ -747,6 +843,8 @@ public partial class App : Application
             Exercise(new SkillsWindow());
             Exercise(new SkillsWindow(importMode: true));
             Exercise(new CategoryBatchDialog());
+            Exercise(new AiConfigDialog());
+            Exercise(new AiGenerateDialog());
             Exercise(new CategoryJsonWindow());
             var settings = new SettingsWindow();
             // The blank-data-folder field now carries a placeholder showing the resolved default —
@@ -762,14 +860,16 @@ public partial class App : Application
             // SyntaxTheme.ApplyDark and PlaceholderColorizer end to end.
             Exercise(new BodyEditorWindow("", "", false, 0, 0, "json"));
             Exercise(new FloatingBallWindow());
+            Exercise(new ClipboardHistoryPanel());
             // The tray icon is the app's ONLY persistent UI, and it is the one resource that has to
             // be created by hand: it lives in App.xaml's resources, so it never joins a visual tree
             // and never fires Loaded — the event H.NotifyIcon creates the shell icon from. A missing
-            // ForceCreate, or an IconSource that stops resolving, leaves an app with no tray icon at
+            // ForceCreate, or a tray .ico that fails to resolve, leaves an app with no tray icon at
             // all and nothing but the hotkey, which no other check here would notice.
             var tray = (TaskbarIcon)FindResource("Tray");
             try
             {
+                ApplyTrayIcon(tray);
                 tray.ForceCreate();
                 if (!tray.IsCreated)
                     throw new InvalidOperationException("Tray icon did not materialize (TaskbarIcon.IsCreated == false).");
@@ -1213,6 +1313,9 @@ public partial class App : Application
             // theme during init (the same side effect the plain settings shot guards against),
             // which otherwise renders the light pass in dark.
             Shot(t + "settings-capture", () => new SettingsWindow(), w => { Ui.ThemeService.Apply(activeTheme); ((SettingsWindow)w).ShotsCapturing(); }, allHeights: false);
+            Shot(t + "settings-ai", () => new SettingsWindow(), w => { Ui.ThemeService.Apply(activeTheme); ((SettingsWindow)w).ShotsAiSection(); }, allHeights: false);
+            Shot(t + "ai-config", () => new AiConfigDialog(), allHeights: false);
+            Shot(t + "ai-generate", () => new AiGenerateDialog(), w => ((AiGenerateDialog)w).ShotsFill(), allHeights: false);
             // batch6: combo summon mode — the only way the "Ctrl/Alt/Shift/Win" hint (and the
             // combo capture box) appears on film; the machine defaults to tap mode.
             Shot(t + "settings-combo", () => new SettingsWindow(), w => { Ui.ThemeService.Apply(activeTheme); ((SettingsWindow)w).ShotsComboMode(); }, allHeights: false);
@@ -1353,8 +1456,22 @@ public partial class App : Application
             p.Hide();
             return;
         }
+        if (_clipboardPanel is { IsVisible: true }) _clipboardPanel.Hide();
         _panel ??= new SearchPanel();
         _panel.ShowForCurrentForeground(captureTarget);
+    }
+
+    private void ShowClipboardHistory(bool toggle = true)
+    {
+        if (!AppState.Current.Settings.ClipboardHistoryEnabled) return;
+        if (toggle && _clipboardPanel is { IsVisible: true } open)
+        {
+            open.Hide();
+            return;
+        }
+        if (_panel is { IsVisible: true }) _panel.Hide();
+        _clipboardPanel ??= new ClipboardHistoryPanel();
+        _clipboardPanel.ShowForCurrentForeground();
     }
 
     private void OnOpenSearch(object s, RoutedEventArgs e) => ShowSearch(toggle: false);
@@ -1464,7 +1581,11 @@ public partial class App : Application
         _hook?.Dispose();
         _hotkey?.Dispose();
         _captureHotkey?.Dispose();
+        _clipboardHotkey?.Dispose();
+        _clipboardWatcher?.Dispose();
         _tapHook?.Dispose();
+        try { _clipboardPanel?.Close(); } catch { /* shutting down */ }
+        _clipboardPanel = null;
         try { _floatBall?.Close(); } catch { /* shutting down */ }
         _floatBall = null;
         _tray.Dispose();

@@ -353,30 +353,54 @@ public static class PasteEngine
 
     private static bool SetClipboardTextWithRetry(string text)
     {
-        for (int attempt = 0; attempt < 5; attempt++)
+        using (ClipboardWriteGate.Suppress())
         {
-            try { Clipboard.SetText(text); return true; }
-            catch { System.Threading.Thread.Sleep(30); }
+            for (int attempt = 0; attempt < 5; attempt++)
+            {
+                try
+                {
+                    Clipboard.SetText(text);
+                    ClipboardWriteGate.NoteOwnWrite();
+                    return true;
+                }
+                catch { System.Threading.Thread.Sleep(30); }
+            }
         }
         return false;
     }
 
     private static bool SetClipboardImageWithRetry(System.Windows.Media.Imaging.BitmapSource image)
     {
-        for (int attempt = 0; attempt < 5; attempt++)
+        using (ClipboardWriteGate.Suppress())
         {
-            try { Clipboard.SetImage(image); return true; }
-            catch { System.Threading.Thread.Sleep(30); }
+            for (int attempt = 0; attempt < 5; attempt++)
+            {
+                try
+                {
+                    Clipboard.SetImage(image);
+                    ClipboardWriteGate.NoteOwnWrite();
+                    return true;
+                }
+                catch { System.Threading.Thread.Sleep(30); }
+            }
         }
         return false;
     }
 
     private static bool SetClipboardDataWithRetry(IDataObject data)
     {
-        for (int attempt = 0; attempt < 5; attempt++)
+        using (ClipboardWriteGate.Suppress())
         {
-            try { Clipboard.SetDataObject(data, true); return true; }
-            catch { System.Threading.Thread.Sleep(30); }
+            for (int attempt = 0; attempt < 5; attempt++)
+            {
+                try
+                {
+                    Clipboard.SetDataObject(data, true);
+                    ClipboardWriteGate.NoteOwnWrite();
+                    return true;
+                }
+                catch { System.Threading.Thread.Sleep(30); }
+            }
         }
         return false;
     }

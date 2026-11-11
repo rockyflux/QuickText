@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -39,7 +40,10 @@ public partial class CategoryManagerWindow : Window
         HintText.Text = loc["CatMgr.Hint"] + " " + loc["CatMgr.DoubleClickRename"];
         EmptyText.Text = loc["CatMgr.Empty"];
         BatchButton.Content = loc["CatMgr.BatchAdd"];
+        AiCreateButton.Content = loc["CatMgr.AiCreate"];
+        AiCreateButton.ToolTip = loc["CatMgr.AiCreateHint"];
         InitButton.Content = loc["CatMgr.Initialize"];
+        InitButton.ToolTip = loc["CatMgr.InitHint"];
         CloseButton.Content = loc["Dialog.OK"];
         foreach (var (mode, key) in SortModeItems)
             SortCombo.Items.Add(new ComboBoxItem { Content = loc[key], Tag = mode });
@@ -65,6 +69,8 @@ public partial class CategoryManagerWindow : Window
         _cats = AppState.Current.SnapshotCategories().ToList();
         Categories.ItemsSource = _cats;
         EmptyText.Visibility = _cats.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+        // Seed defaults only make sense on an empty library; hide once any category exists.
+        InitButton.Visibility = _cats.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         if (keep != null) SelectByName(keep);
         else if (_cats.Count > 0) Categories.SelectedIndex = 0;
         Categories.Items.Refresh();
@@ -246,6 +252,30 @@ public partial class CategoryManagerWindow : Window
 
     private void OnBatchAdd(object s, RoutedEventArgs e) =>
         RunBatch(L("CatMgr.BatchAdd"), L("CatMgr.BatchHint"), "");
+
+    /// <summary>Show a ready-to-paste AI prompt that includes the live index.json and the
+    /// category-file schema, so Codex / Cursor can rewrite the library on disk.</summary>
+    private void OnAiCreate(object s, RoutedEventArgs e)
+    {
+        var root = AppState.Current.Store.Root;
+        var indexPath = Path.Combine(root, "index.json");
+        string indexJson;
+        try
+        {
+            indexJson = File.Exists(indexPath)
+                ? File.ReadAllText(indexPath)
+                : "{\n  \"schemaVersion\": 1,\n  \"categories\": []\n}";
+        }
+        catch
+        {
+            indexJson = "{\n  \"schemaVersion\": 1,\n  \"categories\": []\n}";
+        }
+
+        // Escape braces so live JSON cannot break string.Format (template uses {{ }} for samples).
+        static string Esc(string s) => (s ?? "").Replace("{", "{{").Replace("}", "}}");
+        var prompt = string.Format(L("CatMgr.AiCreatePrompt"), Esc(root), Esc(indexPath), Esc(indexJson));
+        CategoryAiPromptDialog.Show(this, prompt);
+    }
 
     private void OnInitialize(object s, RoutedEventArgs e)
     {

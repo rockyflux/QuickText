@@ -14,8 +14,44 @@ public class SettingsStoreTests
         var s = store.Load();
         Assert.Equal("Ctrl+Shift+8", s.Hotkey);
         Assert.True(s.AbbrEnabled);
+        Assert.Equal("/", s.AbbrPrefix);
+        Assert.Equal(" \t\r\n", s.TerminatorChars);
         Assert.False(s.RestoreClipboard);
+        Assert.False(s.ClipboardHistoryEnabled);
+        Assert.Equal(AppSettings.DefaultClipboardHistoryHotkey, s.ClipboardHistoryHotkey);
         Assert.Equal("", s.Language);
+    }
+
+    [Fact]
+    public void Clipboard_history_settings_survive_a_roundtrip()
+    {
+        var path = TempFile();
+        try
+        {
+            var store = new SettingsStore(path);
+            store.Save(new AppSettings
+            {
+                ClipboardHistoryEnabled = true,
+                ClipboardHistoryHotkey = "Alt+V",
+            });
+            var s = store.Load();
+            Assert.True(s.ClipboardHistoryEnabled);
+            Assert.Equal("Alt+V", s.ClipboardHistoryHotkey);
+        }
+        finally { File.Delete(path); }
+    }
+
+    [Fact]
+    public void TerminatorChars_survive_a_roundtrip()
+    {
+        var path = TempFile();
+        try
+        {
+            var store = new SettingsStore(path);
+            store.Save(new AppSettings { TerminatorChars = " \t" });
+            Assert.Equal(" \t", store.Load().TerminatorChars);
+        }
+        finally { File.Delete(path); }
     }
 
     [Fact]

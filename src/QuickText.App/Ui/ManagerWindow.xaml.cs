@@ -9,8 +9,10 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using QuickText.App;
+using QuickText.Core;
 using QuickText.Core.Localization;
 using QuickText.Core.Models;
+using QuickText.Core.Settings;
 using QuickText.Core.Snippets;
 
 namespace QuickText.App.Ui;
@@ -47,7 +49,7 @@ public partial class ManagerWindow : Window
         WindowTheming.UseDarkChrome(this);
         WindowTheming.ApplyFlowDirection(this);
         WindowTheming.PlaceOnActiveMonitor(this);   // shared with Settings: on the user's monitor, capped, on-screen
-        AbbrPrefixText.Text = AppState.Current.Settings.AbbrPrefix;   // the auto-added trigger prefix
+        RefreshAbbrTriggerUi();
 
         var loc = LocalizationService.Instance;
         foreach (var key in new[] { "Manager.Output.Default", "Manager.Output.Paste", "Manager.Output.PasteEnter", "Manager.Output.Copy" })
@@ -67,6 +69,7 @@ public partial class ManagerWindow : Window
         ApplyWrap();
         ApplyLineNumbers();
         ApplyImageSection();
+        ApplyBodySection();
 
         Closing += OnClosing;
         _filterDebounce.Tick += (_, _) => ApplyFilter();
@@ -203,6 +206,32 @@ public partial class ManagerWindow : Window
         }
     }
 
+    /// <summary>
+    /// Image snippets ignore body on send — hide the editor, its toolbar, and UseVars, and leave
+    /// only OutputMode (still used for copy / paste / paste-enter). On image snippets OutputMode
+    /// uses the same label-above / control-below stack as Abbr; text snippets keep the inline row.
+    /// </summary>
+    private void ApplyBodySection() => SetBodySectionVisible(_editing?.IsImage != true);
+
+    private void SetBodySectionVisible(bool showBody)
+    {
+        var vis = showBody ? Visibility.Visible : Visibility.Collapsed;
+        BodyHeader.Visibility = vis;
+        Body.Visibility = vis;
+        UseVars.Visibility = vis;
+        OutputModeInlineLabel.Visibility = vis;
+        // Image: FieldLabel above the combo (Abbr pattern). Text: muted inline label beside it.
+        OutputModeFieldLabel.Visibility = showBody ? Visibility.Collapsed : Visibility.Visible;
+        System.Windows.Automation.AutomationProperties.SetLabeledBy(
+            OutputMode, showBody ? OutputModeInlineLabel : OutputModeFieldLabel);
+        OptionsRow.Margin = showBody ? new Thickness(2, 12, 0, 0) : new Thickness(2, 18, 0, 0);
+        // A Collapsed child in a * row still leaves the row taking leftover height — zero the
+        // row so the image block can use the freed space.
+        BodyEditorRow.Height = showBody
+            ? new GridLength(1, GridUnitType.Star)
+            : new GridLength(0);
+    }
+
     /// <summary>Open the enlarged body editor, then take its text, caret and selection back.</summary>
     private void OnExpandBody(object sender, RoutedEventArgs e)
     {
@@ -280,8 +309,8 @@ public partial class ManagerWindow : Window
     protected override void OnActivated(EventArgs e)
     {
         base.OnActivated(e);
-        // Reflect a prefix change made in Settings while this window stayed open.
-        AbbrPrefixText.Text = AppState.Current.Settings.AbbrPrefix;
+        // Reflect prefix / terminator changes made in Settings while this window stayed open.
+        RefreshAbbrTriggerUi();
         // A reload that arrived while a modal dialog was open is reconciled after that dialog's
         // caller has finished handling its result.
         if (IsStale && !HasOpenOwnedWindow()) QueuePendingReload();
@@ -522,6 +551,7 @@ public partial class ManagerWindow : Window
         int mode = Array.IndexOf(OutputModes, b.OutputMode);
         OutputMode.SelectedIndex = mode < 0 ? 0 : mode;
         UpdateAbbrConflictHint();
+        RefreshAbbrTriggerUi();
     }
 
     /// <summary>Drop empty drafts so a "new" the user abandoned isn't kept as a blank row (see
@@ -665,6 +695,9 @@ public partial class ManagerWindow : Window
             int mode = Array.IndexOf(OutputModes, sn.OutputMode ?? "");
             OutputMode.SelectedIndex = mode < 0 ? 0 : mode;
             UpdateAbbrConflictHint();
+            // Abbr.TextChanged skips when the previous row was also empty; refresh the tip from
+            // the loaded value so a prior non-empty tip cannot stick on a blank command.
+            RefreshAbbrTriggerUi();
             UpdateUsageStat(sn.Id);
             UpdateSnippetImage();
             EditorPane.IsEnabled = true;
@@ -682,11 +715,13 @@ public partial class ManagerWindow : Window
         SnippetImagePeek.Source = null;
         OutputMode.SelectedIndex = 0;
         AbbrConflict.Visibility = Visibility.Collapsed;
+        RefreshAbbrTriggerUi();
         UsageStat.Text = "";
         SnippetImage.Source = null;
         // _editing is already null by every call site, so this collapses the (now dead) image
         // section instead of leaving it expanded over a form with no snippet behind it.
         ApplyImageSection();
+        ApplyBodySection();
         // Nothing selected — gray the editor out so typing can't silently vanish (there's no
         // snippet behind these fields until one is added/selected).
         EditorPane.IsEnabled = false;
@@ -703,7 +738,37 @@ public partial class ManagerWindow : Window
             last?.ToLocalTime().ToString("yyyy-MM-dd HH:mm") ?? "—");
     }
 
-    private void OnAbbrChanged(object sender, TextChangedEventArgs e) => UpdateAbbrConflictHint();
+    private void OnAbbrChanged(object sender, TextChangedEventArgs e)
+    {
+        UpdateAbbrConflictHint();
+        RefreshAbbrTriggerUi();
+    }
+
+    /// <summary>Live "how to fire this" tip beside the command box (prefix lives in the tip only).
+    /// Cleared when the command is empty so a prior tip cannot linger on new/blank snippets.</summary>
+    private void RefreshAbbrTriggerUi()
+    {
+        var abbr = Abbr.Text.Trim();
+        if (abbr.Length == 0)
+        {
+            AbbrTriggerHint.Text = "";
+            return;
+        }
+
+        var settings = AppState.Current.Settings;
+        AbbrTriggerHint.Text = string.Format(L("Manager.AbbrTriggerHint"),
+            (settings.AbbrPrefix ?? "") + abbr, FirstTerminatorLabel(settings.TerminatorChars));
+    }
+
+    /// <summary>Settings keeps Space / Tab / Enter as a char set; the hint only needs the first one.</summary>
+    private static string FirstTerminatorLabel(string? chars)
+    {
+        chars ??= "";
+        if (chars.Contains(' ')) return L("Settings.AbbrTermSpace");
+        if (chars.Contains('\t')) return L("Settings.AbbrTermTab");
+        if (chars.Contains('\r') || chars.Contains('\n')) return L("Settings.AbbrTermEnter");
+        return L("Settings.AbbrTermSpace");
+    }
 
     /// <summary>
     /// Duplicate abbreviations collide silently in the matcher (last rebuilt wins), so
@@ -742,6 +807,7 @@ public partial class ManagerWindow : Window
         // Collapse state keys off _editing.IsImage, not off the (still-loading) bitmap, so the
         // section opens for an image snippet immediately rather than after the load lands.
         ApplyImageSection();
+        ApplyBodySection();
         if (_editing is not { IsImage: true } s) return;
         var rel = s.ImagePath;
         // The 72-DIP box leaves 64 DIPs for the image; at Windows' 500% maximum scale that is
@@ -764,25 +830,101 @@ public partial class ManagerWindow : Window
         // Clipboard access throws (CLIPBRD_E_CANT_OPEN) when another process holds it open —
         // a clipboard manager, RDP, Office. Retry a few times, then give up quietly rather
         // than crashing the window.
-        BitmapSource? img = null;
-        for (int i = 0; i < 5 && img == null; i++)
+        for (int i = 0; i < 5; i++)
         {
-            try { if (Clipboard.ContainsImage()) img = Clipboard.GetImage(); else return; }
+            try
+            {
+                if (TryReadClipboardImage(out var data, out var ext))
+                {
+                    SetImage(data, ext);
+                    return;
+                }
+                return;
+            }
             catch { System.Threading.Thread.Sleep(30); }
         }
-        if (img != null) SetImage(EncodePng(img), ".png");
+    }
+
+    /// <summary>
+    /// Screenshot tools usually expose a bitmap (CF_DIB). Browser "Copy image" often prefers a
+    /// raw PNG payload, and Explorer "Copy" of an image file is only a file-drop list — neither
+    /// of those makes <see cref="Clipboard.ContainsImage"/> true on its own.
+    /// </summary>
+    private static bool TryReadClipboardImage(out byte[] data, out string ext)
+    {
+        data = Array.Empty<byte>();
+        ext = ".png";
+
+        // 1) Native PNG bytes — Chrome/Edge/Firefox "Copy image", many editors. Prefer over DIB
+        // so we keep real alpha and skip the blank-PNG EncodePng path entirely.
+        if (TryReadClipboardPng(out data))
+            return true;
+
+        // 2) Bitmap / DIB (Snipping Tool, PrintScreen, Paint, …)
+        if (Clipboard.ContainsImage() && Clipboard.GetImage() is { } img)
+        {
+            data = EncodePng(img);
+            ext = ".png";
+            return true;
+        }
+
+        // 3) Copied image file path from Explorer
+        if (Clipboard.ContainsFileDropList())
+        {
+            foreach (string? path in Clipboard.GetFileDropList())
+            {
+                if (string.IsNullOrEmpty(path)) continue;
+                var fileExt = Path.GetExtension(path);
+                if (!ImageFileTypes.IsSupportedExtension(fileExt)) continue;
+                try
+                {
+                    data = File.ReadAllBytes(path);
+                }
+                catch
+                {
+                    // Missing / locked / OneDrive placeholder — try the next dropped file.
+                    continue;
+                }
+                if (data.Length == 0) continue;
+                ext = fileExt;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool TryReadClipboardPng(out byte[] data)
+    {
+        data = Array.Empty<byte>();
+        // "PNG" is the common Windows registered format; "image/png" shows up from some apps.
+        foreach (var format in new[] { "PNG", "image/png" })
+        {
+            if (!Clipboard.ContainsData(format)) continue;
+            if (Clipboard.GetData(format) is not Stream stream) continue;
+            // WPF hands us an owned stream — dispose after copying so we don't leak GDI/native buffers.
+            using (stream)
+            {
+                using var ms = new MemoryStream();
+                if (stream.CanSeek) stream.Position = 0;
+                stream.CopyTo(ms);
+                if (ms.Length == 0) continue;
+                data = ms.ToArray();
+                return true;
+            }
+        }
+        return false;
     }
 
     private void OnImageFromFile(object sender, RoutedEventArgs e)
     {
         if (_editing == null) return;
-        var dlg = new Microsoft.Win32.OpenFileDialog
-        { Filter = "Image (*.png;*.jpg;*.jpeg;*.gif;*.bmp;*.webp)|*.png;*.jpg;*.jpeg;*.gif;*.bmp;*.webp" };
-        if (dlg.ShowDialog() != true) return;
+        var path = ShellFileDialogs.OpenFile(this, ImageFileTypes.OpenFileFilter);
+        if (path == null) return;
         try
         {
-            var ext = Path.GetExtension(dlg.FileName);
-            SetImage(File.ReadAllBytes(dlg.FileName), string.IsNullOrEmpty(ext) ? ".png" : ext);
+            var ext = Path.GetExtension(path);
+            SetImage(File.ReadAllBytes(path), string.IsNullOrEmpty(ext) ? ".png" : ext);
         }
         catch { }
     }
@@ -814,10 +956,35 @@ public partial class ManagerWindow : Window
     private static byte[] EncodePng(BitmapSource img)
     {
         var enc = new PngBitmapEncoder();
-        enc.Frames.Add(BitmapFrame.Create(img));
+        enc.Frames.Add(BitmapFrame.Create(NormalizeClipboardImage(img)));
         using var ms = new MemoryStream();
         enc.Save(ms);
         return ms.ToArray();
+    }
+
+    /// <summary>
+    /// Copy into a frozen Bgra32 bitmap and repair the all-zero alpha that Clipboard.GetImage()
+    /// commonly returns for CF_DIB sources — otherwise PngBitmapEncoder writes a blank PNG.
+    /// </summary>
+    private static BitmapSource NormalizeClipboardImage(BitmapSource source)
+    {
+        BitmapSource bgra = source.Format == PixelFormats.Bgra32
+            ? source
+            : new FormatConvertedBitmap(source, PixelFormats.Bgra32, null, 0);
+
+        int width = bgra.PixelWidth;
+        int height = bgra.PixelHeight;
+        if (width <= 0 || height <= 0) return source;
+
+        int stride = width * 4;
+        var pixels = new byte[checked(stride * height)];
+        bgra.CopyPixels(pixels, stride, 0);
+        ClipboardImagePixels.FixFullyTransparentRgb(pixels);
+
+        var normalized = BitmapSource.Create(
+            width, height, bgra.DpiX, bgra.DpiY, PixelFormats.Bgra32, null, pixels, stride);
+        normalized.Freeze();
+        return normalized;
     }
 
     private static string L(string key) => LocalizationService.Instance[key];
@@ -852,6 +1019,35 @@ public partial class ManagerWindow : Window
         Body.Rescan();   // the new name may resolve a nested reference elsewhere
         SnippetName.Focus();
         SnippetName.SelectAll();
+    }
+
+    /// <summary>Name-field AI chip: open the generate dialog when a default provider is configured.</summary>
+    private void OnAiGenerate(object s, RoutedEventArgs e)
+    {
+        if (App.InSmoke) return;
+        if (_editing is null || !EditorPane.IsEnabled) return;
+
+        var cfg = AiConfigList.DefaultOf(AppState.Current.Settings.AiConfigs);
+        if (cfg is null)
+        {
+            AppDialog.Alert(this, L("Manager.AiNotConfiguredTitle"), L("Manager.AiNotConfigured"));
+            return;
+        }
+
+        var draft = AiGenerateDialog.Show(this, cfg);
+        if (draft is null) return;
+
+        // Confirm fills the editor only — Save still commits. Empty fields from the model are kept
+        // so a partial draft can clear a stale name/abbr the user meant to replace.
+        SnippetName.Text = draft.Name;
+        Abbr.Text = draft.Abbr;
+        Body.Text = draft.Body;
+        UseVars.IsChecked = draft.UseVariables;
+        Body.UseVariables = draft.UseVariables;
+        UpdateAbbrConflictHint();
+        RefreshAbbrTriggerUi();
+        Body.Rescan();
+        if (_editingCategory is { } cat) _dirty.Add(cat);
     }
 
     private void OnImportSkills(object s, RoutedEventArgs e)
@@ -1047,6 +1243,8 @@ public partial class ManagerWindow : Window
         SnippetImage.Source = rtb;
         ImagePeek.Visibility = Visibility.Visible;
         SnippetImagePeek.Source = rtb;
+        // Match the live image-snippet layout: hide body chrome, stack OutputMode like Abbr.
+        SetBodySectionVisible(showBody: false);
     }
 
     private void MoveSelectedTo(Category target)
@@ -1293,6 +1491,40 @@ public partial class ManagerWindow : Window
         Load();   // one disk read: restored snippets should appear immediately
         AppState.Current.ApplyCategories(_cats);
         _loadedVersion = AppState.Current.DataVersion;
+    }
+
+    /// <summary>Sidebar +: prompt for a name and add an empty category without opening CatMgr.</summary>
+    private void OnAddCategory(object s, RoutedEventArgs e)
+    {
+        if (!TryLeaveEditor()) return;
+        if (!EnsureFreshForWrite()) return;
+
+        var name = AppDialog.Prompt(this, L("Manager.NewCategory"), L("Manager.CategoryName"), UniqueCategoryName());
+        if (string.IsNullOrWhiteSpace(name)) return;
+        if (_cats.Any(c => string.Equals(c.Name, name, StringComparison.OrdinalIgnoreCase)))
+        {
+            AppDialog.Alert(this, L("App.Name"), L("Manager.DuplicateCategory"));
+            return;
+        }
+
+        var keep = SelectedCategory?.Name;
+        var cat = new Category { Name = name };
+        _cats.Add(cat);
+        Categories.ItemsSource = null;
+        Categories.ItemsSource = _cats;
+        _dirty.Add(cat);
+        if (!PersistCategory(cat))
+        {
+            _cats.Remove(cat);
+            Categories.ItemsSource = null;
+            Categories.ItemsSource = _cats;
+            if (keep != null) SelectCategoryByName(keep);
+            AlertSaveFailed();
+            return;
+        }
+        AppState.Current.ApplyCategories(_cats);
+        _loadedVersion = AppState.Current.DataVersion;
+        SelectCategoryByName(name);
     }
 
     private void OnOpenCategoryManager(object s, RoutedEventArgs e)

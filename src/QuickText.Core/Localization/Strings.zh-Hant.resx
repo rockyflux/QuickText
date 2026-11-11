@@ -162,13 +162,13 @@
   <data name="Settings.PlaceWindow"><value>跟隨作用中視窗</value></data>
   <data name="Settings.PlaceCaret"><value>跟隨文字游標</value></data>
   <data name="Settings.PlaceFixed"><value>記住上次位置</value></data>
-  <data name="Settings.SectionOutput"><value>輸出</value></data>
+  <data name="Settings.SectionOutput"><value>全域預設輸出方式</value></data>
   <data name="Settings.SectionAbbr"><value>縮寫</value></data>
   <data name="Settings.SectionData"><value>資料</value></data>
   <data name="Settings.SectionGeneral"><value>一般</value></data>
   <data name="Settings.NavSummon"><value>呼出與熱鍵</value></data>
   <data name="Settings.NavAbbr"><value>縮寫擴展</value></data>
-  <data name="Settings.NavOutput"><value>輸出方式</value></data>
+  <data name="Settings.NavOutput"><value>全域預設輸出方式</value></data>
   <data name="Settings.NavData"><value>資料與備份</value></data>
   <data name="Settings.NavGeneral"><value>語言與主題</value></data>
   <data name="Manager.Color"><value>顏色</value></data>
@@ -332,4 +332,106 @@
   <data name="Skills.OpenFolder"><value>開啟 Skills 目錄</value></data>
   <data name="Skills.OpenLocal"><value>本機開啟</value></data>
   <data name="Skills.OpenFailed"><value>無法開啟該路徑</value></data>
+  <data name="Settings.ClipboardHistoryEnabled"><value>記錄剪貼簿歷史</value></data>
+  <data name="Settings.ClipboardHistoryHint"><value>開啟後記錄文字複製，保留最近 3 天；用下方快捷鍵呼出列表並貼上。</value></data>
+  <data name="Settings.ClipboardHistoryHotkey"><value>呼出剪貼簿歷史</value></data>
+  <data name="Settings.ClipboardHistoryClear"><value>清空歷史</value></data>
+  <data name="Clipboard.Title"><value>剪貼簿歷史</value></data>
+  <data name="Clipboard.Empty"><value>暫無記錄</value></data>
+  <data name="Search.Hint.Clipboard"><value>剪貼簿</value></data>
+  <data name="Settings.NavAi"><value>AI 設定</value></data>
+  <data name="Settings.SectionAi"><value>AI</value></data>
+  <data name="Settings.AiHint"><value>第一項為預設；選中後點「設為預設」可切換。管理器名稱框右側的 AI 圖示會使用預設配置產生條目。</value></data>
+  <data name="Settings.AiDefaultBadge"><value>預設</value></data>
+  <data name="Settings.AiAdd"><value>新增</value></data>
+  <data name="Settings.AiEdit"><value>編輯</value></data>
+  <data name="Settings.AiDelete"><value>刪除</value></data>
+  <data name="Settings.AiSetDefault"><value>設為預設</value></data>
+  <data name="Settings.AiEditTitle"><value>AI 設定</value></data>
+  <data name="Settings.AiName"><value>設定名稱</value></data>
+  <data name="Settings.AiProvider"><value>供應商</value></data>
+  <data name="Settings.AiApiKey"><value>API Key</value></data>
+  <data name="Settings.AiApiKeyHint"><value>明文保存在本機，勿外傳。</value></data>
+  <data name="Settings.AiBaseUrl"><value>Base URL</value></data>
+  <data name="Settings.AiBaseUrlHint"><value>已知供應商會自動填入；也可改寫。</value></data>
+  <data name="Settings.AiModel"><value>模型</value></data>
+  <data name="Settings.AiModelHint"><value>自動拉取列表，也可手輸。</value></data>
+  <data name="Settings.AiModelsLoading"><value>正在取得模型列表…</value></data>
+  <data name="Settings.AiModelsLoaded"><value>已取得 {0} 個模型</value></data>
+  <data name="Settings.AiModelsFailed"><value>取得失敗，已顯示內建列表（可手輸）</value></data>
+  <data name="Settings.AiModelsEmpty"><value>介面未返回模型，已顯示內建列表（可手輸）</value></data>
+  <data name="Settings.AiModelsNeedUrl"><value>請先填寫 Base URL，再取得模型</value></data>
+  <data name="Settings.AiProviderMagpie"><value>magpie</value></data>
+  <data name="Settings.AiProviderOpenAi"><value>OpenAI</value></data>
+  <data name="Settings.AiProviderAnthropic"><value>Anthropic</value></data>
+  <data name="Settings.AiProviderAzure"><value>Azure OpenAI</value></data>
+  <data name="Settings.AiProviderDeepSeek"><value>DeepSeek</value></data>
+  <data name="Settings.AiProviderCustom"><value>自訂（OpenAI 相容）</value></data>
+  <data name="Manager.AiBadResponse"><value>無法解析模型回覆。請重試或換模型。</value></data>
+  <data name="Manager.AiConfirm"><value>確認</value></data>
+  <data name="Manager.AiDialogTitle"><value>AI 產生條目</value></data>
+  <data name="Manager.AiFailed"><value>產生失敗：{0}</value></data>
+  <data name="Manager.AiGenerate"><value>AI 產生</value></data>
+  <data name="Manager.AiGenerating"><value>產生中…</value></data>
+  <data name="Manager.AiNotConfigured"><value>請先在設定 → AI 新增至少一組，並設為預設。</value></data>
+  <data name="Manager.AiNotConfiguredTitle"><value>尚未設定 AI</value></data>
+  <data name="Manager.AiPrompt"><value>描述要產生的條目</value></data>
+  <data name="Manager.AiTemplates"><value>範本</value></data>
+  <data name="Manager.AiTpl.General"><value>通用</value></data>
+  <data name="Manager.AiTpl.General.Prompt"><value>Write a reusable expander snippet; use {variables} for fields that change.</value></data>
+  <data name="Manager.AiTpl.Profile.Prompt"><value>Write a profile fact (phone/email/address/company) as plain text — no placeholders.</value></data>
+  <data name="Manager.AiTpl.Office"><value>辦公</value></data>
+  <data name="Manager.AiTpl.Dev"><value>開發提示詞</value></data>
+  <data name="Manager.AiTpl.Profile"><value>資料信息</value></data>
+  <data name="Manager.AiTpl.Dev.Prompt"><value>Write a coding AI prompt using {clipboard}, {stack}, {language}, etc. for reuse.</value></data>
+  <data name="Manager.AiTpl.Agent.Prompt"><value>Write an Agent/Skill-style prompt: role, task, constraints, output format; material via {clipboard}.</value></data>
+  <data name="Manager.AiTpl.Agent"><value>Agent 提示詞</value></data>
+  <data name="Manager.AiTpl.Office.Prompt"><value>Write an office snippet (report/meeting/email/requirement) with {name}, {date}, {clipboard} where useful.</value></data>
+  <data name="Manager.AbbrTriggerHint"><value>In any text field, type {0} then press {1} to expand</value></data>
+  <data name="CatMgr.AiCreate"><value>AI create categories</value></data>
+  <data name="CatMgr.AiCreateHint"><value>Opens a copyable prompt with current index.json and category-file rules. Send it to Codex / Cursor etc. to rewrite the library folder.</value></data>
+  <data name="CatMgr.AiCreatePrompt"><value>请按下列规则在 QuickText 文本库中创建/整理分类（可改 index.json，并新建或更新各分类的 JSON 文件）：
+数据文件夹：{0}
+index.json 路径：{1}
+
+当前 index.json：
+{2}
+
+规则：
+1. index.json 是库目录清单，格式：
+   {{
+     "schemaVersion": 1,
+     "categories": [
+       {{ "name": "显示名", "file": "文件名.json", "color": "#3DC2A0 或空字符串", "sortMode": "created|name|usage|lastUsed 或省略（手动）" }}
+     ]
+   }}
+   categories 数组顺序即侧栏显示顺序。file 只能是库根下的文件名（不要子目录）。
+2. 每个分类对应一个 JSON 文件；若文件不存在请创建。不要命名为 index.json / trash.json / settings.json。
+3. 分类文件根节点必须是 JSON 数组。每条文本必填：id（GUID，如 32 位十六进制）、name（非空）。
+4. 常用字段：abbr（缩写，可空）、body（正文）、useVariables（是否启用 {{{{变量}}}} 占位符）、outputMode（"" | "paste" | "paste-enter" | "copy"；空表示跟随全局）。
+5. 可选字段：imagePath、codeFormat、createdAt、updatedAt。保留已有分类与条目，除非我明确要求替换；新建 id 必须是新的 GUID。
+6. 不要改 trash.json；写完后保持合法 JSON。
+
+分类文件示例：
+[
+  {{
+    "id": "0123456789abcdef0123456789abcdef",
+    "name": "示例",
+    "abbr": "sl",
+    "body": "你好",
+    "useVariables": false,
+    "outputMode": ""
+  }}
+]
+
+请根据我的需求修改 index.json 并创建/更新分类文件。我的需求：
+</value></data>
+  <data name="Settings.AbbrTerminators"><value>Trigger keys</value></data>
+  <data name="Settings.AbbrTermSpace"><value>Space</value></data>
+  <data name="Settings.AbbrTermTab"><value>Tab</value></data>
+  <data name="Settings.AbbrTermEnter"><value>Enter</value></data>
+  <data name="Settings.AbbrTerminatorsHint"><value>Keep at least one. Expansion runs when you press one of these after the abbreviation.</value></data>
+  <data name="Settings.AbbrPrefixNone"><value>No prefix</value></data>
+  <data name="Settings.SectionClipboard"><value>剪貼簿歷史</value></data>
+  <data name="Settings.NavClipboard"><value>剪貼簿</value></data>
 </root>

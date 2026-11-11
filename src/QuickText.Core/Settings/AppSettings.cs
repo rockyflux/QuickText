@@ -14,13 +14,20 @@ public sealed class AppSettings
     public string SummonTapKey { get; set; } = "";
     public bool SummonTapDouble { get; set; }   // true = double-tap, false = single-tap
     public string CaptureHotkey { get; set; } = "";   // save clipboard as a snippet; empty = disabled
+    // Opt-in clipboard history (text only, 3-day retention). Missing field → off.
+    public bool ClipboardHistoryEnabled { get; set; }
+    public const string DefaultClipboardHistoryHotkey = "Ctrl+Shift+V";
+    // Empty = no summon hotkey (recording can still run when Enabled).
+    public string ClipboardHistoryHotkey { get; set; } = DefaultClipboardHistoryHotkey;
     // "dark" (the design of record) | "light" | "system" (follow the Windows app-theme preference).
     public string Theme { get; set; } = "dark";
     public string DataFolder { get; set; } = "";
     public bool Autostart { get; set; }
     public bool AbbrEnabled { get; set; } = true;
     public string TerminatorChars { get; set; } = " \t\r\n";
-    public string AbbrPrefix { get; set; } = ";";   // auto-prepended to every abbreviation when matching
+    // Auto-prepended to every abbreviation when matching. Fresh installs default to "/";
+    // existing settings.json that already wrote this field keeps whatever the user had (often ";").
+    public string AbbrPrefix { get; set; } = "/";
     public string AbbrBlacklist { get; set; } = "";   // process names where expansion is disabled, ";"-separated
     // Off by default: restoring means writing the clipboard again shortly after Ctrl+V, and an app
     // that reads the clipboard late then pastes the restored content instead of the snippet. A
@@ -73,4 +80,8 @@ public sealed class AppSettings
     // Hide-for-this-session is not persisted: every launch shows the ball again.
     public double FloatBallX { get; set; }
     public double FloatBallY { get; set; }
+
+    // AI provider endpoints. Empty by default so existing settings.json (field absent) keeps the
+    // previous "no AI" behaviour. Index 0 is the default; switching default reorders the list.
+    public List<AiProviderConfig> AiConfigs { get; set; } = new();
 }

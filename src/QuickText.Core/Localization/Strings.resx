@@ -119,7 +119,8 @@
   <data name="Manager.Categories"><value>分类</value></data>
   <data name="Manager.Snippets"><value>文本</value></data>
   <data name="Manager.Name"><value>名称</value></data>
-  <data name="Manager.Abbr"><value>缩写</value></data>
+  <data name="Manager.Abbr"><value>快捷文本指令</value></data>
+  <data name="Manager.AbbrTriggerHint"><value>任意输入框输入 {0}，再按{1}即可展开</value></data>
   <data name="Manager.Body"><value>正文</value></data>
   <data name="Manager.Delete"><value>删除</value></data>
   <data name="Manager.Save"><value>保存</value></data>
@@ -149,9 +150,9 @@
   <data name="Trash.EmptyState"><value>回收站是空的</value></data>
   <data name="Trash.Hint"><value>删除的条目在这里保留 {0} 天，之后自动清除。恢复会放回原分类（不存在则重建）。</value></data>
   <data name="Trash.EmptyConfirm"><value>清空回收站？里面的条目将无法恢复。</value></data>
-  <data name="Tray.PauseAbbr"><value>暂停缩写展开</value></data>
-  <data name="Tray.ResumeAbbr"><value>恢复缩写展开</value></data>
-  <data name="Tray.PausedTip"><value>缩写展开已暂停</value></data>
+  <data name="Tray.PauseAbbr"><value>暂停文本指令</value></data>
+  <data name="Tray.ResumeAbbr"><value>恢复文本指令</value></data>
+  <data name="Tray.PausedTip"><value>文本指令已暂停</value></data>
   <data name="Settings.CaptureHotkey"><value>快速采集热键</value></data>
   <data name="Settings.CaptureHotkeyHint"><value>按下即把当前剪贴板文本静默存为新条目。点击后按组合键设置；按 Delete 清除（留空 = 停用）。</value></data>
   <data name="Settings.OpenBackups"><value>打开备份文件夹</value></data>
@@ -192,7 +193,7 @@
   <data name="Tray.NewFromClipboard"><value>从剪贴板新建</value></data>
   <data name="Ctx.Edit"><value>编辑此条</value></data>
   <data name="Ctx.Copy"><value>复制内容</value></data>
-  <data name="Settings.AbbrBlacklist"><value>在这些进程中禁用缩写</value></data>
+  <data name="Settings.AbbrBlacklist"><value>在这些进程中禁用文本指令</value></data>
   <data name="Settings.AbbrBlacklistHint"><value>进程名以分号分隔，如：cmd.exe; putty.exe</value></data>
   <data name="Settings.ExportBackup"><value>导出备份</value></data>
   <data name="Msg.Exported"><value>备份已导出</value></data>
@@ -212,13 +213,15 @@
   <data name="Settings.PlaceWindow"><value>跟随活动窗口</value></data>
   <data name="Settings.PlaceCaret"><value>跟随文本光标</value></data>
   <data name="Settings.PlaceFixed"><value>记住上次位置</value></data>
-  <data name="Settings.SectionOutput"><value>输出</value></data>
-  <data name="Settings.SectionAbbr"><value>缩写</value></data>
+  <data name="Settings.SectionOutput"><value>全局默认输出方式</value></data>
+  <data name="Settings.SectionClipboard"><value>剪贴板历史</value></data>
+  <data name="Settings.SectionAbbr"><value>文本指令</value></data>
   <data name="Settings.SectionData"><value>数据</value></data>
   <data name="Settings.SectionGeneral"><value>通用</value></data>
   <data name="Settings.NavSummon"><value>呼出与热键</value></data>
-  <data name="Settings.NavAbbr"><value>缩写扩展</value></data>
-  <data name="Settings.NavOutput"><value>输出方式</value></data>
+  <data name="Settings.NavAbbr"><value>文本指令</value></data>
+  <data name="Settings.NavOutput"><value>全局默认输出方式</value></data>
+  <data name="Settings.NavClipboard"><value>剪贴板</value></data>
   <data name="Settings.NavData"><value>数据与备份</value></data>
   <data name="Settings.NavGeneral"><value>语言与主题</value></data>
   <data name="Manager.Color"><value>颜色</value></data>
@@ -237,6 +240,44 @@
   <data name="CatMgr.Initialize"><value>初始化内置分类</value></data>
   <data name="CatMgr.InitHint"><value>按当前语言写入内置分类与示例文本（资料信息、开发类/其他类提示词、Skills）。已有同名分类不会覆盖。</value></data>
   <data name="CatMgr.BatchResult"><value>已添加 {0} 个，跳过 {1} 个同名</value></data>
+  <data name="CatMgr.AiCreate"><value>AI 创建分类</value></data>
+  <data name="CatMgr.AiCreateHint"><value>弹出可复制的提示词：含当前 index.json 与分类文件规则。发给 Codex / Cursor 等即可改写库目录。</value></data>
+  <data name="CatMgr.AiCreatePrompt" xml:space="preserve"><value>请按下列规则在 QuickText 文本库中创建/整理分类（可改 index.json，并新建或更新各分类的 JSON 文件）：
+数据文件夹：{0}
+index.json 路径：{1}
+
+当前 index.json：
+{2}
+
+规则：
+1. index.json 是库目录清单，格式：
+   {{
+     "schemaVersion": 1,
+     "categories": [
+       {{ "name": "显示名", "file": "文件名.json", "color": "#3DC2A0 或空字符串", "sortMode": "created|name|usage|lastUsed 或省略（手动）" }}
+     ]
+   }}
+   categories 数组顺序即侧栏显示顺序。file 只能是库根下的文件名（不要子目录）。
+2. 每个分类对应一个 JSON 文件；若文件不存在请创建。不要命名为 index.json / trash.json / settings.json。
+3. 分类文件根节点必须是 JSON 数组。每条文本必填：id（GUID，如 32 位十六进制）、name（非空）。
+4. 常用字段：abbr（缩写，可空）、body（正文）、useVariables（是否启用 {{{{变量}}}} 占位符）、outputMode（"" | "paste" | "paste-enter" | "copy"；空表示跟随全局）。
+5. 可选字段：imagePath、codeFormat、createdAt、updatedAt。保留已有分类与条目，除非我明确要求替换；新建 id 必须是新的 GUID。
+6. 不要改 trash.json；写完后保持合法 JSON。
+
+分类文件示例：
+[
+  {{
+    "id": "0123456789abcdef0123456789abcdef",
+    "name": "示例",
+    "abbr": "sl",
+    "body": "你好",
+    "useVariables": false,
+    "outputMode": ""
+  }}
+]
+
+请根据我的需求修改 index.json 并创建/更新分类文件。我的需求：
+</value></data>
   <data name="Manager.DuplicateCategory"><value>已存在同名分类</value></data>
   <data name="Manager.SaveFailed"><value>保存失败：数据文件夹只读，或正被其它程序占用。请解除占用，或在设置里换一个文件夹。</value></data>
   <data name="Manager.DeleteCategoryConfirm"><value>删除分类「{0}」？其中的文本会一并删除。</value></data>
@@ -260,12 +301,25 @@
   <data name="Settings.SummonTapHint"><value>点这里按一下修饰键（如右 Ctrl），之后连按它就能呼出面板。按 Delete 清除。（单个修饰键无法用普通热键，故用连按检测）</value></data>
   <data name="Settings.DataFolder"><value>数据文件夹</value></data>
   <data name="Settings.Language"><value>界面语言</value></data>
-  <data name="Settings.AbbrEnabled"><value>启用缩写</value></data>
+  <data name="Settings.AbbrEnabled"><value>启用文本指令</value></data>
+  <data name="Settings.AbbrTerminators"><value>触发字符</value></data>
+  <data name="Settings.AbbrTermSpace"><value>空格</value></data>
+  <data name="Settings.AbbrTermTab"><value>Tab</value></data>
+  <data name="Settings.AbbrTermEnter"><value>回车</value></data>
+  <data name="Settings.AbbrTerminatorsHint"><value>至少保留一个。输入缩写后按这些键才会展开。</value></data>
   <data name="Settings.AbbrPrefix"><value>触发前缀</value></data>
-  <data name="Settings.AbbrPrefixHint"><value>自动加在每个缩写前面（默认 ;）。你在管理器里只填缩写本身（如 qm），实际触发是「前缀+缩写」（如 ;qm）。留空则不加前缀 —— 前缀能避免正常打字误触发。</value></data>
-  <data name="Settings.AbbrExpandHint"><value>输入「前缀+缩写」后，按空格、Tab 或回车即可展开；展开后立刻按一下退格，可还原成你刚打的缩写。</value></data>
+  <data name="Settings.AbbrPrefixNone"><value>无需前缀</value></data>
+  <data name="Settings.AbbrPrefixHint"><value>管理器只填缩写（如 qm）；有前缀更不易误触发。</value></data>
+  <data name="Settings.AbbrExpandHint"><value>展开后立刻按退格，可还原成刚打的缩写。</value></data>
   <data name="Settings.RestoreClipboard"><value>保留原剪贴板内容</value></data>
   <data name="Settings.RestoreClipboardHint"><value>粘贴时会临时占用剪贴板，之后放回你原来复制的内容。默认关闭：少数程序读剪贴板较慢，还原可能赶在它读取之前，导致贴出旧内容。</value></data>
+  <data name="Settings.ClipboardHistoryEnabled"><value>记录剪贴板历史</value></data>
+  <data name="Settings.ClipboardHistoryHint"><value>开启后记录文本复制，保留最近 3 天；用下方快捷键呼出列表并粘贴。</value></data>
+  <data name="Settings.ClipboardHistoryHotkey"><value>呼出剪贴板历史</value></data>
+  <data name="Settings.ClipboardHistoryClear"><value>清空历史</value></data>
+  <data name="Clipboard.Title"><value>剪贴板历史</value></data>
+  <data name="Clipboard.Empty"><value>暂无记录</value></data>
+  <data name="Search.Hint.Clipboard"><value>剪贴板</value></data>
   <data name="Settings.FollowSystem"><value>跟随系统</value></data>
   <data name="Msg.HotkeyTaken"><value>「{0}」已被其它程序占用，面板呼不出来。请在设置里换一个热键。</value></data>
   <data name="Msg.ConflictFiles"><value>检测到 {0} 个同步冲突文件，未载入文本库。请在数据文件夹核对后删除。</value></data>
@@ -382,4 +436,52 @@
   <data name="Skills.OpenFolder"><value>打开 Skills 目录</value></data>
   <data name="Skills.OpenLocal"><value>本地打开</value></data>
   <data name="Skills.OpenFailed"><value>无法打开该路径</value></data>
+  <data name="Settings.NavAi"><value>AI 配置</value></data>
+  <data name="Settings.SectionAi"><value>AI</value></data>
+  <data name="Settings.AiHint"><value>第一项为默认；选中后点「设为默认」可切换。管理器名称框右侧的 AI 图标会使用默认配置生成条目。</value></data>
+  <data name="Settings.AiDefaultBadge"><value>默认</value></data>
+  <data name="Settings.AiAdd"><value>添加</value></data>
+  <data name="Settings.AiEdit"><value>编辑</value></data>
+  <data name="Settings.AiDelete"><value>删除</value></data>
+  <data name="Settings.AiSetDefault"><value>设为默认</value></data>
+  <data name="Settings.AiEditTitle"><value>AI 配置</value></data>
+  <data name="Settings.AiName"><value>配置名称</value></data>
+  <data name="Settings.AiProvider"><value>提供商</value></data>
+  <data name="Settings.AiApiKey"><value>API Key</value></data>
+  <data name="Settings.AiApiKeyHint"><value>明文保存在本机，勿外传。</value></data>
+  <data name="Settings.AiBaseUrl"><value>Base URL</value></data>
+  <data name="Settings.AiBaseUrlHint"><value>已知提供商会自动填入；也可改写。</value></data>
+  <data name="Settings.AiModel"><value>模型</value></data>
+  <data name="Settings.AiModelHint"><value>自动拉取列表，也可手输。</value></data>
+  <data name="Settings.AiModelsLoading"><value>正在获取模型列表…</value></data>
+  <data name="Settings.AiModelsLoaded"><value>已获取 {0} 个模型</value></data>
+  <data name="Settings.AiModelsFailed"><value>获取失败，已显示内置列表（可手输）</value></data>
+  <data name="Settings.AiModelsEmpty"><value>接口未返回模型，已显示内置列表（可手输）</value></data>
+  <data name="Settings.AiModelsNeedUrl"><value>请先填写 Base URL，再获取模型</value></data>
+  <data name="Settings.AiProviderMagpie"><value>magpie</value></data>
+  <data name="Settings.AiProviderOpenAi"><value>OpenAI</value></data>
+  <data name="Settings.AiProviderAnthropic"><value>Anthropic</value></data>
+  <data name="Settings.AiProviderAzure"><value>Azure OpenAI</value></data>
+  <data name="Settings.AiProviderDeepSeek"><value>DeepSeek</value></data>
+  <data name="Settings.AiProviderCustom"><value>自定义（OpenAI 兼容）</value></data>
+  <data name="Manager.AiBadResponse"><value>模型返回无法解析，请重试或换模型。</value></data>
+  <data name="Manager.AiConfirm"><value>确认</value></data>
+  <data name="Manager.AiDialogTitle"><value>AI 生成条目</value></data>
+  <data name="Manager.AiFailed"><value>生成失败：{0}</value></data>
+  <data name="Manager.AiGenerate"><value>AI 生成</value></data>
+  <data name="Manager.AiGenerating"><value>正在生成…</value></data>
+  <data name="Manager.AiNotConfigured"><value>请先在设置 → AI 配置中添加至少一组提供商，并将要用的那项设为默认。</value></data>
+  <data name="Manager.AiNotConfiguredTitle"><value>未配置 AI</value></data>
+  <data name="Manager.AiPrompt"><value>描述你想要的文本</value></data>
+  <data name="Manager.AiTemplates"><value>内置话术</value></data>
+  <data name="Manager.AiTpl.General"><value>通用</value></data>
+  <data name="Manager.AiTpl.General.Prompt"><value>写一条可复用的文本扩展内容，说明用途；会变化的字段用 {变量}。</value></data>
+  <data name="Manager.AiTpl.Profile.Prompt"><value>写一条资料信息（如手机/邮箱/地址/公司），纯文本、无需占位符。</value></data>
+  <data name="Manager.AiTpl.Office"><value>办公协作</value></data>
+  <data name="Manager.AiTpl.Dev"><value>开发提示词</value></data>
+  <data name="Manager.AiTpl.Profile"><value>资料信息</value></data>
+  <data name="Manager.AiTpl.Dev.Prompt"><value>写一条开发类 AI 提示词：可含 {剪贴板}、{技术栈}、{语言} 等，方便反复粘贴到对话里。</value></data>
+  <data name="Manager.AiTpl.Agent.Prompt"><value>写一条 Agent/Skill 风格提示词：角色、任务、约束、输出格式，材料可用 {剪贴板}。</value></data>
+  <data name="Manager.AiTpl.Agent"><value>Agent 提示词</value></data>
+  <data name="Manager.AiTpl.Office.Prompt"><value>写一条办公协作文本（周报/日报/会议纪要/邮件/需求），可变处用 {姓名}、{日期}、{剪贴板} 等。</value></data>
 </root>

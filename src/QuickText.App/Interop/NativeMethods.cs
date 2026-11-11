@@ -253,6 +253,14 @@ internal static class NativeMethods
     [DllImport("user32.dll")]
     public static extern uint GetClipboardSequenceNumber();
 
+    public const int WM_CLIPBOARDUPDATE = 0x031D;
+
+    [DllImport("user32.dll")]
+    public static extern bool AddClipboardFormatListener(IntPtr hwnd);
+
+    [DllImport("user32.dll")]
+    public static extern bool RemoveClipboardFormatListener(IntPtr hwnd);
+
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
     public static extern int ToUnicodeEx(uint wVirtKey, uint wScanCode, byte[] lpKeyState,
         [Out] System.Text.StringBuilder pwszBuff, int cchBuff, uint wFlags, IntPtr dwhkl);

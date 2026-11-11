@@ -98,6 +98,48 @@ internal static class WindowTheming
         };
     }
 
+    /// <summary>Horizontally centre on the owner (or cursor) monitor, with Top = work-area top +
+    /// <paramref name="topOffset"/>. For dialogs that should sit near the top rather than
+    /// <c>CenterOwner</c> (e.g. AI generate, which grows downward as the result appears).</summary>
+    public static void PlaceNearTop(Window w, double topOffset = 50)
+    {
+        w.WindowStartupLocation = WindowStartupLocation.Manual;
+        Rect wa = default;
+        bool settled = false;
+        void Place()
+        {
+            if (settled || App.InSmoke) return;
+            if (w.WindowState == WindowState.Maximized) return;
+            double width = w.ActualWidth > 0 ? w.ActualWidth : w.Width;
+            double height = w.ActualHeight;
+            double left = wa.Left + Math.Max(0, (wa.Width - width) / 2);
+            double top = wa.Top + topOffset;
+            if (height > 0 && top + height > wa.Bottom) top = Math.Max(wa.Top, wa.Bottom - height);
+            w.Left = Math.Max(wa.Left, Math.Min(left, wa.Right - width));
+            w.Top = top;
+        }
+        w.SourceInitialized += (_, _) =>
+        {
+            wa = OwnerOrCursorWorkAreaForPlacement(w);
+            Place();
+        };
+        w.Loaded += (_, _) => Place();
+        w.ContentRendered += (_, _) => { Place(); settled = true; };
+    }
+
+    /// <summary>Owner/cursor work area in <paramref name="w"/>'s DIP space for Left/Top writes.</summary>
+    private static Rect OwnerOrCursorWorkAreaForPlacement(Window w)
+    {
+        if (w.Owner is { } owner)
+        {
+            var oh = new WindowInteropHelper(owner).Handle;
+            if (oh != IntPtr.Zero)
+                return MonitorWorkAreaFor(w,
+                    NativeMethods.MonitorFromWindow(oh, NativeMethods.MONITOR_DEFAULTTONEAREST));
+        }
+        return CursorWorkArea(w);
+    }
+
     /// <summary>Work area (DIPs) of the monitor the owner window is on; the cursor's monitor when
     /// there is no owner (VariablesDialog is summoned from the panel and can be ownerless, and the
     /// parameterless BodyEditorWindow ctor used by --smoke has none either).
@@ -148,6 +190,11 @@ internal static class WindowTheming
     /// centered, capped to that monitor's work area, and nudged fully on-screen so nothing (the
     /// Save button, the editor) ends up under the taskbar or off a short / secondary display.
     /// One shared implementation so each window doesn't reinvent (or forget) it.
+    /// <para>The work-area <see cref="Window.MaxHeight"/> is only a Normal-state resize cap. While
+    /// Maximized it must be lifted: a secondary with no taskbar has work area ≈ full height, and
+    /// WPF's maximize frame then sits MaxHeight below a slightly negative Top — the bottom chrome
+    /// sticks out past the monitor. Primary often hides the same bug because its taskbar already
+    /// shortens the work area. Restore re-applies the cap for the monitor the window is on.</para>
     /// </summary>
     public static void PlaceOnActiveMonitor(Window w)
     {
@@ -157,6 +204,8 @@ internal static class WindowTheming
         void Place()
         {
             if (settled || App.InSmoke) return;   // --smoke parks windows off-screen and never shows them
+            // Never write Left/Top under Maximized — that fights the system maximize frame.
+            if (w.WindowState == WindowState.Maximized) return;
             // Top-centered: horizontal centre needs only the width (a set Width, or ActualWidth once
             // laid out), and the vertical anchor is a fixed offset — so this can run in
             // SourceInitialized, BEFORE the first paint and before SizeToContent finalizes. Centering
@@ -184,6 +233,22 @@ internal static class WindowTheming
         w.Loaded += (_, _) => Place();
         w.SizeChanged += (_, _) => Place();
         w.ContentRendered += (_, _) => { Place(); settled = true; };
+        w.StateChanged += (_, _) =>
+        {
+            if (App.InSmoke) return;
+            if (w.WindowState == WindowState.Maximized)
+            {
+                // Same lift MaximizeOnActiveMonitor does before maximizing.
+                w.MaxHeight = double.PositiveInfinity;
+                return;
+            }
+            if (w.WindowState != WindowState.Normal) return;
+            var hwnd = new WindowInteropHelper(w).Handle;
+            var mon = hwnd != IntPtr.Zero
+                ? NativeMethods.MonitorFromWindow(hwnd, NativeMethods.MONITOR_DEFAULTTONEAREST)
+                : CursorMonitor();
+            w.MaxHeight = MonitorWorkAreaDip(mon).Height;
+        };
     }
 
     /// <summary>Per-MONITOR device-px → DIP factor (96 / that monitor's effective DPI), via

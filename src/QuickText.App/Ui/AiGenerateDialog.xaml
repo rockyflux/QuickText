@@ -1,0 +1,97 @@
+<Window x:Class="QuickText.App.Ui.AiGenerateDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:app="clr-namespace:QuickText.App"
+        Width="520" SizeToContent="Height" ResizeMode="NoResize"
+        WindowStartupLocation="Manual" ShowInTaskbar="False"
+        Background="{DynamicResource Brush.WinBg}" FontFamily="{StaticResource Font.Ui}"
+        MaxHeight="720"
+        Title="{Binding [Manager.AiDialogTitle], Source={x:Static app:LocProxy.Instance}}">
+    <!-- SizeToContent + MaxHeight + CapHeightToMonitor: title/actions stay outside the scroll body. -->
+    <Grid Margin="22,18,22,18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+                <!-- Label left, compact scenario dropdown right (not a chip row). -->
+                <Grid Margin="0,0,0,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" x:Name="PromptLabel" Style="{StaticResource FieldLabel}"
+                               VerticalAlignment="Center" Margin="2,0,8,0"
+                               Text="{Binding [Manager.AiPrompt], Source={x:Static app:LocProxy.Instance}}"/>
+                    <ComboBox Grid.Column="1" x:Name="TemplateCombo" Style="{StaticResource DarkComboBox}"
+                              MinWidth="108" MaxWidth="148" FontSize="12" Padding="8,3"
+                              VerticalAlignment="Center" SelectedValuePath="Id"
+                              AutomationProperties.Name="{Binding [Manager.AiTemplates], Source={x:Static app:LocProxy.Instance}}"
+                              SelectionChanged="OnTemplateChanged">
+                        <!-- ItemTemplate (not DisplayMemberPath): DarkComboBox's SelectionBox uses
+                             SelectionBoxItemTemplate; DisplayMemberPath alone showed record ToString. -->
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Label}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </Grid>
+
+                <!-- Prompt + in-box Generate (bottom-right inside the field). -->
+                <Grid>
+                    <TextBox x:Name="PromptBox" Style="{StaticResource DarkTextBox}" FontSize="13.5"
+                             AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
+                             MinHeight="120" Padding="10,8,10,36"
+                             AutomationProperties.LabeledBy="{Binding ElementName=PromptLabel}"/>
+                    <Button x:Name="GenerateButton" Style="{StaticResource DarkButtonPrimary}"
+                            HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                            Margin="0,0,8,8" Padding="10,4" FontSize="12" MinWidth="0"
+                            Click="OnGenerate"
+                            Content="{Binding [Manager.AiGenerate], Source={x:Static app:LocProxy.Instance}}"
+                            ToolTip="{Binding [Manager.AiGenerate], Source={x:Static app:LocProxy.Instance}}"/>
+                </Grid>
+
+                <TextBlock x:Name="StatusText" Margin="2,10,0,0" FontSize="12.5" TextWrapping="Wrap"
+                           Foreground="{DynamicResource Brush.TextMuted}"/>
+
+                <Border x:Name="ResultPanel" Margin="0,14,0,0" Padding="12,12,12,10" CornerRadius="10"
+                        Background="{DynamicResource Brush.Panel}"
+                        BorderBrush="{DynamicResource Brush.Divider}" BorderThickness="1"
+                        Visibility="Collapsed">
+                    <StackPanel>
+                        <TextBlock x:Name="ResultNameLabel" Style="{StaticResource FieldLabel}" Margin="0,0,0,6"
+                                   Text="{Binding [Manager.Name], Source={x:Static app:LocProxy.Instance}}"/>
+                        <TextBox x:Name="ResultName" Style="{StaticResource DarkTextBox}" FontSize="14"
+                                 AutomationProperties.LabeledBy="{Binding ElementName=ResultNameLabel}"/>
+
+                        <TextBlock x:Name="ResultAbbrLabel" Style="{StaticResource FieldLabel}" Margin="0,12,0,6"
+                                   Text="{Binding [Manager.Abbr], Source={x:Static app:LocProxy.Instance}}"/>
+                        <TextBox x:Name="ResultAbbr" Style="{StaticResource DarkTextBox}" Width="200"
+                                 HorizontalAlignment="Left"
+                                 FontFamily="{StaticResource Font.Mono}"
+                                 AutomationProperties.LabeledBy="{Binding ElementName=ResultAbbrLabel}"/>
+
+                        <TextBlock x:Name="ResultBodyLabel" Style="{StaticResource FieldLabel}" Margin="0,12,0,6"
+                                   Text="{Binding [Manager.Body], Source={x:Static app:LocProxy.Instance}}"/>
+                        <TextBox x:Name="ResultBody" Style="{StaticResource DarkTextBox}" FontSize="13.5"
+                                 AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
+                                 MinHeight="120" MaxHeight="220" Padding="10,8"
+                                 AutomationProperties.LabeledBy="{Binding ElementName=ResultBodyLabel}"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <WrapPanel Grid.Row="1" HorizontalAlignment="Right" Margin="0,14,0,-6">
+            <Button x:Name="CancelButton" Style="{StaticResource DarkButton}" MinWidth="84" Padding="16,7"
+                    Margin="0,0,10,6" IsCancel="True" Click="OnCancel"
+                    Content="{Binding [Dialog.Cancel], Source={x:Static app:LocProxy.Instance}}"/>
+            <Button x:Name="ConfirmButton" Style="{StaticResource DarkButtonPrimary}" MinWidth="100" Padding="16,7"
+                    Margin="0,0,0,6" Click="OnConfirm" IsEnabled="False"
+                    Content="{Binding [Manager.AiConfirm], Source={x:Static app:LocProxy.Instance}}"/>
+        </WrapPanel>
+    </Grid>
+</Window>

@@ -5,14 +5,13 @@
       <stop offset="1" stop-color="#22997C"/>
     </linearGradient>
   </defs>
+  <!-- Tray-first mark: one amber caret + one text bar. No nested cards. -->
   <rect x="5" y="5" width="54" height="54" rx="15" fill="url(#qg)"/>
   <rect x="5.75" y="5.75" width="52.5" height="52.5" rx="14.25" fill="none" stroke="#ffffff" stroke-opacity="0.22" stroke-width="1.5"/>
-  <!-- the text that just landed -->
-  <rect x="15" y="27" width="17" height="11" rx="3.5" fill="#F2B457"/>
-  <!-- the I-beam text caret -->
+  <rect x="14" y="26" width="20" height="13" rx="4" fill="#F2B457"/>
   <g fill="#0F1D19">
-    <rect x="37" y="19" width="5" height="27" rx="2.5"/>
-    <rect x="32.5" y="19" width="14" height="3" rx="1.5"/>
-    <rect x="32.5" y="43" width="14" height="3" rx="1.5"/>
+    <rect x="40" y="16" width="7" height="32" rx="3.5"/>
+    <rect x="34" y="16" width="19" height="5" rx="2.5"/>
+    <rect x="34" y="43" width="19" height="5" rx="2.5"/>
   </g>
 </svg>

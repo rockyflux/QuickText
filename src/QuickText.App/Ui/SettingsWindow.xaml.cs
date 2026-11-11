@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
@@ -9,12 +10,34 @@ using System.Windows.Media;
 using QuickText.App;
 using QuickText.App.Interop;
 using QuickText.Core.Localization;
+using QuickText.Core.Settings;
 
 namespace QuickText.App.Ui;
 
 public partial class SettingsWindow : Window
 {
     private sealed record LangItem(string Code, string Name);
+    private sealed record PrefixItem(string Value, string Label);
+
+    // Built-in trigger prefixes offered in Settings. Order matches the dropdown.
+    private static readonly string[] BuiltInAbbrPrefixes = ["/", ";", "@", ""];
+
+    /// <summary>One row in the AI config list. Index 0 is the default.</summary>
+    private sealed class AiRow
+    {
+        public required AiProviderConfig Config { get; init; }
+        public string Name => string.IsNullOrWhiteSpace(Config.Name) ? "—" : Config.Name;
+        public string ProviderLabel => ProviderDisplay(Config.Provider);
+        public string ModelSummary =>
+            string.IsNullOrWhiteSpace(Config.Model)
+                ? (string.IsNullOrWhiteSpace(Config.BaseUrl) ? "—" : Config.BaseUrl)
+                : Config.Model;
+        public Visibility DefaultVis { get; init; }
+        public string AutomationName =>
+            DefaultVis == Visibility.Visible
+                ? Name + " (" + LocalizationService.Instance["Settings.AiDefaultBadge"] + ")"
+                : Name;
+    }
 
     // Single source of truth for the shipped UI languages (culture code + native display name).
     private static readonly LangItem[] Languages =
@@ -42,22 +65,30 @@ public partial class SettingsWindow : Window
     private FormState? _savedForm;
 
     private sealed record FormState(
-        string Hotkey, string CaptureHotkey, string SummonMode, string SummonTapKey,
+        string Hotkey, string CaptureHotkey, string ClipboardHistoryHotkey, string SummonMode, string SummonTapKey,
         bool TapDouble, string DataFolder, string Language, string AbbrBlacklist, string AbbrPrefix,
-        bool AbbrEnabled, bool RestoreClipboard, bool AutoSend, bool ClickToSend, bool ClipboardOnly,
-        string Placement, string Theme, bool Autostart, bool CheckUpdates);
+        string TerminatorChars, bool AbbrEnabled, bool RestoreClipboard, bool ClipboardHistoryEnabled,
+        bool AutoSend, bool ClickToSend,
+        bool ClipboardOnly, string Placement, string Theme, bool Autostart, bool CheckUpdates,
+        string AiFingerprint);
 
     private FormState CurrentForm() => new(
-        _hotkey.Trim(), _captureHotkey.Trim(), _summonMode, _summonTapKey,
+        _hotkey.Trim(), _captureHotkey.Trim(), _clipboardHistoryHotkey.Trim(), _summonMode, _summonTapKey,
         SummonTapDouble.IsChecked == true, DataFolder.Text.Trim(), (LangCombo.SelectedValue as string) ?? "",
-        AbbrBlacklist.Text.Trim(), AbbrPrefixBox.Text.Trim(), AbbrEnabled.IsChecked == true,
-        RestoreClipboard.IsChecked == true, AutoSend.IsChecked == true, ClickToSend.IsChecked == true,
-        _clipboardOnly, _placement, _theme, Autostart.IsChecked == true, CheckUpdates.IsChecked == true);
+        AbbrBlacklist.Text.Trim(), CurrentAbbrPrefix(), BuildTerminators(),
+        AbbrEnabled.IsChecked == true, RestoreClipboard.IsChecked == true, ClipboardHistoryEnabled.IsChecked == true,
+        AutoSend.IsChecked == true,
+        ClickToSend.IsChecked == true, _clipboardOnly, _placement, _theme, Autostart.IsChecked == true,
+        CheckUpdates.IsChecked == true, AiConfigList.Fingerprint(_aiConfigs));
+
+    private readonly ObservableCollection<AiRow> _aiRows = new();
+    private List<AiProviderConfig> _aiConfigs = new();
 
     private static string L(string key) => LocalizationService.Instance[key];
 
     private string _hotkey = "";
     private string _captureHotkey = "";
+    private string _clipboardHistoryHotkey = "";
     private string _summonMode = "hotkey";
     private string _summonTapKey = "";
     private bool _capturingTap;
@@ -74,6 +105,7 @@ public partial class SettingsWindow : Window
         HotkeyBox.InvokeRequested += (_, _) => BeginCapture(HotkeyBox);
         SummonTapBox.InvokeRequested += (_, _) => StartTapCapture();
         CaptureBox.InvokeRequested += (_, _) => BeginCapture(CaptureBox);
+        ClipboardHistoryHotkeyBox.InvokeRequested += (_, _) => BeginCapture(ClipboardHistoryHotkeyBox);
         WindowTheming.UseDarkChrome(this);
         WindowTheming.ApplyFlowDirection(this);
         WindowTheming.PlaceOnActiveMonitor(this);   // cursor's monitor, capped, on-screen
@@ -83,6 +115,8 @@ public partial class SettingsWindow : Window
         HotkeyText.Text = HotkeyDisplay(_hotkey);
         _captureHotkey = s.CaptureHotkey;
         CaptureText.Text = HotkeyDisplay(_captureHotkey);
+        _clipboardHistoryHotkey = s.ClipboardHistoryHotkey;
+        ClipboardHistoryHotkeyText.Text = HotkeyDisplay(_clipboardHistoryHotkey);
         _summonTapKey = s.SummonTapKey;
         SummonTapText.Text = TapDisplay(_summonTapKey);
         SummonTapDouble.IsChecked = s.SummonTapDouble;
@@ -95,9 +129,11 @@ public partial class SettingsWindow : Window
         LangCombo.ItemsSource = LanguageChoices();
         LangCombo.SelectedValue = _language;   // "" selects "follow system"
         AbbrBlacklist.Text = s.AbbrBlacklist;
-        AbbrPrefixBox.Text = s.AbbrPrefix;
+        LoadAbbrPrefixChoices(s.AbbrPrefix);
+        LoadTerminators(s.TerminatorChars);
         AbbrEnabled.IsChecked = s.AbbrEnabled;
         RestoreClipboard.IsChecked = s.RestoreClipboard;
+        ClipboardHistoryEnabled.IsChecked = s.ClipboardHistoryEnabled;
         AutoSend.IsChecked = s.AutoSend;
         ClickToSend.IsChecked = s.ClickToSend;
         Autostart.IsChecked = QuickText.App.Interop.Autostart.IsEnabled();
@@ -117,6 +153,10 @@ public partial class SettingsWindow : Window
         _theme = s.Theme is ThemeService.Light or ThemeService.FollowSystem ? s.Theme : ThemeService.Dark;
         foreach (var rb in ThemePanel.Children.OfType<RadioButton>())
             if ((string?)rb.Tag == _theme) rb.IsChecked = true;
+
+        _aiConfigs = AiConfigList.CloneAll(s.AiConfigs);
+        AiList.ItemsSource = _aiRows;
+        RefreshAiList();
 
         // Suspend the summon triggers while this window is open so pressing the current hotkey
         // (or tap key) reaches the capture boxes instead of firing the panel; the ref-counted
@@ -145,10 +185,83 @@ public partial class SettingsWindow : Window
         SectionSummon.Visibility = name == nameof(SectionSummon) ? Visibility.Visible : Visibility.Collapsed;
         SectionAbbr.Visibility = name == nameof(SectionAbbr) ? Visibility.Visible : Visibility.Collapsed;
         SectionOutput.Visibility = name == nameof(SectionOutput) ? Visibility.Visible : Visibility.Collapsed;
+        SectionClipboard.Visibility = name == nameof(SectionClipboard) ? Visibility.Visible : Visibility.Collapsed;
         SectionData.Visibility = name == nameof(SectionData) ? Visibility.Visible : Visibility.Collapsed;
         SectionGeneral.Visibility = name == nameof(SectionGeneral) ? Visibility.Visible : Visibility.Collapsed;
+        SectionAi.Visibility = name == nameof(SectionAi) ? Visibility.Visible : Visibility.Collapsed;
         ContentScroll.ScrollToHome();
     }
+
+    private static string ProviderDisplay(string? id) => AiProviders.Normalize(id) switch
+    {
+        AiProviders.Magpie => L("Settings.AiProviderMagpie"),
+        AiProviders.OpenAi => L("Settings.AiProviderOpenAi"),
+        AiProviders.Anthropic => L("Settings.AiProviderAnthropic"),
+        AiProviders.Azure => L("Settings.AiProviderAzure"),
+        AiProviders.DeepSeek => L("Settings.AiProviderDeepSeek"),
+        _ => L("Settings.AiProviderCustom"),
+    };
+
+    private void RefreshAiList(string? selectId = null)
+    {
+        var keep = selectId ?? (AiList.SelectedItem as AiRow)?.Config.Id;
+        _aiRows.Clear();
+        for (var i = 0; i < _aiConfigs.Count; i++)
+        {
+            var cfg = _aiConfigs[i];
+            _aiRows.Add(new AiRow
+            {
+                Config = cfg,
+                DefaultVis = i == 0 ? Visibility.Visible : Visibility.Collapsed,
+            });
+        }
+        if (keep != null)
+            AiList.SelectedItem = _aiRows.FirstOrDefault(r => r.Config.Id == keep);
+    }
+
+    private AiProviderConfig? SelectedAi() => (AiList.SelectedItem as AiRow)?.Config;
+
+    private void OnAiAdd(object sender, RoutedEventArgs e)
+    {
+        var created = AiConfigDialog.Show(this, null);
+        if (created == null) return;
+        _aiConfigs.Add(created);
+        // First added config becomes the default by being alone at index 0.
+        RefreshAiList(created.Id);
+    }
+
+    private void OnAiEdit(object sender, RoutedEventArgs e)
+    {
+        var cur = SelectedAi();
+        if (cur == null) return;
+        var edited = AiConfigDialog.Show(this, cur);
+        if (edited == null) return;
+        var i = _aiConfigs.FindIndex(c => c.Id == cur.Id);
+        if (i < 0) return;
+        _aiConfigs[i] = edited;
+        RefreshAiList(edited.Id);
+    }
+
+    private void OnAiSetDefault(object sender, RoutedEventArgs e)
+    {
+        var cur = SelectedAi();
+        if (cur == null) return;
+        if (!AiConfigList.SetDefault(_aiConfigs, cur.Id)) return;
+        RefreshAiList(cur.Id);
+    }
+
+    private void OnAiDelete(object sender, RoutedEventArgs e)
+    {
+        var cur = SelectedAi();
+        if (cur == null) return;
+        var i = _aiConfigs.FindIndex(c => c.Id == cur.Id);
+        if (i < 0) return;
+        _aiConfigs.RemoveAt(i);
+        RefreshAiList();
+    }
+
+    /// <summary>--shots only: open the AI section so the list/actions are on film.</summary>
+    internal void ShotsAiSection() => SelectNav(nameof(SectionAi));
 
     /// <summary>A settings change is not applied until Save (except the live theme preview), so a
     /// bare X must not silently discard it. Keep the Manager's Save/Don't-save/Cancel choice;
@@ -196,6 +309,57 @@ public partial class SettingsWindow : Window
     /// <summary>Called by the tray pause toggle so an already-open window can't save a stale value back.</summary>
     public void SyncAbbrEnabled(bool on) => AbbrEnabled.IsChecked = on;
 
+    /// <summary>Dropdown of built-in prefixes (/ ; @ / none). Selected via SelectedItem (not
+    /// SelectedValue) so the empty "no prefix" row can be selected — WPF treats SelectedValue=""
+    /// as unset. A hand-edited custom value is kept as an extra row so opening Settings and saving
+    /// can't silently change it.</summary>
+    private void LoadAbbrPrefixChoices(string? current)
+    {
+        var cur = current ?? "";
+        var items = new List<PrefixItem>
+        {
+            new("/", "/"),
+            new(";", ";"),
+            new("@", "@"),
+            new("", L("Settings.AbbrPrefixNone")),
+        };
+        if (!BuiltInAbbrPrefixes.Contains(cur))
+            items.Insert(0, new(cur, cur));
+        AbbrPrefixCombo.ItemsSource = items;
+        AbbrPrefixCombo.SelectedItem = items.FirstOrDefault(i => i.Value == cur) ?? items[0];
+    }
+
+    private string CurrentAbbrPrefix() =>
+        (AbbrPrefixCombo.SelectedItem as PrefixItem)?.Value ?? "/";
+
+    /// <summary>Space / Tab / Enter map onto the persisted TerminatorChars string (Enter = CR+LF).
+    /// An empty or hand-edited value with none of the three falls back to all-on so the UI isn't a trap.</summary>
+    private void LoadTerminators(string? chars)
+    {
+        chars ??= "";
+        TermSpace.IsChecked = chars.Contains(' ');
+        TermTab.IsChecked = chars.Contains('\t');
+        TermEnter.IsChecked = chars.Contains('\r') || chars.Contains('\n');
+        if (TermSpace.IsChecked != true && TermTab.IsChecked != true && TermEnter.IsChecked != true)
+            TermSpace.IsChecked = TermTab.IsChecked = TermEnter.IsChecked = true;
+    }
+
+    private string BuildTerminators()
+    {
+        var chars = "";
+        if (TermSpace.IsChecked == true) chars += " ";
+        if (TermTab.IsChecked == true) chars += "\t";
+        if (TermEnter.IsChecked == true) chars += "\r\n";
+        return chars.Length > 0 ? chars : " \t\r\n";
+    }
+
+    /// <summary>Keep at least one trigger key — with none selected, expansion can never fire.</summary>
+    private void OnTerminatorUnchecked(object sender, RoutedEventArgs e)
+    {
+        if (TermSpace.IsChecked == true || TermTab.IsChecked == true || TermEnter.IsChecked == true) return;
+        if (sender is CheckBox cb) cb.IsChecked = true;
+    }
+
     private void OnOutputChecked(object sender, RoutedEventArgs e)
     {
         if (sender is RadioButton rb) _clipboardOnly = (string?)rb.Tag == "clip";
@@ -229,11 +393,15 @@ public partial class SettingsWindow : Window
         TapModePanel.Visibility = tap ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    // ---------- hotkey capture (shared by the summon and capture boxes) ----------
-    private (TextBlock Text, Func<string> Get, Action<string> Set) Target(Border box) =>
-        box == HotkeyBox
-            ? (HotkeyText, () => _hotkey, v => _hotkey = v)
-            : (CaptureText, () => _captureHotkey, v => _captureHotkey = v);
+    // ---------- hotkey capture (shared by summon / capture / clipboard-history boxes) ----------
+    private (TextBlock Text, Func<string> Get, Action<string> Set) Target(Border box)
+    {
+        if (ReferenceEquals(box, HotkeyBox))
+            return (HotkeyText, () => _hotkey, v => _hotkey = v);
+        if (ReferenceEquals(box, ClipboardHistoryHotkeyBox))
+            return (ClipboardHistoryHotkeyText, () => _clipboardHistoryHotkey, v => _clipboardHistoryHotkey = v);
+        return (CaptureText, () => _captureHotkey, v => _captureHotkey = v);
+    }
 
     private void OnHotkeyBoxClick(object sender, MouseButtonEventArgs e)
     {
@@ -291,6 +459,20 @@ public partial class SettingsWindow : Window
         e.Handled = true;
     }
 
+    private void OnClipboardHistoryHotkeyClick(object sender, MouseButtonEventArgs e)
+    {
+        BeginCapture(ClipboardHistoryHotkeyBox);
+        e.Handled = true;
+    }
+
+    private void OnClipboardHistoryClear(object sender, RoutedEventArgs e)
+    {
+        if (Application.Current is App app)
+            app.ClipboardHistory.Clear();
+        else
+            new Core.Clipboard.ClipboardHistoryStore(Core.AppPaths.ClipboardHistoryPath).Clear();
+    }
+
     private void BeginCapture(Border box)
     {
         _capBox = box;
@@ -330,9 +512,9 @@ public partial class SettingsWindow : Window
         if (key == Key.Escape) { EndCapture(); return; }
         if (key is Key.Delete or Key.Back)
         {
-            // The capture hotkey is optional — clearing it disables the feature. The SUMMON box is
-            // the only keyboard entry in hotkey mode, so clearing it would silently lock the user
-            // out; Delete there falls back to the default instead of empty.
+            // Capture / clipboard-history hotkeys are optional — clearing disables summon for that
+            // feature. The SUMMON box is the only keyboard entry in hotkey mode, so clearing it
+            // would lock the user out; Delete there falls back to the default instead of empty.
             t.Set(ReferenceEquals(_capBox, HotkeyBox) ? Core.Settings.AppSettings.DefaultHotkey : "");
             EndCapture();
             return;
@@ -350,16 +532,23 @@ public partial class SettingsWindow : Window
             t.Text.Text = LocalizationService.Instance["Settings.HotkeyPrompt"];
             return;
         }
-        // The two slots can't hold the same combo — RegisterHotKey fails the second and blames
-        // "another program". Reject the collision here so the user isn't sent hunting a culprit app.
-        var other = ReferenceEquals(_capBox, HotkeyBox) ? _captureHotkey : _hotkey;
-        if (combo == other)
+        // Hotkey slots can't share a combo — RegisterHotKey fails the second and blames
+        // "another program". Reject collisions here so the user isn't sent hunting a culprit app.
+        if (HotkeyTakenByOther(_capBox, combo))
         {
             t.Text.Text = LocalizationService.Instance["Settings.HotkeyPrompt"];
             return;
         }
         t.Set(combo);
         EndCapture();
+    }
+
+    private bool HotkeyTakenByOther(Border box, string combo)
+    {
+        if (!ReferenceEquals(box, HotkeyBox) && combo == _hotkey) return true;
+        if (!ReferenceEquals(box, CaptureBox) && combo == _captureHotkey) return true;
+        if (!ReferenceEquals(box, ClipboardHistoryHotkeyBox) && combo == _clipboardHistoryHotkey) return true;
+        return false;
     }
 
     /// <summary>Maps the WPF key event onto the Core combo builder (which is what the unit test
@@ -459,8 +648,8 @@ public partial class SettingsWindow : Window
 
     private void OnBrowse(object sender, RoutedEventArgs e)
     {
-        var dlg = new Microsoft.Win32.OpenFolderDialog();
-        if (dlg.ShowDialog() == true) DataFolder.Text = dlg.FolderName;
+        var folder = ShellFileDialogs.OpenFolder(this);
+        if (folder != null) DataFolder.Text = folder;
     }
 
     // Toggle portable mode immediately (create/remove the marker beside the exe) rather than on
@@ -525,17 +714,14 @@ public partial class SettingsWindow : Window
 
     private void OnExportBackup(object sender, RoutedEventArgs e)
     {
-        var dlg = new Microsoft.Win32.SaveFileDialog
-        {
-            Filter = "Zip (*.zip)|*.zip",
-            FileName = $"QuickText-backup-{DateTime.Now:yyyyMMdd-HHmm}.zip",
-        };
-        if (dlg.ShowDialog() != true) return;
+        var path = ShellFileDialogs.SaveFile(this, "Zip (*.zip)|*.zip",
+            $"QuickText-backup-{DateTime.Now:yyyyMMdd-HHmm}.zip");
+        if (path == null) return;
         try
         {
             var folder = AppState.Current.ResolveDataFolder();
-            if (System.IO.File.Exists(dlg.FileName)) System.IO.File.Delete(dlg.FileName);
-            System.IO.Compression.ZipFile.CreateFromDirectory(folder, dlg.FileName);
+            if (System.IO.File.Exists(path)) System.IO.File.Delete(path);
+            System.IO.Compression.ZipFile.CreateFromDirectory(folder, path);
             AppDialog.Alert(this, LocalizationService.Instance["App.Name"], LocalizationService.Instance["Msg.Exported"]);
         }
         catch (Exception ex)
@@ -594,9 +780,9 @@ public partial class SettingsWindow : Window
             "QuickText-import-" + Guid.NewGuid().ToString("N"));
         try
         {
-            var dlg = new Microsoft.Win32.OpenFileDialog { Filter = "Zip (*.zip)|*.zip" };
-            if (dlg.ShowDialog() != true) return;
-            await Task.Run(() => System.IO.Compression.ZipFile.ExtractToDirectory(dlg.FileName, tmp));
+            var zipPath = ShellFileDialogs.OpenFile(this, "Zip (*.zip)|*.zip");
+            if (zipPath == null) return;
+            await Task.Run(() => System.IO.Compression.ZipFile.ExtractToDirectory(zipPath, tmp));
 
             // A QuickText backup is the data folder zipped: index.json must exist and parse.
             var idxPath = System.IO.Path.Combine(tmp, "index.json");
@@ -656,12 +842,15 @@ public partial class SettingsWindow : Window
             s.SummonMode = Core.Interop.ModifierTapKeys.IsValidTap(_summonMode, _summonTapKey) ? "tap" : "hotkey";
             s.Hotkey = _hotkey.Trim();
             s.CaptureHotkey = _captureHotkey.Trim();
+            s.ClipboardHistoryEnabled = ClipboardHistoryEnabled.IsChecked == true;
+            s.ClipboardHistoryHotkey = _clipboardHistoryHotkey.Trim();
             s.SummonTapKey = _summonTapKey;
             s.SummonTapDouble = SummonTapDouble.IsChecked == true;
             s.DataFolder = DataFolder.Text.Trim();
             s.Language = (LangCombo.SelectedValue as string) ?? "";
             s.AbbrBlacklist = AbbrBlacklist.Text.Trim();
-            s.AbbrPrefix = AbbrPrefixBox.Text.Trim();
+            s.AbbrPrefix = CurrentAbbrPrefix();
+            s.TerminatorChars = BuildTerminators();
             s.AbbrEnabled = AbbrEnabled.IsChecked == true;
             s.RestoreClipboard = RestoreClipboard.IsChecked == true;
             s.AutoSend = AutoSend.IsChecked == true;
@@ -671,6 +860,7 @@ public partial class SettingsWindow : Window
             s.Theme = _theme;
             s.Autostart = Autostart.IsChecked == true;
             s.CheckUpdates = CheckUpdates.IsChecked == true;
+            s.AiConfigs = AiConfigList.CloneAll(_aiConfigs);
 
             AppState.Current.SettingsStore.Save(s);
             _savedForm = CurrentForm();
