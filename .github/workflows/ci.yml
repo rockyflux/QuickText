@@ -15,8 +15,10 @@ jobs:
         # fetch-depth: 0 for the tags. VersionFromGitTag in the csproj derives the version from
         # `git describe --tags`, and checkout clones shallow WITHOUT tags by default — so the
         # build would silently stamp VersionFallback instead of the release being built.
+        # lfs: branding .ico/.png live in Git LFS; without smudge, CSC fails on ApplicationIcon.
         with:
           fetch-depth: 0
+          lfs: true
       - uses: actions/setup-dotnet@v6
         with:
           global-json-file: global.json
@@ -62,8 +64,10 @@ jobs:
         # fetch-depth: 0 for the tags. VersionFromGitTag in the csproj derives the version from
         # `git describe --tags`, and checkout clones shallow WITHOUT tags by default — so the
         # build would silently stamp VersionFallback instead of the release being built.
+        # lfs: branding .ico/.png live in Git LFS; without smudge, CSC fails on ApplicationIcon.
         with:
           fetch-depth: 0
+          lfs: true
       - uses: actions/setup-dotnet@v6
         with:
           global-json-file: global.json
