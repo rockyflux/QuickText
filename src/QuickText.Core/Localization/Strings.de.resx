@@ -241,7 +241,7 @@
   <data name="Settings.PortableRestart"><value>Portabler Modus umgeschaltet – Neustart zum Übernehmen. Textbibliothek per Backup exportieren / importieren verschieben.</value></data>
   <data name="Settings.PortableFailed"><value>Schreiben neben der App nicht möglich (evtl. an einem schreibgeschützten Ort wie Program Files). Der portable Modus erfordert die App an einem schreibbaren Ort, etwa auf einem USB-Stick.</value></data>
   <data name="Settings.CheckUpdates"><value>Beim Start nach Updates suchen</value></data>
-  <data name="Settings.CheckUpdatesHint"><value>Wenn aktiviert, kontaktiert die App beim Start einmal GitLab, um eine neuere Version zu prüfen und lokal herunterzuladen. Das laufende Programm wird nicht ersetzt; dies ist der einzige Netzwerkzugriff der App.</value></data>
+  <data name="Settings.CheckUpdatesHint"><value>Wenn aktiviert, kontaktiert die App beim Start einmal GitHub, um eine neuere Version zu prüfen und lokal herunterzuladen. Das laufende Programm wird nicht ersetzt; dies ist der einzige Netzwerkzugriff der App.</value></data>
   <data name="Settings.CheckNow"><value>Jetzt suchen</value></data>
   <data name="Msg.UpToDate"><value>Sie verwenden die neueste Version.</value></data>
   <data name="Msg.UpdateCheckFailed"><value>Update-Suche fehlgeschlagen. Bitte später erneut versuchen.</value></data>

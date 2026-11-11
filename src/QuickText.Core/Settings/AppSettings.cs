@@ -61,7 +61,7 @@ public sealed class AppSettings
     public double BodyWinY { get; set; }
     public double BodyWinW { get; set; }
     public double BodyWinH { get; set; }
-    // Opt-in, OFF by default: when true the app contacts the GitLab Releases API at startup, and if
+    // Opt-in, OFF by default: when true the app contacts the GitHub Releases API at startup, and if
     // a newer version exists downloads its zip and checksums (everything else stays fully offline).
     // It never replaces the running program. Off keeps the "no network" promise intact.
     public bool CheckUpdates { get; set; }

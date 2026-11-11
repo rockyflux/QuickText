@@ -241,7 +241,7 @@
   <data name="Settings.PortableRestart"><value>Modalità portatile cambiata — riavvia per applicare. Sposta la tua libreria di testi con Esporta / Importa backup.</value></data>
   <data name="Settings.PortableFailed"><value>Impossibile scrivere accanto all'app (potrebbe trovarsi in una posizione di sola lettura come Program Files). La modalità portatile richiede l'app in una posizione scrivibile, come una chiavetta USB.</value></data>
   <data name="Settings.CheckUpdates"><value>Controlla aggiornamenti all'avvio</value></data>
-  <data name="Settings.CheckUpdatesHint"><value>Se attivata, l'app contatta GitLab una volta all'avvio per verificare e scaricare una versione più recente sul disco locale. Non sostituisce il programma in esecuzione; è l'unica operazione di rete dell'app.</value></data>
+  <data name="Settings.CheckUpdatesHint"><value>Se attivata, l'app contatta GitHub una volta all'avvio per verificare e scaricare una versione più recente sul disco locale. Non sostituisce il programma in esecuzione; è l'unica operazione di rete dell'app.</value></data>
   <data name="Settings.CheckNow"><value>Controlla ora</value></data>
   <data name="Msg.UpToDate"><value>Hai già l'ultima versione.</value></data>
   <data name="Msg.UpdateCheckFailed"><value>Impossibile controllare gli aggiornamenti. Riprova più tardi.</value></data>

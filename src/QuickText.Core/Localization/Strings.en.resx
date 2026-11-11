@@ -241,7 +241,7 @@
   <data name="Settings.PortableRestart"><value>Portable mode switched — restart to apply. Move your text library with Export / Import backup.</value></data>
   <data name="Settings.PortableFailed"><value>Can't write next to the app (it may be in a read-only location like Program Files). Portable mode needs the app in a writable place, such as a USB stick.</value></data>
   <data name="Settings.CheckUpdates"><value>Check for updates on startup</value></data>
-  <data name="Settings.CheckUpdatesHint"><value>When on, the app contacts GitLab once at startup to check for and download a newer build to local disk. It never replaces the running program; this is the app's only network access.</value></data>
+  <data name="Settings.CheckUpdatesHint"><value>When on, the app contacts GitHub once at startup to check for and download a newer build to local disk. It never replaces the running program; this is the app's only network access.</value></data>
   <data name="Settings.CheckNow"><value>Check now</value></data>
   <data name="Msg.UpToDate"><value>You're on the latest version.</value></data>
   <data name="Msg.UpdateCheckFailed"><value>Couldn't check for updates. Try again later.</value></data>

@@ -241,7 +241,7 @@
   <data name="Settings.PortableRestart"><value>Mode portable modifié — redémarrez pour appliquer. Déplacez votre bibliothèque de texte avec Exporter / Importer une sauvegarde.</value></data>
   <data name="Settings.PortableFailed"><value>Impossible d'écrire à côté de l'application (elle est peut-être dans un emplacement en lecture seule comme Program Files). Le mode portable nécessite l'application dans un emplacement inscriptible, comme une clé USB.</value></data>
   <data name="Settings.CheckUpdates"><value>Vérifier les mises à jour au démarrage</value></data>
-  <data name="Settings.CheckUpdatesHint"><value>Si cette option est activée, l'application contacte GitLab une fois au démarrage pour vérifier et télécharger une version plus récente sur le disque local. Elle ne remplace jamais le programme en cours d'exécution ; c'est la seule opération réseau de l'application.</value></data>
+  <data name="Settings.CheckUpdatesHint"><value>Si cette option est activée, l'application contacte GitHub une fois au démarrage pour vérifier et télécharger une version plus récente sur le disque local. Elle ne remplace jamais le programme en cours d'exécution ; c'est la seule opération réseau de l'application.</value></data>
   <data name="Settings.CheckNow"><value>Vérifier maintenant</value></data>
   <data name="Msg.UpToDate"><value>Vous avez la dernière version.</value></data>
   <data name="Msg.UpdateCheckFailed"><value>Impossible de vérifier les mises à jour. Réessayez plus tard.</value></data>

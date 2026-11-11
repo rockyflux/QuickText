@@ -426,7 +426,7 @@ public partial class App : Application
             Balloon(string.Format(LocalizationService.Instance["Msg.AbbrConflicts"],
                 string.Join("、", state.AbbrConflicts)), NotificationIcon.Warning);
 
-        // Opt-in, off by default (the only feature in the app that goes online): ask GitLab whether
+        // Opt-in, off by default (the only feature in the app that goes online): ask GitHub whether
         // a newer release exists, and fetch it if so. Fire-and-forget so a slow/absent network
         // never delays the tray coming up.
         if (state.Settings.CheckUpdates) _ = CheckForUpdatesAsync(manual: false);
@@ -440,7 +440,7 @@ public partial class App : Application
     }
 
     /// <summary>
-    /// Opt-in update check: ask GitLab for the latest release — the only thing in QuickText that
+    /// Opt-in update check: ask GitHub for the latest release — the only thing in QuickText that
     /// goes online — and, if it is newer than this build, download it, check it against the
     /// checksum the same release published, and unpack it where the user can find it. A
     /// <paramref name="manual"/> check (the Settings button) also reports the up-to-date and

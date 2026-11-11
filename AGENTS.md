@@ -2,13 +2,13 @@
 
 Repository working agreement for AI coding agents. Read before changing code. If another tool has its own instruction file, treat it as a pointer here — not a second rule set.
 
-QuickText is a **Windows-only WPF / .NET 10** tray app: snippet manager + text expander, shipped as a single-file portable exe. No web stack, no plugins. Hosted on the internal GitLab project (`UpdateService.ProjectUrl` / README download link). User docs: `README.md` (简体中文, default) and `README.en.md` (English). Release notes: `docs/release-notes/`. Build entry: README **构建** / **Build**, plus root `build.bat`.
+QuickText is a **Windows-only WPF / .NET 10** tray app: snippet manager + text expander, shipped as a single-file portable exe. No web stack, no plugins. Hosted on GitHub (`UpdateService.ProjectUrl` / README download link: https://github.com/rockyflux/QuickText). User docs: `README.md` (简体中文, default) and `README.en.md` (English). Release notes: `docs/release-notes/`. Build entry: README **构建** / **Build**, plus root `build.bat`.
 
 ## 1. Read before changing
 
 - **`README.md` / `README.en.md`** — product promises and screens.
 - **`docs/release-notes/`** — published notes are immutable; add a new file only when cutting that version (`docs/release-notes/<tag>.md`, e.g. `v1.0.1.md`).
-- **`.github/workflows/ci.yml`** — canonical test / smoke / publish / checksum recipe. Local green ≠ released; confirm the GitLab release assets separately.
+- **`.github/workflows/ci.yml`** — canonical test / smoke / publish / checksum recipe. Local green ≠ released; confirm the GitHub release assets separately.
 - **In-repo WPF pitfalls** (no external `wpf-desktop` skill assumed): `src/QuickText.App/app.manifest` (PerMonitorV2), `App.xaml.cs` foreground/`SetWindowPos` comments, `Ui/WindowTheming.cs`, `--smoke` / `--shots` in `App.xaml.cs`. Read those before layout, DPI, activation, tray, or harness changes.
 - **`git status` / `git log`** — the tree may already be dirty; never treat it as a clean release tree.
 
@@ -64,7 +64,7 @@ dotnet publish src/QuickText.App -c Release -p:PublishProfile=win-x64-needs-dotn
 - Custom focusable visuals need an accessibility story: `AutomationPeer`, `AutomationProperties.Name`, `LabeledBy` on form controls, list-item names from displayed data (not model type names). Confirm via UIA; XAML alone is not evidence.
 - Keep single-instance, config location, and startup behavior intact. A second-instance test needs an isolated copy or a dedicated message name.
 - First-run defaults go in settings defaults / seeds — not in a model property that existing configs already persist. A missing JSON field must keep prior behavior; test both fresh and old configs.
-- Offline by default. Opt-in network only: **check updates** (GitLab Releases API) and **AI generate** (user-configured provider). No telemetry, cloud sync, or silent background network.
+- Offline by default. Opt-in network only: **check updates** (GitHub Releases API) and **AI generate** (user-configured provider). No telemetry, cloud sync, or silent background network.
 
 ## 4. Localization and documentation
 
@@ -86,7 +86,7 @@ dotnet publish src/QuickText.App -c Release -p:PublishProfile=win-x64-needs-dotn
 
 - Version source is the git tag. Source builds use the newest reachable tag; CI/publish pass `-p:Version=` from the tag. Do not maintain a second version number in the app or docs.
 - Before changing CI, read `.github/workflows/ci.yml`. Expected gates: Core tests with `--minimum-expected-tests` (raise when adding tests, never lower casually), Release app build, `--smoke` marker check; on `v*` tags, both publish profiles, zip + bare `QuickText.exe` + `SHA256SUMS.txt`, and a release body built from `docs/release-notes/<tag>.md` (missing notes = no release).
-- Hosted releases and the in-app updater target **GitLab Releases** (see `UpdateService`). A green local build does not prove the release page has every asset users download.
+- Hosted releases and the in-app updater target **GitHub Releases** (see `UpdateService`). A green local build does not prove the release page has every asset users download.
 - Do not add Dependabot. Before a public/shared release, check outdated/vulnerable packages manually (`dotnet list package --outdated`, `dotnet list package --vulnerable --include-transitive`) and review Action major bumps in the workflow pins.
 - Do not add a winget publish step in this repo. Public winget packaging, if used at all, lives outside this tree (historically `rockbenben/winget-manifests`); a second manifest PR duplicates and gets rejected.
 - Do not push, create a tag, publish a release, or edit published assets without explicit maintainer approval. A local commit is not a release.

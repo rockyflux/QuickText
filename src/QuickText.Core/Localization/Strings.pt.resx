@@ -241,7 +241,7 @@
   <data name="Settings.PortableRestart"><value>Modo portátil alterado — reinicie para aplicar. Mova a sua biblioteca de texto com Exportar / Importar cópia.</value></data>
   <data name="Settings.PortableFailed"><value>Não é possível escrever junto à app (pode estar num local só de leitura como Program Files). O modo portátil precisa da app num local com permissão de escrita, como uma pen USB.</value></data>
   <data name="Settings.CheckUpdates"><value>Verificar atualizações ao iniciar</value></data>
-  <data name="Settings.CheckUpdatesHint"><value>Se ativado, a app acede ao GitLab uma vez no arranque para verificar e transferir uma versão mais recente para o disco local. Não substitui o programa em execução; é a única operação de rede da app.</value></data>
+  <data name="Settings.CheckUpdatesHint"><value>Se ativado, a app acede ao GitHub uma vez no arranque para verificar e transferir uma versão mais recente para o disco local. Não substitui o programa em execução; é a única operação de rede da app.</value></data>
   <data name="Settings.CheckNow"><value>Verificar agora</value></data>
   <data name="Msg.UpToDate"><value>Você está na versão mais recente.</value></data>
   <data name="Msg.UpdateCheckFailed"><value>Não foi possível verificar atualizações. Tente novamente mais tarde.</value></data>

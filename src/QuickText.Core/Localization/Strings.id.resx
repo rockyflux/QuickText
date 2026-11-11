@@ -241,7 +241,7 @@
   <data name="Settings.PortableRestart"><value>Mode portabel diubah — mulai ulang untuk menerapkan. Pindahkan pustaka teks Anda dengan Ekspor / Impor cadangan.</value></data>
   <data name="Settings.PortableFailed"><value>Tidak bisa menulis di samping aplikasi (mungkin di lokasi baca-saja seperti Program Files). Mode portabel butuh aplikasi di tempat yang bisa ditulis, seperti USB.</value></data>
   <data name="Settings.CheckUpdates"><value>Periksa pembaruan saat mulai</value></data>
-  <data name="Settings.CheckUpdatesHint"><value>Saat aktif, aplikasi menghubungi GitLab sekali saat mulai untuk memeriksa dan mengunduh versi yang lebih baru ke disk lokal. Aplikasi tidak mengganti program yang sedang berjalan; ini satu-satunya akses jaringan aplikasi.</value></data>
+  <data name="Settings.CheckUpdatesHint"><value>Saat aktif, aplikasi menghubungi GitHub sekali saat mulai untuk memeriksa dan mengunduh versi yang lebih baru ke disk lokal. Aplikasi tidak mengganti program yang sedang berjalan; ini satu-satunya akses jaringan aplikasi.</value></data>
   <data name="Settings.CheckNow"><value>Periksa sekarang</value></data>
   <data name="Msg.UpToDate"><value>Anda memakai versi terbaru.</value></data>
   <data name="Msg.UpdateCheckFailed"><value>Gagal memeriksa pembaruan. Coba lagi nanti.</value></data>

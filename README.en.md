@@ -12,7 +12,7 @@ Lives in the tray. Store email, signatures, templates, replies, prompts, Skills,
 
 ## Download
 
-**[⬇ Get the latest release](http://172.16.68.178:8090/vb-coding/quicktext/-/releases)** — Windows x64, no installer.
+**[⬇ Get the latest release](https://github.com/rockyflux/QuickText/releases)** — Windows x64, no installer.
 
 | File | Needs | Notes |
 | --- | --- | --- |

@@ -446,7 +446,7 @@
             <Grid Grid.Row="1" Margin="24,8,24,16">
                 <Button Click="OnOpenRepo" HorizontalAlignment="Left" VerticalAlignment="Center"
                         AutomationProperties.Name="Repository"
-                        Cursor="Hand" ToolTip="http://172.16.68.178:8090/vb-coding/quicktext">
+                        Cursor="Hand" ToolTip="https://github.com/rockyflux/QuickText">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <Border Background="Transparent" Padding="1">

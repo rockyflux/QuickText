@@ -241,7 +241,7 @@
   <data name="Settings.PortableRestart"><value>Đã chuyển chế độ di động — khởi động lại để áp dụng. Chuyển thư viện văn bản bằng Xuất / Nhập bản sao lưu.</value></data>
   <data name="Settings.PortableFailed"><value>Không ghi được cạnh ứng dụng (có thể ở vị trí chỉ đọc như Program Files). Chế độ di động cần ứng dụng ở nơi ghi được, chẳng hạn USB.</value></data>
   <data name="Settings.CheckUpdates"><value>Kiểm tra cập nhật khi khởi động</value></data>
-  <data name="Settings.CheckUpdatesHint"><value>Khi bật, ứng dụng chỉ truy cập GitLab một lần khi khởi động để kiểm tra và tải bản mới hơn về ổ đĩa cục bộ. Ứng dụng không thay thế chương trình đang chạy; đây là thao tác mạng duy nhất của ứng dụng.</value></data>
+  <data name="Settings.CheckUpdatesHint"><value>Khi bật, ứng dụng chỉ truy cập GitHub một lần khi khởi động để kiểm tra và tải bản mới hơn về ổ đĩa cục bộ. Ứng dụng không thay thế chương trình đang chạy; đây là thao tác mạng duy nhất của ứng dụng.</value></data>
   <data name="Settings.CheckNow"><value>Kiểm tra ngay</value></data>
   <data name="Msg.UpToDate"><value>Bạn đang dùng phiên bản mới nhất.</value></data>
   <data name="Msg.UpdateCheckFailed"><value>Không kiểm tra được cập nhật. Vui lòng thử lại sau.</value></data>

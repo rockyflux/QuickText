@@ -12,7 +12,7 @@
 
 ## 下载
 
-**[⬇ 下载最新版](http://172.16.68.178:8090/vb-coding/quicktext/-/releases)** — Windows x64，免安装。
+**[⬇ 下载最新版](https://github.com/rockyflux/QuickText/releases)** — Windows x64，免安装。
 
 | 文件 | 前提 | 说明 |
 | --- | --- | --- |

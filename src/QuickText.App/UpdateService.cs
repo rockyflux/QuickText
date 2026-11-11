@@ -33,7 +33,7 @@ public sealed record UpdateOutcome(UpdateStatus Status, string? Version, string?
                                    string? ReleaseUrl, string? Error);
 
 /// <summary>
-/// The opt-in update check: ask GitLab for the latest release, and if it is newer than the
+/// The opt-in update check: ask GitHub for the latest release, and if it is newer than the
 /// running build, download the self-contained zip, check it against the checksum the same release
 /// published, and unpack it where the user can find it.
 /// <para><b>It never replaces the running program.</b> These releases are single-file
@@ -44,10 +44,10 @@ public sealed record UpdateOutcome(UpdateStatus Status, string? Version, string?
 /// </summary>
 public static class UpdateService
 {
-    public const string ProjectUrl = "http://172.16.68.178:8090/vb-coding/quicktext";
-    /// <summary>GitLab Releases API — newest first, one page.</summary>
-    public const string ApiUrl = "http://172.16.68.178:8090/api/v4/projects/vb-coding%2Fquicktext/releases?per_page=1";
-    public const string ReleasePage = ProjectUrl + "/-/releases";
+    public const string ProjectUrl = "https://github.com/rockyflux/QuickText";
+    /// <summary>GitHub Releases API — latest non-draft, non-prerelease.</summary>
+    public const string ApiUrl = "https://api.github.com/repos/rockyflux/QuickText/releases/latest";
+    public const string ReleasePage = ProjectUrl + "/releases";
     private const string ChecksumsAsset = "SHA256SUMS.txt";
 
     /// <summary>Where an unpacked update is put: LocalAppData in installed mode, Data\Updates in
@@ -93,26 +93,33 @@ public static class UpdateService
         try
         {
             using var req = new HttpRequestMessage(HttpMethod.Get, ApiUrl);
+            // GitHub rejects requests without a User-Agent.
             req.Headers.UserAgent.ParseAdd("QuickText-update-check");
-            req.Headers.Accept.ParseAdd("application/json");
+            req.Headers.Accept.ParseAdd("application/vnd.github+json");
             using var resp = await Api.SendAsync(req, ct).ConfigureAwait(false);
+            // No published release yet (404) is "up to date", not a hard failure.
+            if (resp.StatusCode == System.Net.HttpStatusCode.NotFound)
+                return new(UpdateStatus.UpToDate, null, null, null, null);
             resp.EnsureSuccessStatusCode();
             using var doc = JsonDocument.Parse(await resp.Content.ReadAsStringAsync(ct).ConfigureAwait(false));
-            var list = doc.RootElement;
-            if (list.ValueKind != JsonValueKind.Array || list.GetArrayLength() == 0)
+            var root = doc.RootElement;
+            if (root.ValueKind != JsonValueKind.Object)
                 return new(UpdateStatus.UpToDate, null, null, null, null);
 
-            var root = list[0];
-
-            // An upcoming (unpublished) GitLab release is not something to put in front of a user
-            // who is running a released build.
-            if (root.TryGetProperty("upcoming_release", out var upcoming) && upcoming.ValueKind == JsonValueKind.True)
+            // /releases/latest already skips drafts and prereleases; keep the guards for safety.
+            if (root.TryGetProperty("draft", out var draft) && draft.ValueKind == JsonValueKind.True)
+                return new(UpdateStatus.UpToDate, null, null, null, null);
+            if (root.TryGetProperty("prerelease", out var pre) && pre.ValueKind == JsonValueKind.True)
                 return new(UpdateStatus.UpToDate, null, null, null, null);
 
             string? tag = root.TryGetProperty("tag_name", out var t) ? t.GetString() : null;
-            releaseUrl = tag is { Length: > 0 }
-                ? ReleasePage + "/" + Uri.EscapeDataString(tag)
-                : ReleasePage;
+            releaseUrl = root.TryGetProperty("html_url", out var hu) ? hu.GetString() : null;
+            if (string.IsNullOrEmpty(releaseUrl))
+            {
+                releaseUrl = tag is { Length: > 0 }
+                    ? ReleasePage + "/tag/" + Uri.EscapeDataString(tag)
+                    : ReleasePage;
+            }
             if (!UpdateCheck.IsNewer(tag, currentVersion))
                 return new(UpdateStatus.UpToDate, UpdateCheck.NormalizeVersion(tag), null, releaseUrl, null);
 
@@ -165,20 +172,16 @@ public static class UpdateService
         }
     }
 
-    /// <summary>GitLab release assets live under <c>assets.links[]</c> (name + url / direct_asset_url).</summary>
+    /// <summary>GitHub release assets live under <c>assets[]</c> (name + browser_download_url).</summary>
     private static List<(string Name, string Url)> ReadAssets(JsonElement root)
     {
         var assets = new List<(string, string)>();
-        if (!root.TryGetProperty("assets", out var assetsObj) || assetsObj.ValueKind != JsonValueKind.Object)
+        if (!root.TryGetProperty("assets", out var list) || list.ValueKind != JsonValueKind.Array)
             return assets;
-        if (!assetsObj.TryGetProperty("links", out var links) || links.ValueKind != JsonValueKind.Array)
-            return assets;
-        foreach (var a in links.EnumerateArray())
+        foreach (var a in list.EnumerateArray())
         {
             string name = a.TryGetProperty("name", out var n) ? n.GetString() ?? "" : "";
-            string url = "";
-            if (a.TryGetProperty("direct_asset_url", out var d)) url = d.GetString() ?? "";
-            if (url.Length == 0 && a.TryGetProperty("url", out var u)) url = u.GetString() ?? "";
+            string url = a.TryGetProperty("browser_download_url", out var u) ? u.GetString() ?? "" : "";
             if (name.Length > 0 && url.Length > 0) assets.Add((name, url));
         }
         return assets;

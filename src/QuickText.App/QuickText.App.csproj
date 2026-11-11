@@ -52,8 +52,8 @@
     <Company>Rocky</Company>
     <Description>Tray-resident Windows snippet manager and text expander — recall stored text or images by a few pinyin keystrokes or an abbreviation, pasted at the cursor.</Description>
     <Copyright>Copyright © 2026 Rocky</Copyright>
-    <PackageProjectUrl>http://172.16.68.178:8090/vb-coding/quicktext</PackageProjectUrl>
-    <RepositoryUrl>http://172.16.68.178:8090/vb-coding/quicktext</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/rockyflux/QuickText</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/rockyflux/QuickText</RepositoryUrl>
   </PropertyGroup>
 
   <!--

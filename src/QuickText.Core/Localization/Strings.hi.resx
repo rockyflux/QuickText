@@ -241,7 +241,7 @@
   <data name="Settings.PortableRestart"><value>पोर्टेबल मोड बदला गया — लागू करने के लिए पुनरारंभ करें। अपनी टेक्स्ट लाइब्रेरी को बैकअप निर्यात / आयात से स्थानांतरित करें।</value></data>
   <data name="Settings.PortableFailed"><value>ऐप के बगल में लिख नहीं सकते (यह Program Files जैसे केवल-पढ़ने योग्य स्थान में हो सकता है)। पोर्टेबल मोड के लिए ऐप को लिखने योग्य स्थान पर होना चाहिए, जैसे USB स्टिक।</value></data>
   <data name="Settings.CheckUpdates"><value>शुरू होने पर अपडेट जाँचें</value></data>
-  <data name="Settings.CheckUpdatesHint"><value>चालू होने पर ऐप स्टार्टअप पर एक बार GitLab से संपर्क करके नया संस्करण जाँचता और स्थानीय डिस्क पर डाउनलोड करता है। यह चल रहे प्रोग्राम को नहीं बदलता; ऐप का यह एकमात्र नेटवर्क कार्य है।</value></data>
+  <data name="Settings.CheckUpdatesHint"><value>चालू होने पर ऐप स्टार्टअप पर एक बार GitHub से संपर्क करके नया संस्करण जाँचता और स्थानीय डिस्क पर डाउनलोड करता है। यह चल रहे प्रोग्राम को नहीं बदलता; ऐप का यह एकमात्र नेटवर्क कार्य है।</value></data>
   <data name="Settings.CheckNow"><value>अभी जाँचें</value></data>
   <data name="Msg.UpToDate"><value>आप नवीनतम संस्करण पर हैं।</value></data>
   <data name="Msg.UpdateCheckFailed"><value>अपडेट जाँच नहीं सका। बाद में पुनः प्रयास करें।</value></data>
