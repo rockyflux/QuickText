@@ -71,6 +71,9 @@ public partial class SearchPanel : Window
     // True while ShowForCurrentForeground clears the box — TextChanged would otherwise queue a
     // second Refresh 80ms later on top of the one we already run, re-binding the lists again.
     private bool _suppressQueryNotify;
+    // True while SyncAutostartSwitch writes IsChecked — Checked/Unchecked would otherwise re-enter
+    // Enable/Disable/Save on every panel show.
+    private bool _suppressAutostartNotify;
 
     public SearchPanel()
     {
@@ -255,6 +258,7 @@ public partial class SearchPanel : Window
         _suppressQueryNotify = true;
         try { Query.Text = ""; }
         finally { _suppressQueryNotify = false; }
+        SyncAutostartSwitch();
         Refresh();
         PositionAndSize();
         Show();
@@ -1205,6 +1209,37 @@ public partial class SearchPanel : Window
         // Same guard as the foreground hook: a summon that hasn't landed yet deactivates us
         // spuriously, and hiding on it is the flash.
         if (!_pinned && !_settling) Hide();
+    }
+
+    /// <summary>Mirror the live Run-key / Startup-shortcut state into the footer switch. Reads
+    /// <see cref="Autostart.IsEnabled"/> (not the settings field) so a change made in Settings —
+    /// or by deleting the shortcut by hand — shows up the next time the panel opens.</summary>
+    private void SyncAutostartSwitch()
+    {
+        _suppressAutostartNotify = true;
+        try { AutostartSwitch.IsChecked = Autostart.IsEnabled(); }
+        finally { _suppressAutostartNotify = false; }
+    }
+
+    private void OnAutostartChanged(object sender, RoutedEventArgs e)
+    {
+        if (_suppressAutostartNotify) return;
+        bool on = AutostartSwitch.IsChecked == true;
+        try
+        {
+            if (on) Autostart.Enable();
+            else Autostart.Disable();
+            var s = AppState.Current.Settings;
+            s.Autostart = on;
+            AppState.Current.SettingsStore.Save(s);
+        }
+        catch (Exception ex)
+        {
+            // Roll the switch back to the real OS state so a failed write never leaves the UI lying.
+            SyncAutostartSwitch();
+            AppDialog.Alert(this, LocalizationService.Instance["App.Name"],
+                $"Could not update the autostart setting: {ex.Message}");
+        }
     }
 
     private void OnTogglePin(object sender, RoutedEventArgs e)

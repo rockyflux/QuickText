@@ -278,6 +278,16 @@
                             <Border Style="{StaticResource HintKey}"><TextBlock Text="esc" Style="{StaticResource HintKeyText}"/></Border>
                             <TextBlock Text="{Binding [Search.Hint.Close], Source={x:Static app:LocProxy.Instance}}" Style="{StaticResource HintLabel}"/>
                         </StackPanel>
+                        <!-- Immediately after esc: start-with-Windows toggle (same Interop.Autostart
+                             path as Settings). Stays in the legend WrapPanel so it sits next to esc
+                             instead of colliding with CountText on the right. -->
+                        <StackPanel Orientation="Horizontal" Margin="16,0,0,4" VerticalAlignment="Center">
+                            <CheckBox x:Name="AutostartSwitch" Style="{StaticResource FooterSwitch}"
+                                      Content="{Binding [Tray.Autostart], Source={x:Static app:LocProxy.Instance}}"
+                                      AutomationProperties.Name="{Binding [Tray.Autostart], Source={x:Static app:LocProxy.Instance}}"
+                                      ToolTip="{Binding [Tray.Autostart], Source={x:Static app:LocProxy.Instance}}"
+                                      Checked="OnAutostartChanged" Unchecked="OnAutostartChanged"/>
+                        </StackPanel>
                     </WrapPanel>
                     <TextBlock Grid.Column="1" x:Name="CountText" VerticalAlignment="Center" Margin="12,0,0,0"
                                FontFamily="{StaticResource Font.Ui}" FontSize="11.5"

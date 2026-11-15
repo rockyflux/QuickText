@@ -555,6 +555,55 @@
         </Setter>
     </Style>
 
+    <!-- Compact on/off switch for chrome that cannot spare a full checkbox (search-panel footer).
+         Same CheckBox contract as DarkCheckBox so Content / IsChecked / a11y stay familiar; the
+         track+thumb is the only visual difference. -->
+    <Style x:Key="FooterSwitch" TargetType="CheckBox">
+        <Setter Property="Foreground" Value="{DynamicResource Brush.TextFaint}"/>
+        <Setter Property="FontFamily" Value="{StaticResource Font.Ui}"/>
+        <Setter Property="FontSize" Value="11.5"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="FocusVisualStyle" Value="{StaticResource AppFocusVisual}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <Grid Background="Transparent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <ContentPresenter VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <Border x:Name="track" Grid.Column="1" Width="34" Height="18" CornerRadius="9"
+                                Background="{DynamicResource Brush.InputBg}"
+                                BorderBrush="{DynamicResource Brush.InputBorder}" BorderThickness="1"
+                                VerticalAlignment="Center">
+                            <Border x:Name="thumb" Width="14" Height="14" CornerRadius="7"
+                                    HorizontalAlignment="Left" Margin="2,0,0,0"
+                                    Background="{DynamicResource Brush.TextMuted}"
+                                    VerticalAlignment="Center"/>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="track" Property="BorderBrush" Value="{DynamicResource Brush.Accent}"/>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="track" Property="Background" Value="{DynamicResource Brush.Accent}"/>
+                            <Setter TargetName="track" Property="BorderBrush" Value="{DynamicResource Brush.Accent}"/>
+                            <Setter TargetName="thumb" Property="HorizontalAlignment" Value="Right"/>
+                            <Setter TargetName="thumb" Property="Margin" Value="0,0,2,0"/>
+                            <Setter TargetName="thumb" Property="Background" Value="{DynamicResource Brush.OnAccent}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.45"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- segmented selector (used for language) -->
     <Style x:Key="ChipToggle" TargetType="RadioButton">
         <Setter Property="Foreground" Value="{DynamicResource Brush.TextMuted}"/>
