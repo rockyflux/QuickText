@@ -59,6 +59,31 @@ public class UpdateCheckTests
         Assert.Equal("QuickText-v1.0.0-win-x64.zip", UpdateCheck.SelectSelfContainedAsset(assets));
     }
 
+    [Theory]
+    [InlineData("v1.1.1", "QuickText-v1.1.1-win-x64.zip")]
+    [InlineData("1.1.1", "QuickText-1.1.1-win-x64.zip")]
+    [InlineData("", "")]
+    public void Self_contained_zip_name_matches_the_CI_asset(string tag, string expected)
+        => Assert.Equal(expected, UpdateCheck.SelfContainedZipName(tag));
+
+    [Theory]
+    [InlineData("https://github.com/rockyflux/QuickText/releases/tag/v1.1.1", "v1.1.1")]
+    [InlineData("https://github.com/rockyflux/QuickText/releases/tag/v1.1.1/", "v1.1.1")]
+    [InlineData("https://github.com/rockyflux/QuickText/releases/latest", null)]
+    [InlineData("https://github.com/rockyflux/QuickText/", null)]
+    [InlineData("", null)]
+    [InlineData(null, null)]
+    public void Tag_is_read_from_a_releases_latest_redirect(string? url, string? expected)
+        => Assert.Equal(expected, UpdateCheck.TagFromLatestUrl(url));
+
+    [Fact]
+    public void Release_asset_url_points_at_the_download_CDN_path()
+    {
+        Assert.Equal(
+            "https://github.com/rockyflux/QuickText/releases/download/v1.1.1/SHA256SUMS.txt",
+            UpdateCheck.ReleaseAssetUrl("https://github.com/rockyflux/QuickText", "v1.1.1", "SHA256SUMS.txt"));
+    }
+
     [Fact]
     public void No_self_contained_asset_means_no_pick()
     {

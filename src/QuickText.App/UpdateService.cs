@@ -1,6 +1,6 @@
 using System.IO;
+using System.Net;
 using System.Net.Http;
-using System.Text.Json;
 using QuickText.Core;
 using QuickText.Core.Updates;
 
@@ -17,8 +17,8 @@ public enum UpdateStatus
     /// <summary>The download did not match the checksum the release published, so it was thrown
     /// away. Nothing was unpacked.</summary>
     VerifyFailed,
-    /// <summary>The check itself failed: no network, rate-limited, or a release that does not carry
-    /// the files we need.</summary>
+    /// <summary>The check itself failed: no network, or a release that does not carry the files we
+    /// need.</summary>
     Failed,
 }
 
@@ -33,9 +33,13 @@ public sealed record UpdateOutcome(UpdateStatus Status, string? Version, string?
                                    string? ReleaseUrl, string? Error);
 
 /// <summary>
-/// The opt-in update check: ask GitHub for the latest release, and if it is newer than the
+/// The opt-in update check: resolve the latest GitHub release, and if it is newer than the
 /// running build, download the self-contained zip, check it against the checksum the same release
 /// published, and unpack it where the user can find it.
+/// <para>Resolves the tag via the public <c>/releases/latest</c> redirect and downloads assets from
+/// the releases CDN — not the REST API. Unauthenticated API calls are capped at ~60/hour per IP
+/// and return 403 once exhausted; the HTML/CDN path is what users hit when browsing releases and
+/// does not share that quota.</para>
 /// <para><b>It never replaces the running program.</b> These releases are single-file
 /// self-contained executables, and Windows locks a running executable: overwriting it in place
 /// fails with a sharing violation and leaves a half-written install behind. So the new build is
@@ -45,8 +49,8 @@ public sealed record UpdateOutcome(UpdateStatus Status, string? Version, string?
 public static class UpdateService
 {
     public const string ProjectUrl = "https://github.com/rockyflux/QuickText";
-    /// <summary>GitHub Releases API — latest non-draft, non-prerelease.</summary>
-    public const string ApiUrl = "https://api.github.com/repos/rockyflux/QuickText/releases/latest";
+    /// <summary>Public latest-release redirect (302 → <c>/releases/tag/v…</c>). Not the REST API.</summary>
+    public const string LatestUrl = ProjectUrl + "/releases/latest";
     public const string ReleasePage = ProjectUrl + "/releases";
     private const string ChecksumsAsset = "SHA256SUMS.txt";
 
@@ -55,14 +59,23 @@ public static class UpdateService
     /// outside the program's own folder, so it survives the program being moved or replaced.</summary>
     public static string UpdatesRoot => AppPaths.UpdatesDir;
 
-    // The metadata and the checksum file are small; the zip is not. Two clients so a slow network
-    // cannot turn the small calls into long waits, and so the big one is not cut off half-way.
-    private static readonly HttpClient Api = new() { Timeout = TimeSpan.FromSeconds(15) };
-    private static readonly HttpClient Downloads = new() { Timeout = TimeSpan.FromMinutes(10) };
+    // Redirect probe must NOT follow: we only need the Location header that names the tag.
+    // Downloads follow redirects (GitHub → release-assets CDN).
+    private static readonly HttpClient Latest = CreateClient(allowAutoRedirect: false, TimeSpan.FromSeconds(15));
+    private static readonly HttpClient Downloads = CreateClient(allowAutoRedirect: true, TimeSpan.FromMinutes(10));
 
     // Two checks (startup + "Check now", or a double click) must not extract into the same folder
     // at the same time. The second waits, then finds the completed first result.
     private static readonly SemaphoreSlim Gate = new(1, 1);
+
+    private static HttpClient CreateClient(bool allowAutoRedirect, TimeSpan timeout)
+    {
+        var handler = new HttpClientHandler { AllowAutoRedirect = allowAutoRedirect };
+        var client = new HttpClient(handler) { Timeout = timeout };
+        // GitHub rejects requests without a User-Agent (API and site alike).
+        client.DefaultRequestHeaders.UserAgent.ParseAdd("QuickText-update-check");
+        return client;
+    }
 
     /// <summary>
     /// Check for a newer release and, if there is one, fetch it. Never throws: every failure comes
@@ -92,45 +105,21 @@ public static class UpdateService
         string tempDir = "";
         try
         {
-            using var req = new HttpRequestMessage(HttpMethod.Get, ApiUrl);
-            // GitHub rejects requests without a User-Agent.
-            req.Headers.UserAgent.ParseAdd("QuickText-update-check");
-            req.Headers.Accept.ParseAdd("application/vnd.github+json");
-            using var resp = await Api.SendAsync(req, ct).ConfigureAwait(false);
-            // No published release yet (404) is "up to date", not a hard failure.
-            if (resp.StatusCode == System.Net.HttpStatusCode.NotFound)
-                return new(UpdateStatus.UpToDate, null, null, null, null);
-            resp.EnsureSuccessStatusCode();
-            using var doc = JsonDocument.Parse(await resp.Content.ReadAsStringAsync(ct).ConfigureAwait(false));
-            var root = doc.RootElement;
-            if (root.ValueKind != JsonValueKind.Object)
+            string? tag = await ResolveLatestTagAsync(ct).ConfigureAwait(false);
+            // No published release yet (or an unexpected landing page) is "up to date", not a failure.
+            if (tag is null)
                 return new(UpdateStatus.UpToDate, null, null, null, null);
 
-            // /releases/latest already skips drafts and prereleases; keep the guards for safety.
-            if (root.TryGetProperty("draft", out var draft) && draft.ValueKind == JsonValueKind.True)
-                return new(UpdateStatus.UpToDate, null, null, null, null);
-            if (root.TryGetProperty("prerelease", out var pre) && pre.ValueKind == JsonValueKind.True)
-                return new(UpdateStatus.UpToDate, null, null, null, null);
-
-            string? tag = root.TryGetProperty("tag_name", out var t) ? t.GetString() : null;
-            releaseUrl = root.TryGetProperty("html_url", out var hu) ? hu.GetString() : null;
-            if (string.IsNullOrEmpty(releaseUrl))
-            {
-                releaseUrl = tag is { Length: > 0 }
-                    ? ReleasePage + "/tag/" + Uri.EscapeDataString(tag)
-                    : ReleasePage;
-            }
+            releaseUrl = ReleasePage + "/tag/" + Uri.EscapeDataString(tag);
             if (!UpdateCheck.IsNewer(tag, currentVersion))
                 return new(UpdateStatus.UpToDate, UpdateCheck.NormalizeVersion(tag), null, releaseUrl, null);
 
-            var assets = ReadAssets(root);
-            string? zipName = UpdateCheck.SelectSelfContainedAsset(assets.Select(a => a.Name));
-            string? zipUrl = zipName is null ? null : assets.FirstOrDefault(a => a.Name == zipName).Url;
-            string? sumsUrl = assets.FirstOrDefault(a => a.Name == ChecksumsAsset).Url;
-            if (zipName is null || zipUrl is null)
-                return new(UpdateStatus.Failed, null, null, releaseUrl, "the release has no self-contained win-x64 zip");
-            if (sumsUrl is null)
-                return new(UpdateStatus.Failed, null, null, releaseUrl, "the release has no " + ChecksumsAsset);
+            string zipName = UpdateCheck.SelfContainedZipName(tag);
+            if (zipName.Length == 0)
+                return new(UpdateStatus.Failed, null, null, releaseUrl, "empty release tag");
+
+            string zipUrl = UpdateCheck.ReleaseAssetUrl(ProjectUrl, tag, zipName);
+            string sumsUrl = UpdateCheck.ReleaseAssetUrl(ProjectUrl, tag, ChecksumsAsset);
 
             string version = UpdateCheck.NormalizeVersion(tag);
             string destDir = Path.Combine(UpdatesRoot, version);
@@ -172,19 +161,33 @@ public static class UpdateService
         }
     }
 
-    /// <summary>GitHub release assets live under <c>assets[]</c> (name + browser_download_url).</summary>
-    private static List<(string Name, string Url)> ReadAssets(JsonElement root)
+    /// <summary>
+    /// Read the tag from the <c>Location</c> of a 302 to <c>/releases/tag/…</c>. A 404 (no release
+    /// yet) returns null. Any other status is an error worth surfacing.
+    /// </summary>
+    private static async Task<string?> ResolveLatestTagAsync(CancellationToken ct)
     {
-        var assets = new List<(string, string)>();
-        if (!root.TryGetProperty("assets", out var list) || list.ValueKind != JsonValueKind.Array)
-            return assets;
-        foreach (var a in list.EnumerateArray())
+        using var req = new HttpRequestMessage(HttpMethod.Get, LatestUrl);
+        using var resp = await Latest.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, ct)
+            .ConfigureAwait(false);
+
+        if (resp.StatusCode == HttpStatusCode.NotFound)
+            return null;
+
+        // 301/302/303/307/308 all carry Location for "latest → tag".
+        if ((int)resp.StatusCode is >= 300 and < 400)
         {
-            string name = a.TryGetProperty("name", out var n) ? n.GetString() ?? "" : "";
-            string url = a.TryGetProperty("browser_download_url", out var u) ? u.GetString() ?? "" : "";
-            if (name.Length > 0 && url.Length > 0) assets.Add((name, url));
+            var loc = resp.Headers.Location;
+            if (loc is null) return null;
+            var absolute = loc.IsAbsoluteUri ? loc.AbsoluteUri : new Uri(new Uri(LatestUrl), loc).AbsoluteUri;
+            return UpdateCheck.TagFromLatestUrl(absolute);
         }
-        return assets;
+
+        resp.EnsureSuccessStatusCode();
+        // Rare: some proxies collapse the redirect and return 200 on the tag page. Prefer the
+        // final request URI when present.
+        var final = resp.RequestMessage?.RequestUri?.AbsoluteUri;
+        return UpdateCheck.TagFromLatestUrl(final);
     }
 
     private static async Task DownloadFileAsync(string url, string path, CancellationToken ct)

@@ -57,6 +57,49 @@ public static class UpdateCheck
     }
 
     /// <summary>
+    /// The zip name CI publishes for a release tag (e.g. <c>v1.1.1</c> →
+    /// <c>QuickText-v1.1.1-win-x64.zip</c>). Keeps the leading <c>v</c> when the tag has one —
+    /// that is how the release workflow names the asset.
+    /// </summary>
+    public static string SelfContainedZipName(string? tag)
+    {
+        var t = (tag ?? "").Trim();
+        if (t.Length == 0) return "";
+        return "QuickText-" + t + "-win-x64.zip";
+    }
+
+    /// <summary>
+    /// Pull the release tag out of a GitHub <c>/releases/latest</c> redirect (or the final URL
+    /// after following it). Returns null when the URL is not a tag page — so a 404 landing, a
+    /// login wall, or an unexpected path never invents a version.
+    /// </summary>
+    public static string? TagFromLatestUrl(string? url)
+    {
+        if (string.IsNullOrWhiteSpace(url)) return null;
+        if (!Uri.TryCreate(url.Trim(), UriKind.Absolute, out var uri)) return null;
+        // .../releases/tag/v1.1.1  (optional trailing slash)
+        var parts = uri.AbsolutePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        for (int i = 0; i + 2 < parts.Length; i++)
+        {
+            if (!parts[i].Equals("releases", StringComparison.OrdinalIgnoreCase)) continue;
+            if (!parts[i + 1].Equals("tag", StringComparison.OrdinalIgnoreCase)) continue;
+            var tag = Uri.UnescapeDataString(parts[i + 2]).Trim();
+            return tag.Length > 0 ? tag : null;
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Direct download URL for a named asset on a published tag — the releases CDN path, not the
+    /// REST API (which is rate-limited for unauthenticated clients).
+    /// </summary>
+    public static string ReleaseAssetUrl(string projectUrl, string tag, string assetName)
+    {
+        var root = (projectUrl ?? "").TrimEnd('/');
+        return $"{root}/releases/download/{Uri.EscapeDataString(tag.Trim())}/{Uri.EscapeDataString(assetName)}";
+    }
+
+    /// <summary>
     /// The published SHA-256 digests, keyed by file name. The format is the one
     /// <c>sha256sum</c> writes: the digest, whitespace, then the file name — the name may carry a
     /// leading '*' (binary mode). Lines that are not a digest plus a name are skipped rather than

@@ -673,13 +673,24 @@ public partial class SettingsWindow : Window
     }
 
     // Check the release server for a newer build right now (explicit user action, so it runs
-    // regardless of the saved opt-in flag). The App shows the result as a tray balloon and downloads.
+    // regardless of the saved opt-in flag). A dialog is the reliable signal — tray balloons are
+    // easy to miss and can fail under Focus Assist / a missing shell icon.
     private async void OnCheckUpdatesNow(object sender, RoutedEventArgs e)
     {
         CheckNowButton.IsEnabled = false;
+        var loc = LocalizationService.Instance;
         try
         {
-            if (Application.Current is App app) await app.CheckForUpdatesAsync(manual: true);
+            if (Application.Current is not App app) return;
+            var outcome = await app.CheckForUpdatesAsync(manual: true);
+            string msg = outcome.Status switch
+            {
+                UpdateStatus.Ready => string.Format(loc["Msg.UpdateReady"], outcome.Version, outcome.ExePath),
+                UpdateStatus.VerifyFailed => loc["Msg.UpdateVerifyFailed"],
+                UpdateStatus.UpToDate => loc["Msg.UpToDate"],
+                _ => loc["Msg.UpdateCheckFailed"],
+            };
+            AppDialog.Alert(this, loc["App.Name"], msg);
         }
         finally { CheckNowButton.IsEnabled = true; }
     }

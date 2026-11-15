@@ -452,9 +452,15 @@ public partial class App : Application
     /// </summary>
     private bool _updateCheckRunning;
 
-    public async Task CheckForUpdatesAsync(bool manual)
+    /// <summary>
+    /// Run one update check. Returns the outcome so Settings can show a dialog (tray balloons are
+    /// easy to miss, and <see cref="Balloon"/> can fail under quiet hours / a missing shell icon).
+    /// Startup still uses balloons only — silent when up to date.
+    /// </summary>
+    public async Task<UpdateOutcome> CheckForUpdatesAsync(bool manual)
     {
-        if (_updateCheckRunning) return;
+        if (_updateCheckRunning)
+            return new(UpdateStatus.Failed, null, null, null, "already running");
         _updateCheckRunning = true;
         var loc = LocalizationService.Instance;
         try
@@ -485,11 +491,13 @@ public partial class App : Application
                     if (manual) Balloon(loc["Msg.UpdateCheckFailed"], NotificationIcon.Warning);
                     break;
             }
+            return outcome;
         }
         catch (Exception ex)
         {
             Core.Log.Error("update check", ex);
             if (manual) Balloon(loc["Msg.UpdateCheckFailed"], NotificationIcon.Warning);
+            return new(UpdateStatus.Failed, null, null, null, ex.Message);
         }
         finally { _updateCheckRunning = false; }
     }
@@ -517,11 +525,15 @@ public partial class App : Application
     /// <summary>Every tray balloon goes through here so that showing any balloon OTHER than "update
     /// available" disarms its click-to-download link (only that one passes a <paramref name="url"/>).
     /// Otherwise an ignored update balloon would leave the link live, and the next click on an
-    /// unrelated balloon (captured / conflict / up-to-date) would open the browser.</summary>
+    /// unrelated balloon (captured / conflict / up-to-date) would open the browser.
+    /// <para>Failures are swallowed: Focus Assist / a missing shell icon / H.NotifyIcon can throw
+    /// from <c>ShowNotification</c>, and letting that escape turned "check failed" into a silent
+    /// no-op for the Settings button (the dialog path is what still tells the user).</para></summary>
     private void Balloon(string message, NotificationIcon icon, string? url = null)
     {
         _updateUrl = url;
-        _tray?.ShowNotification(LocalizationService.Instance["App.Name"], message, icon);
+        try { _tray?.ShowNotification(LocalizationService.Instance["App.Name"], message, icon); }
+        catch (Exception ex) { Core.Log.Error("tray balloon", ex); }
     }
 
     /// <summary>Show an ordinary tray message from a sibling window (no click-through URL).</summary>
