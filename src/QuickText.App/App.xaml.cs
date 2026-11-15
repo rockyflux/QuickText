@@ -426,10 +426,11 @@ public partial class App : Application
             Balloon(string.Format(LocalizationService.Instance["Msg.AbbrConflicts"],
                 string.Join("、", state.AbbrConflicts)), NotificationIcon.Warning);
 
-        // Opt-in, off by default (the only feature in the app that goes online): ask GitHub whether
-        // a newer release exists, and fetch it if so. Fire-and-forget so a slow/absent network
-        // never delays the tray coming up.
+        // Opt-in, off by default: ask GitHub whether a newer release exists, and fetch it if so.
+        // Fire-and-forget so a slow/absent network never delays the tray coming up. Always leave a
+        // one-line trace so "I turned this on — did it run?" is answerable from error.log.
         if (state.Settings.CheckUpdates) _ = CheckForUpdatesAsync(manual: false);
+        else Core.Log.Write("update check: skipped (CheckUpdates off)");
 
         // A hand-launched exe (double-click) opens search, same as double-clicking the tray or
         // relaunching while we're already running — otherwise the app just "does nothing visible".
@@ -440,12 +441,12 @@ public partial class App : Application
     }
 
     /// <summary>
-    /// Opt-in update check: ask GitHub for the latest release — the only thing in QuickText that
-    /// goes online — and, if it is newer than this build, download it, check it against the
-    /// checksum the same release published, and unpack it where the user can find it. A
+    /// Opt-in update check: ask GitHub for the latest release (alongside AI generate, the other
+    /// opt-in network feature) and, if it is newer than this build, download it, check it against
+    /// the checksum the same release published, and unpack it where the user can find it. A
     /// <paramref name="manual"/> check (the Settings button) also reports the up-to-date and
     /// failed cases; the silent startup check stays quiet unless there's actually something to
-    /// report.
+    /// report — outcomes are always written to the log either way.
     /// <para>The running program is never replaced: Windows locks a running executable, so the new
     /// build is unpacked into a folder of its own and the user is told where it is.</para>
     /// </summary>
@@ -459,10 +460,12 @@ public partial class App : Application
         try
         {
             string current = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "1.0.0";
+            Core.Log.Write($"update check: starting ({(manual ? "manual" : "startup")}, current={current})");
             var outcome = await UpdateService.RunAsync(current);   // resumes on the UI thread (WPF SyncContext)
             switch (outcome.Status)
             {
                 case UpdateStatus.Ready:
+                    Core.Log.Write($"update check: ready {outcome.Version} at {outcome.ExePath}");
                     Balloon(string.Format(loc["Msg.UpdateReady"], outcome.Version, outcome.ExePath),
                             NotificationIcon.Info, outcome.ReleaseUrl ?? UpdateService.ReleasePage);
                     break;
@@ -473,6 +476,8 @@ public partial class App : Application
                     if (manual) Balloon(loc["Msg.UpdateVerifyFailed"], NotificationIcon.Warning);
                     break;
                 case UpdateStatus.UpToDate:
+                    Core.Log.Write("update check: up to date" +
+                        (outcome.Version is { Length: > 0 } v ? $" (latest={v})" : ""));
                     if (manual) Balloon(loc["Msg.UpToDate"], NotificationIcon.Info);
                     break;
                 default:

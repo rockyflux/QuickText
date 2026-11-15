@@ -55,6 +55,9 @@
                     <ListBoxItem Tag="SectionAi"
                                  Content="{Binding [Settings.NavAi], Source={x:Static app:LocProxy.Instance}}"
                                  AutomationProperties.Name="{Binding Content, RelativeSource={RelativeSource Self}}"/>
+                    <ListBoxItem Tag="SectionAbout"
+                                 Content="{Binding [Settings.NavAbout], Source={x:Static app:LocProxy.Instance}}"
+                                 AutomationProperties.Name="{Binding Content, RelativeSource={RelativeSource Self}}"/>
                 </ListBox>
             </DockPanel>
         </Border>
@@ -365,17 +368,9 @@
                                                  Content="{Binding [Settings.FollowSystem], Source={x:Static app:LocProxy.Instance}}"/>
                                 </WrapPanel>
                             </StackPanel>
-                            <StackPanel Style="{StaticResource SetField}">
+                            <StackPanel Style="{StaticResource SetField}" Margin="0">
                                 <CheckBox x:Name="Autostart" Style="{StaticResource DarkCheckBox}"
                                           Content="{Binding [Tray.Autostart], Source={x:Static app:LocProxy.Instance}}"/>
-                            </StackPanel>
-                            <StackPanel Style="{StaticResource SetField}" Margin="0">
-                                <CheckBox x:Name="CheckUpdates" Style="{StaticResource DarkCheckBox}"
-                                          Content="{Binding [Settings.CheckUpdates], Source={x:Static app:LocProxy.Instance}}"/>
-                                <TextBlock Style="{StaticResource SetHintIndent}"
-                                           Text="{Binding [Settings.CheckUpdatesHint], Source={x:Static app:LocProxy.Instance}}"/>
-                                <Button x:Name="CheckNowButton" HorizontalAlignment="Left" Style="{StaticResource DarkButton}" Padding="12,6" Margin="24,4,0,0"
-                                        Content="{Binding [Settings.CheckNow], Source={x:Static app:LocProxy.Instance}}" Click="OnCheckUpdatesNow"/>
                             </StackPanel>
                         </StackPanel>
 
@@ -437,6 +432,36 @@
                                         Content="{Binding [Settings.AiDelete], Source={x:Static app:LocProxy.Instance}}"
                                         Click="OnAiDelete"/>
                             </WrapPanel>
+                        </StackPanel>
+
+                        <!-- section · 版本信息 -->
+                        <StackPanel x:Name="SectionAbout" Visibility="Collapsed">
+                            <ContentControl Margin="0,0,0,10" Style="{StaticResource SetHeader}"
+                                            Content="{Binding [Settings.SectionAbout], Source={x:Static app:LocProxy.Instance}}"/>
+                            <StackPanel Style="{StaticResource SetField}">
+                                <TextBlock Text="{Binding [Settings.CurrentVersion], Source={x:Static app:LocProxy.Instance}}"
+                                           Style="{StaticResource SetFieldLabel}"/>
+                                <TextBlock x:Name="AboutVersionText" FontSize="15" FontWeight="SemiBold"
+                                           FontFamily="{StaticResource Font.Mono}"
+                                           Foreground="{DynamicResource Brush.TextPrimary}"/>
+                            </StackPanel>
+                            <StackPanel Style="{StaticResource SetField}">
+                                <TextBlock Text="{Binding [Settings.WhatsNew], Source={x:Static app:LocProxy.Instance}}"
+                                           Style="{StaticResource SetFieldLabel}"/>
+                                <TextBlock x:Name="WhatsNewText" Style="{StaticResource SetHint}" Margin="0,2,0,0"
+                                           TextWrapping="Wrap"/>
+                                <Button HorizontalAlignment="Left" Style="{StaticResource DarkButton}" Padding="12,6" Margin="0,8,0,0"
+                                        Content="{Binding [Settings.OpenReleases], Source={x:Static app:LocProxy.Instance}}"
+                                        Click="OnOpenReleases"/>
+                            </StackPanel>
+                            <StackPanel Style="{StaticResource SetField}" Margin="0">
+                                <CheckBox x:Name="CheckUpdates" Style="{StaticResource DarkCheckBox}"
+                                          Content="{Binding [Settings.CheckUpdates], Source={x:Static app:LocProxy.Instance}}"/>
+                                <TextBlock Style="{StaticResource SetHintIndent}"
+                                           Text="{Binding [Settings.CheckUpdatesHint], Source={x:Static app:LocProxy.Instance}}"/>
+                                <Button x:Name="CheckNowButton" HorizontalAlignment="Left" Style="{StaticResource DarkButton}" Padding="12,6" Margin="24,4,0,0"
+                                        Content="{Binding [Settings.CheckNow], Source={x:Static app:LocProxy.Instance}}" Click="OnCheckUpdatesNow"/>
+                            </StackPanel>
                         </StackPanel>
                     </Grid>
                 </ScrollViewer>

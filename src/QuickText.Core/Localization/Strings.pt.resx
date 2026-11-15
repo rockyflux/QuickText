@@ -241,7 +241,7 @@
   <data name="Settings.PortableRestart"><value>Modo portátil alterado — reinicie para aplicar. Mova a sua biblioteca de texto com Exportar / Importar cópia.</value></data>
   <data name="Settings.PortableFailed"><value>Não é possível escrever junto à app (pode estar num local só de leitura como Program Files). O modo portátil precisa da app num local com permissão de escrita, como uma pen USB.</value></data>
   <data name="Settings.CheckUpdates"><value>Verificar atualizações ao iniciar</value></data>
-  <data name="Settings.CheckUpdatesHint"><value>Se ativado, a app acede ao GitHub uma vez no arranque para verificar e transferir uma versão mais recente para o disco local. Não substitui o programa em execução; é a única operação de rede da app.</value></data>
+  <data name="Settings.CheckUpdatesHint"><value>Se ativado, a app acede ao GitHub uma vez no arranque para verificar e transferir uma versão mais recente para o disco local. Não substitui o programa em execução; como a geração por IA, é acesso de rede opcional.</value></data>
   <data name="Settings.CheckNow"><value>Verificar agora</value></data>
   <data name="Msg.UpToDate"><value>Você está na versão mais recente.</value></data>
   <data name="Msg.UpdateCheckFailed"><value>Não foi possível verificar atualizações. Tente novamente mais tarde.</value></data>
@@ -434,4 +434,10 @@ index.json 路径：{1}
   <data name="Settings.AbbrPrefixNone"><value>No prefix</value></data>
   <data name="Settings.SectionClipboard"><value>Histórico da área de transferência</value></data>
   <data name="Settings.NavClipboard"><value>Área de transferência</value></data>
+  <data name="Settings.NavAbout"><value>Acerca de</value></data>
+  <data name="Settings.SectionAbout"><value>Versão</value></data>
+  <data name="Settings.CurrentVersion"><value>Versão atual</value></data>
+  <data name="Settings.WhatsNew"><value>Novidades</value></data>
+  <data name="Settings.WhatsNewMissing"><value>Sem notas de versão para esta build.</value></data>
+  <data name="Settings.OpenReleases"><value>Ver todos os lançamentos</value></data>
 </root>

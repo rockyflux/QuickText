@@ -14,6 +14,8 @@
   <ItemGroup>
     <!-- Starter categories/snippets; first-run and "initialize built-in" both read this. -->
     <EmbeddedResource Include="Seed\builtin-categories.json" />
+    <!-- Published release notes (docs/release-notes/v*.md); Settings "About" shows the matching file. -->
+    <EmbeddedResource Include="..\..\docs\release-notes\*.md" Link="ReleaseNotes\%(Filename)%(Extension)" />
   </ItemGroup>
 
 </Project>

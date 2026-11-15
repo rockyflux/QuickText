@@ -139,8 +139,11 @@ public partial class SettingsWindow : Window
         Autostart.IsChecked = QuickText.App.Interop.Autostart.IsEnabled();
         CheckUpdates.IsChecked = s.CheckUpdates;
         PortableMode.IsChecked = Core.AppPaths.IsPortable;   // Click-wired, so this set won't fire the handler
-        VersionText.Text = LocalizationService.Instance["App.Name"] + " v" +
-            (System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "1.0.0");
+        var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "1.0.0";
+        VersionText.Text = LocalizationService.Instance["App.Name"] + " v" + version;
+        AboutVersionText.Text = "v" + version;
+        WhatsNewText.Text = Core.Updates.ReleaseNotes.TryLoad(version)
+            ?? LocalizationService.Instance["Settings.WhatsNewMissing"];
 
         _clipboardOnly = s.CopyToClipboardOnly;
         foreach (var rb in OutputPanel.Children.OfType<RadioButton>())
@@ -189,6 +192,7 @@ public partial class SettingsWindow : Window
         SectionData.Visibility = name == nameof(SectionData) ? Visibility.Visible : Visibility.Collapsed;
         SectionGeneral.Visibility = name == nameof(SectionGeneral) ? Visibility.Visible : Visibility.Collapsed;
         SectionAi.Visibility = name == nameof(SectionAi) ? Visibility.Visible : Visibility.Collapsed;
+        SectionAbout.Visibility = name == nameof(SectionAbout) ? Visibility.Visible : Visibility.Collapsed;
         ContentScroll.ScrollToHome();
     }
 
@@ -683,6 +687,12 @@ public partial class SettingsWindow : Window
     private void OnOpenRepo(object sender, RoutedEventArgs e)
     {
         try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(UpdateService.ProjectUrl) { UseShellExecute = true }); }
+        catch { }
+    }
+
+    private void OnOpenReleases(object sender, RoutedEventArgs e)
+    {
+        try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(UpdateService.ReleasePage) { UseShellExecute = true }); }
         catch { }
     }
 

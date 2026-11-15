@@ -241,7 +241,7 @@
   <data name="Settings.PortableRestart"><value>已切換便攜模式，重啟後生效。文字庫可用「匯出 / 匯入備份」搬到新位置。</value></data>
   <data name="Settings.PortableFailed"><value>無法寫入程式所在目錄（可能裝在 Program Files 等唯讀位置）。便攜模式需把程式放到可寫入位置，如 USB 隨身碟。</value></data>
   <data name="Settings.CheckUpdates"><value>啟動時檢查更新</value></data>
-  <data name="Settings.CheckUpdatesHint"><value>開啟後僅在啟動時連線 GitHub 檢查並下載新版本到本機，不會自動取代程式；這是本應用程式唯一的連線操作，其餘功能始終離線。</value></data>
+  <data name="Settings.CheckUpdatesHint"><value>開啟後僅在啟動時連線 GitHub 檢查並下載新版本到本機，不會自動取代程式；與 AI 產生同屬可選連線。</value></data>
   <data name="Settings.CheckNow"><value>立即檢查</value></data>
   <data name="Msg.UpToDate"><value>已是最新版本。</value></data>
   <data name="Msg.UpdateCheckFailed"><value>檢查更新失敗，請稍後再試。</value></data>
@@ -434,4 +434,10 @@ index.json 路径：{1}
   <data name="Settings.AbbrPrefixNone"><value>No prefix</value></data>
   <data name="Settings.SectionClipboard"><value>剪貼簿歷史</value></data>
   <data name="Settings.NavClipboard"><value>剪貼簿</value></data>
+  <data name="Settings.NavAbout"><value>關於</value></data>
+  <data name="Settings.SectionAbout"><value>版本資訊</value></data>
+  <data name="Settings.CurrentVersion"><value>目前版本</value></data>
+  <data name="Settings.WhatsNew"><value>本版更新</value></data>
+  <data name="Settings.WhatsNewMissing"><value>暫無本版更新說明。</value></data>
+  <data name="Settings.OpenReleases"><value>查看全部發行說明</value></data>
 </root>

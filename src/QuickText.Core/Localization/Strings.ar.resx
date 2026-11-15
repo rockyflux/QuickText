@@ -241,7 +241,7 @@
   <data name="Settings.PortableRestart"><value>تم تبديل الوضع المحمول — أعد التشغيل للتطبيق. انقل مكتبة نصوصك عبر تصدير / استيراد نسخة احتياطية.</value></data>
   <data name="Settings.PortableFailed"><value>تعذّرت الكتابة بجوار التطبيق (قد يكون في موقع للقراءة فقط مثل Program Files). يتطلب الوضع المحمول وجود التطبيق في مكان قابل للكتابة، مثل ذاكرة USB.</value></data>
   <data name="Settings.CheckUpdates"><value>التحقق من التحديثات عند بدء التشغيل</value></data>
-  <data name="Settings.CheckUpdatesHint"><value>عند التفعيل، يتصل التطبيق بـ GitHub مرة واحدة عند بدء التشغيل للتحقق من إصدار أحدث وتنزيله إلى القرص المحلي. لا يستبدل البرنامج قيد التشغيل؛ هذا هو اتصال الشبكة الوحيد للتطبيق.</value></data>
+  <data name="Settings.CheckUpdatesHint"><value>عند التفعيل، يتصل التطبيق بـ GitHub مرة واحدة عند بدء التشغيل للتحقق من إصدار أحدث وتنزيله إلى القرص المحلي. لا يستبدل البرنامج قيد التشغيل؛ مثل توليد الذكاء الاصطناعي، هذا وصول شبكة اختياري.</value></data>
   <data name="Settings.CheckNow"><value>تحقق الآن</value></data>
   <data name="Msg.UpToDate"><value>أنت تستخدم أحدث إصدار.</value></data>
   <data name="Msg.UpdateCheckFailed"><value>تعذّر التحقق من التحديثات. حاول مرة أخرى لاحقًا.</value></data>
@@ -434,4 +434,10 @@ index.json 路径：{1}
   <data name="Settings.AbbrPrefixNone"><value>No prefix</value></data>
   <data name="Settings.SectionClipboard"><value>سجل الحافظة</value></data>
   <data name="Settings.NavClipboard"><value>الحافظة</value></data>
+  <data name="Settings.NavAbout"><value>حول</value></data>
+  <data name="Settings.SectionAbout"><value>الإصدار</value></data>
+  <data name="Settings.CurrentVersion"><value>الإصدار الحالي</value></data>
+  <data name="Settings.WhatsNew"><value>الجديد في هذا الإصدار</value></data>
+  <data name="Settings.WhatsNewMissing"><value>لا توجد ملاحظات إصدار لهذا البناء.</value></data>
+  <data name="Settings.OpenReleases"><value>عرض كل الإصدارات</value></data>
 </root>

@@ -20,6 +20,20 @@ public class SettingsStoreTests
         Assert.False(s.ClipboardHistoryEnabled);
         Assert.Equal(AppSettings.DefaultClipboardHistoryHotkey, s.ClipboardHistoryHotkey);
         Assert.Equal("", s.Language);
+        Assert.False(s.CheckUpdates);   // opt-in; missing field must stay off
+    }
+
+    [Fact]
+    public void CheckUpdates_survives_a_roundtrip()
+    {
+        var path = TempFile();
+        try
+        {
+            var store = new SettingsStore(path);
+            store.Save(new AppSettings { CheckUpdates = true });
+            Assert.True(store.Load().CheckUpdates);
+        }
+        finally { File.Delete(path); }
     }
 
     [Fact]

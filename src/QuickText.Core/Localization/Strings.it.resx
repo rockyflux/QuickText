@@ -241,7 +241,7 @@
   <data name="Settings.PortableRestart"><value>Modalità portatile cambiata — riavvia per applicare. Sposta la tua libreria di testi con Esporta / Importa backup.</value></data>
   <data name="Settings.PortableFailed"><value>Impossibile scrivere accanto all'app (potrebbe trovarsi in una posizione di sola lettura come Program Files). La modalità portatile richiede l'app in una posizione scrivibile, come una chiavetta USB.</value></data>
   <data name="Settings.CheckUpdates"><value>Controlla aggiornamenti all'avvio</value></data>
-  <data name="Settings.CheckUpdatesHint"><value>Se attivata, l'app contatta GitHub una volta all'avvio per verificare e scaricare una versione più recente sul disco locale. Non sostituisce il programma in esecuzione; è l'unica operazione di rete dell'app.</value></data>
+  <data name="Settings.CheckUpdatesHint"><value>Se attivata, l'app contatta GitHub una volta all'avvio per verificare e scaricare una versione più recente sul disco locale. Non sostituisce il programma in esecuzione; come la generazione AI, è un accesso di rete opzionale.</value></data>
   <data name="Settings.CheckNow"><value>Controlla ora</value></data>
   <data name="Msg.UpToDate"><value>Hai già l'ultima versione.</value></data>
   <data name="Msg.UpdateCheckFailed"><value>Impossibile controllare gli aggiornamenti. Riprova più tardi.</value></data>
@@ -434,4 +434,10 @@ index.json 路径：{1}
   <data name="Settings.AbbrPrefixNone"><value>No prefix</value></data>
   <data name="Settings.SectionClipboard"><value>Cronologia appunti</value></data>
   <data name="Settings.NavClipboard"><value>Appunti</value></data>
+  <data name="Settings.NavAbout"><value>Informazioni</value></data>
+  <data name="Settings.SectionAbout"><value>Versione</value></data>
+  <data name="Settings.CurrentVersion"><value>Versione attuale</value></data>
+  <data name="Settings.WhatsNew"><value>Novità</value></data>
+  <data name="Settings.WhatsNewMissing"><value>Nessuna nota di rilascio per questa build.</value></data>
+  <data name="Settings.OpenReleases"><value>Vedi tutte le versioni</value></data>
 </root>

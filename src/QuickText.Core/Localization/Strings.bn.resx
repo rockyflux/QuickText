@@ -241,7 +241,7 @@
   <data name="Settings.PortableRestart"><value>পোর্টেবল মোড বদলানো হয়েছে — প্রয়োগে পুনরায় চালু করুন। ব্যাকআপ রপ্তানি / আমদানি দিয়ে আপনার টেক্সট লাইব্রেরি সরান।</value></data>
   <data name="Settings.PortableFailed"><value>অ্যাপের পাশে লেখা যাচ্ছে না (এটি Program Files-এর মতো শুধু-পঠনযোগ্য স্থানে থাকতে পারে)। পোর্টেবল মোডের জন্য অ্যাপটি একটি লেখার-যোগ্য স্থানে থাকা দরকার, যেমন একটি USB স্টিক।</value></data>
   <data name="Settings.CheckUpdates"><value>চালু হওয়ার সময় আপডেট দেখুন</value></data>
-  <data name="Settings.CheckUpdatesHint"><value>চালু থাকলে অ্যাপটি শুরুতে একবার GitHub-এ সংযোগ করে নতুন সংস্করণ পরীক্ষা করে স্থানীয় ডিস্কে ডাউনলোড করে। এটি চলমান প্রোগ্রাম প্রতিস্থাপন করে না; এটিই অ্যাপের একমাত্র নেটওয়ার্ক কাজ।</value></data>
+  <data name="Settings.CheckUpdatesHint"><value>চালু থাকলে অ্যাপটি শুরুতে একবার GitHub-এ সংযোগ করে নতুন সংস্করণ পরীক্ষা করে স্থানীয় ডিস্কে ডাউনলোড করে। চলমান প্রোগ্রাম প্রতিস্থাপন করে না; AI তৈরির মতো এটি ঐচ্ছিক নেটওয়ার্ক ব্যবহার।</value></data>
   <data name="Settings.CheckNow"><value>এখনই দেখুন</value></data>
   <data name="Msg.UpToDate"><value>আপনি সর্বশেষ সংস্করণে আছেন।</value></data>
   <data name="Msg.UpdateCheckFailed"><value>আপডেট দেখা যায়নি। পরে আবার চেষ্টা করুন।</value></data>
@@ -434,4 +434,10 @@ index.json 路径：{1}
   <data name="Settings.AbbrPrefixNone"><value>No prefix</value></data>
   <data name="Settings.SectionClipboard"><value>ক্লিপবোর্ড ইতিহাস</value></data>
   <data name="Settings.NavClipboard"><value>ক্লিপবোর্ড</value></data>
+  <data name="Settings.NavAbout"><value>সম্পর্কে</value></data>
+  <data name="Settings.SectionAbout"><value>সংস্করণ</value></data>
+  <data name="Settings.CurrentVersion"><value>বর্তমান সংস্করণ</value></data>
+  <data name="Settings.WhatsNew"><value>নতুন কী</value></data>
+  <data name="Settings.WhatsNewMissing"><value>এই বিল্ডের জন্য আপডেট নোট নেই।</value></data>
+  <data name="Settings.OpenReleases"><value>সব রিলিজ দেখুন</value></data>
 </root>

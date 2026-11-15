@@ -241,7 +241,7 @@
   <data name="Settings.PortableRestart"><value>Portabler Modus umgeschaltet – Neustart zum Übernehmen. Textbibliothek per Backup exportieren / importieren verschieben.</value></data>
   <data name="Settings.PortableFailed"><value>Schreiben neben der App nicht möglich (evtl. an einem schreibgeschützten Ort wie Program Files). Der portable Modus erfordert die App an einem schreibbaren Ort, etwa auf einem USB-Stick.</value></data>
   <data name="Settings.CheckUpdates"><value>Beim Start nach Updates suchen</value></data>
-  <data name="Settings.CheckUpdatesHint"><value>Wenn aktiviert, kontaktiert die App beim Start einmal GitHub, um eine neuere Version zu prüfen und lokal herunterzuladen. Das laufende Programm wird nicht ersetzt; dies ist der einzige Netzwerkzugriff der App.</value></data>
+  <data name="Settings.CheckUpdatesHint"><value>Wenn aktiviert, kontaktiert die App beim Start einmal GitHub, um eine neuere Version zu prüfen und lokal herunterzuladen. Das laufende Programm wird nicht ersetzt; wie bei AI-Generierung ist dies optionaler Netzwerkzugriff.</value></data>
   <data name="Settings.CheckNow"><value>Jetzt suchen</value></data>
   <data name="Msg.UpToDate"><value>Sie verwenden die neueste Version.</value></data>
   <data name="Msg.UpdateCheckFailed"><value>Update-Suche fehlgeschlagen. Bitte später erneut versuchen.</value></data>
@@ -434,4 +434,10 @@ index.json 路径：{1}
   <data name="Settings.AbbrPrefixNone"><value>No prefix</value></data>
   <data name="Settings.SectionClipboard"><value>Zwischenablageverlauf</value></data>
   <data name="Settings.NavClipboard"><value>Zwischenablage</value></data>
+  <data name="Settings.NavAbout"><value>Info</value></data>
+  <data name="Settings.SectionAbout"><value>Version</value></data>
+  <data name="Settings.CurrentVersion"><value>Aktuelle Version</value></data>
+  <data name="Settings.WhatsNew"><value>Neu in dieser Version</value></data>
+  <data name="Settings.WhatsNewMissing"><value>Keine Versionshinweise für diesen Build.</value></data>
+  <data name="Settings.OpenReleases"><value>Alle Releases anzeigen</value></data>
 </root>

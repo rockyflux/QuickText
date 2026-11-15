@@ -241,7 +241,7 @@
   <data name="Settings.PortableRestart"><value>สลับโหมดพกพาแล้ว — รีสตาร์ตเพื่อใช้งาน ย้ายคลังข้อความของคุณด้วยการส่งออก / นำเข้าข้อมูลสำรอง</value></data>
   <data name="Settings.PortableFailed"><value>เขียนข้างแอปไม่ได้ (อาจอยู่ในตำแหน่งอ่านอย่างเดียว เช่น Program Files) โหมดพกพาต้องวางแอปในตำแหน่งที่เขียนได้ เช่น USB</value></data>
   <data name="Settings.CheckUpdates"><value>ตรวจหาอัปเดตเมื่อเริ่มโปรแกรม</value></data>
-  <data name="Settings.CheckUpdatesHint"><value>เมื่อเปิดใช้งาน แอปจะติดต่อ GitHub หนึ่งครั้งตอนเริ่มต้นเพื่อตรวจหาและดาวน์โหลดเวอร์ชันใหม่ลงดิสก์ในเครื่อง แอปจะไม่แทนที่โปรแกรมที่กำลังทำงาน นี่คือการเชื่อมต่อเครือข่ายเพียงอย่างเดียวของแอป</value></data>
+  <data name="Settings.CheckUpdatesHint"><value>เมื่อเปิดใช้งาน แอปจะติดต่อ GitHub หนึ่งครั้งตอนเริ่มต้นเพื่อตรวจหาและดาวน์โหลดเวอร์ชันใหม่ลงดิสก์ในเครื่อง ไม่แทนที่โปรแกรมที่กำลังทำงาน เช่นเดียวกับการสร้างด้วย AI นี่คือการเข้าถึงเครือข่ายแบบเลือกได้</value></data>
   <data name="Settings.CheckNow"><value>ตรวจสอบตอนนี้</value></data>
   <data name="Msg.UpToDate"><value>คุณใช้เวอร์ชันล่าสุดอยู่แล้ว</value></data>
   <data name="Msg.UpdateCheckFailed"><value>ตรวจหาอัปเดตไม่สำเร็จ โปรดลองใหม่ภายหลัง</value></data>
@@ -434,4 +434,10 @@ index.json 路径：{1}
   <data name="Settings.AbbrPrefixNone"><value>No prefix</value></data>
   <data name="Settings.SectionClipboard"><value>ประวัติคลิปบอร์ด</value></data>
   <data name="Settings.NavClipboard"><value>คลิปบอร์ด</value></data>
+  <data name="Settings.NavAbout"><value>เกี่ยวกับ</value></data>
+  <data name="Settings.SectionAbout"><value>เวอร์ชัน</value></data>
+  <data name="Settings.CurrentVersion"><value>เวอร์ชันปัจจุบัน</value></data>
+  <data name="Settings.WhatsNew"><value>สิ่งใหม่ในเวอร์ชันนี้</value></data>
+  <data name="Settings.WhatsNewMissing"><value>ยังไม่มีบันทึกการอัปเดตสำหรับบิลด์นี้</value></data>
+  <data name="Settings.OpenReleases"><value>ดูการเผยแพร่ทั้งหมด</value></data>
 </root>

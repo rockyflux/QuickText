@@ -241,7 +241,7 @@
   <data name="Settings.PortableRestart"><value>Portable mode switched — restart to apply. Move your text library with Export / Import backup.</value></data>
   <data name="Settings.PortableFailed"><value>Can't write next to the app (it may be in a read-only location like Program Files). Portable mode needs the app in a writable place, such as a USB stick.</value></data>
   <data name="Settings.CheckUpdates"><value>Check for updates on startup</value></data>
-  <data name="Settings.CheckUpdatesHint"><value>When on, the app contacts GitHub once at startup to check for and download a newer build to local disk. It never replaces the running program; this is the app's only network access.</value></data>
+  <data name="Settings.CheckUpdatesHint"><value>When on, the app contacts GitHub once at startup to check for and download a newer build to local disk. It never replaces the running program. Like AI generate, this is opt-in network access.</value></data>
   <data name="Settings.CheckNow"><value>Check now</value></data>
   <data name="Msg.UpToDate"><value>You're on the latest version.</value></data>
   <data name="Msg.UpdateCheckFailed"><value>Couldn't check for updates. Try again later.</value></data>
@@ -434,4 +434,10 @@ index.json 路径：{1}
   <data name="Settings.AbbrPrefixNone"><value>No prefix</value></data>
   <data name="Settings.SectionClipboard"><value>Clipboard history</value></data>
   <data name="Settings.NavClipboard"><value>Clipboard</value></data>
+  <data name="Settings.NavAbout"><value>About</value></data>
+  <data name="Settings.SectionAbout"><value>Version</value></data>
+  <data name="Settings.CurrentVersion"><value>Current version</value></data>
+  <data name="Settings.WhatsNew"><value>What's new</value></data>
+  <data name="Settings.WhatsNewMissing"><value>No release notes for this build.</value></data>
+  <data name="Settings.OpenReleases"><value>View all releases</value></data>
 </root>
