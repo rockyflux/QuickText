@@ -196,6 +196,7 @@
   <data name="Search.Recents"><value>الأخيرة</value></data>
   <data name="Search.Favorites"><value>المفضلة</value></data>
   <data name="Search.KeepOpen"><value>إبقاؤها مفتوحة (إرسال عدة)</value></data>
+  <data name="Search.Website"><value>الموقع</value></data>
   <data name="Dialog.FillVariables"><value>تعبئة المتغيرات</value></data>
   <data name="Settings.AutoSend"><value>الضغط على Enter بعد اللصق</value></data>
   <data name="Settings.ClickToSend"><value>نقرة واحدة للإرسال</value></data>

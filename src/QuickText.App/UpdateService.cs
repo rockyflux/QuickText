@@ -49,6 +49,8 @@ public sealed record UpdateOutcome(UpdateStatus Status, string? Version, string?
 public static class UpdateService
 {
     public const string ProjectUrl = "https://github.com/rockyflux/QuickText";
+    /// <summary>Marketing / docs site (SearchPanel header link). Separate from the GitHub repo URL.</summary>
+    public const string SiteUrl = "https://rockyflux.github.io/QuickText/";
     /// <summary>Public latest-release redirect (302 → <c>/releases/tag/v…</c>). Not the REST API.</summary>
     public const string LatestUrl = ProjectUrl + "/releases/latest";
     public const string ReleasePage = ProjectUrl + "/releases";

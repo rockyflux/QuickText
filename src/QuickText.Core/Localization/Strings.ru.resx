@@ -196,6 +196,7 @@
   <data name="Search.Recents"><value>Недавние</value></data>
   <data name="Search.Favorites"><value>Избранное</value></data>
   <data name="Search.KeepOpen"><value>Не закрывать (отправить несколько)</value></data>
+  <data name="Search.Website"><value>Сайт</value></data>
   <data name="Dialog.FillVariables"><value>Заполните переменные</value></data>
   <data name="Settings.AutoSend"><value>Нажимать Enter после вставки</value></data>
   <data name="Settings.ClickToSend"><value>Отправка одним щелчком</value></data>

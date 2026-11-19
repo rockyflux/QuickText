@@ -196,6 +196,7 @@
   <data name="Search.Recents"><value>최근</value></data>
   <data name="Search.Favorites"><value>즐겨찾기</value></data>
   <data name="Search.KeepOpen"><value>계속 열어두기(여러 개 보내기)</value></data>
+  <data name="Search.Website"><value>공식 사이트</value></data>
   <data name="Dialog.FillVariables"><value>변수 입력</value></data>
   <data name="Settings.AutoSend"><value>붙여넣은 후 Enter 누르기</value></data>
   <data name="Settings.ClickToSend"><value>한 번 클릭으로 보내기</value></data>

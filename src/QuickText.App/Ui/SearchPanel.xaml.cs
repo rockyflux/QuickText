@@ -1251,10 +1251,54 @@ public partial class SearchPanel : Window
         PinButton.Content = _pinned ? "\uE840" : "\uE718";
     }
 
-    private void OnInputDrag(object sender, MouseButtonEventArgs e)
+    private void OnOpenWebsite(object sender, RoutedEventArgs e)
     {
-        // Drag the borderless panel by its input row (but not when clicking into the search box).
-        if (e.OriginalSource is TextBox || e.ButtonState != MouseButtonState.Pressed) return;
-        try { DragMove(); } catch { /* not draggable right now */ }
+        try
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(UpdateService.SiteUrl)
+            { UseShellExecute = true });
+        }
+        catch { }
+        // Browser takes focus; keep the panel only when the user pinned it for multi-send.
+        if (!_pinned) Hide();
+    }
+
+    private void OnChromeDrag(object sender, MouseButtonEventArgs e)
+    {
+        if (e.ButtonState != MouseButtonState.Pressed) return;
+        // TextBox / buttons / footer switch / resize grip keep their own clicks.
+        if (IsInteractiveChromeSource(e.OriginalSource)) return;
+
+        double x = Left, y = Top;
+        try { DragMove(); }
+        catch { return; /* not draggable right now */ }
+
+        // Click without a real move — leave placement mode alone.
+        if (Math.Abs(Left - x) < 1 && Math.Abs(Top - y) < 1) return;
+
+        // Dragging means "park it here": switch to remembered position so the next summon stays put
+        // (window/caret modes would otherwise re-place and discard the drag).
+        if (App.InSmoke) return;
+        var s = AppState.Current.Settings;
+        s.PanelPlacement = "fixed";
+        s.PanelX = Left;
+        s.PanelY = Top;
+        if (SizeToContent == SizeToContent.Manual)
+        {
+            s.PanelW = Width;
+            s.PanelH = Height;
+        }
+        try { AppState.Current.SettingsStore.Save(s); } catch { }
+    }
+
+    /// <summary>Walk the visual tree so a click on the TextBox, header buttons, footer switch, or
+    /// resize Thumb is never treated as a window drag.</summary>
+    private static bool IsInteractiveChromeSource(object? source)
+    {
+        for (var d = source as DependencyObject; d != null; d = VisualTreeHelper.GetParent(d))
+        {
+            if (d is TextBoxBase or ButtonBase or Thumb) return true;
+        }
+        return false;
     }
 }

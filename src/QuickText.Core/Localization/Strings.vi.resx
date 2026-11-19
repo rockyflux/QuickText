@@ -196,6 +196,7 @@
   <data name="Search.Recents"><value>Gần đây</value></data>
   <data name="Search.Favorites"><value>Yêu thích</value></data>
   <data name="Search.KeepOpen"><value>Giữ mở (gửi nhiều mục)</value></data>
+  <data name="Search.Website"><value>Trang chủ</value></data>
   <data name="Dialog.FillVariables"><value>Điền biến</value></data>
   <data name="Settings.AutoSend"><value>Nhấn Enter sau khi dán</value></data>
   <data name="Settings.ClickToSend"><value>Nhấp một lần để gửi</value></data>

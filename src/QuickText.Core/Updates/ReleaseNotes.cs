@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace QuickText.Core.Updates;
 
@@ -10,6 +11,9 @@ namespace QuickText.Core.Updates;
 /// </summary>
 public static class ReleaseNotes
 {
+    // Leading "- " / "* " (common in the shipped markdown bullets) → a proper bullet for the About panel.
+    private static readonly Regex ListMarker = new(@"^\s*[-*]\s+", RegexOptions.Multiline | RegexOptions.CultureInvariant);
+
     /// <summary>
     /// Load the release notes for <paramref name="version"/> (with or without a leading 'v').
     /// Returns null when no matching embedded file exists.
@@ -31,4 +35,10 @@ public static class ReleaseNotes
         var text = reader.ReadToEnd().Trim();
         return text.Length == 0 ? null : text;
     }
+
+    /// <summary>
+    /// Soften raw markdown list markers for the Settings About panel (still plain text — no renderer).
+    /// </summary>
+    public static string FormatForDisplay(string notes) =>
+        ListMarker.Replace(notes.Trim(), "• ").Trim();
 }

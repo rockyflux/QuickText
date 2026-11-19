@@ -436,30 +436,52 @@
 
                         <!-- section · 版本信息 -->
                         <StackPanel x:Name="SectionAbout" Visibility="Collapsed">
-                            <ContentControl Margin="0,0,0,10" Style="{StaticResource SetHeader}"
+                            <ContentControl Margin="0,0,0,14" Style="{StaticResource SetHeader}"
                                             Content="{Binding [Settings.SectionAbout], Source={x:Static app:LocProxy.Instance}}"/>
+
+                            <!-- version chip: Abbr* tokens already carry the brand accent on both themes -->
                             <StackPanel Style="{StaticResource SetField}">
-                                <TextBlock Text="{Binding [Settings.CurrentVersion], Source={x:Static app:LocProxy.Instance}}"
+                                <TextBlock x:Name="AboutVersionLabel"
+                                           Text="{Binding [Settings.CurrentVersion], Source={x:Static app:LocProxy.Instance}}"
                                            Style="{StaticResource SetFieldLabel}"/>
-                                <TextBlock x:Name="AboutVersionText" FontSize="15" FontWeight="SemiBold"
-                                           FontFamily="{StaticResource Font.Mono}"
-                                           Foreground="{DynamicResource Brush.TextPrimary}"/>
+                                <Border HorizontalAlignment="Left" Padding="12,6" CornerRadius="7"
+                                        Background="{DynamicResource Brush.AbbrBg}"
+                                        BorderBrush="{DynamicResource Brush.AbbrBorder}" BorderThickness="1"
+                                        SnapsToDevicePixels="True">
+                                    <TextBlock x:Name="AboutVersionText" FontSize="15" FontWeight="SemiBold"
+                                               FontFamily="{StaticResource Font.Mono}"
+                                               Foreground="{DynamicResource Brush.AbbrText}"
+                                               AutomationProperties.LabeledBy="{Binding ElementName=AboutVersionLabel}"/>
+                                </Border>
                             </StackPanel>
+
+                            <!-- notes sit in a recessed WinBg panel so they read as content, not a hint -->
                             <StackPanel Style="{StaticResource SetField}">
-                                <TextBlock Text="{Binding [Settings.WhatsNew], Source={x:Static app:LocProxy.Instance}}"
+                                <TextBlock x:Name="WhatsNewLabel"
+                                           Text="{Binding [Settings.WhatsNew], Source={x:Static app:LocProxy.Instance}}"
                                            Style="{StaticResource SetFieldLabel}"/>
-                                <TextBlock x:Name="WhatsNewText" Style="{StaticResource SetHint}" Margin="0,2,0,0"
-                                           TextWrapping="Wrap"/>
-                                <Button HorizontalAlignment="Left" Style="{StaticResource DarkButton}" Padding="12,6" Margin="0,8,0,0"
+                                <Border Padding="14,12" CornerRadius="10" MinHeight="72"
+                                        Background="{DynamicResource Brush.WinBg}"
+                                        BorderBrush="{DynamicResource Brush.Stroke}" BorderThickness="1"
+                                        SnapsToDevicePixels="True">
+                                    <TextBlock x:Name="WhatsNewText" FontSize="13" LineHeight="20"
+                                               TextWrapping="Wrap"
+                                               Foreground="{DynamicResource Brush.TextPrimary}"
+                                               AutomationProperties.LabeledBy="{Binding ElementName=WhatsNewLabel}"/>
+                                </Border>
+                                <Button HorizontalAlignment="Left" Style="{StaticResource DarkButton}" Padding="12,6" Margin="0,10,0,0"
                                         Content="{Binding [Settings.OpenReleases], Source={x:Static app:LocProxy.Instance}}"
                                         Click="OnOpenReleases"/>
                             </StackPanel>
+
+                            <Border Height="1" Background="{DynamicResource Brush.Divider}" Margin="0,4,0,14"/>
+
                             <StackPanel Style="{StaticResource SetField}" Margin="0">
                                 <CheckBox x:Name="CheckUpdates" Style="{StaticResource DarkCheckBox}"
                                           Content="{Binding [Settings.CheckUpdates], Source={x:Static app:LocProxy.Instance}}"/>
                                 <TextBlock Style="{StaticResource SetHintIndent}"
                                            Text="{Binding [Settings.CheckUpdatesHint], Source={x:Static app:LocProxy.Instance}}"/>
-                                <Button x:Name="CheckNowButton" HorizontalAlignment="Left" Style="{StaticResource DarkButton}" Padding="12,6" Margin="24,4,0,0"
+                                <Button x:Name="CheckNowButton" HorizontalAlignment="Left" Style="{StaticResource DarkButton}" Padding="12,6" Margin="24,8,0,0"
                                         Content="{Binding [Settings.CheckNow], Source={x:Static app:LocProxy.Instance}}" Click="OnCheckUpdatesNow"/>
                             </StackPanel>
                         </StackPanel>

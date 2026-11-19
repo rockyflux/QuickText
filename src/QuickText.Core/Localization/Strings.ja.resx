@@ -196,6 +196,7 @@
   <data name="Search.Recents"><value>よく使う</value></data>
   <data name="Search.Favorites"><value>お気に入り</value></data>
   <data name="Search.KeepOpen"><value>パネルを固定（連続送信）</value></data>
+  <data name="Search.Website"><value>公式サイト</value></data>
   <data name="Dialog.FillVariables"><value>変数を入力</value></data>
   <data name="Settings.AutoSend"><value>貼り付け後にEnterを押す</value></data>
   <data name="Settings.ClickToSend"><value>クリックで送信</value></data>

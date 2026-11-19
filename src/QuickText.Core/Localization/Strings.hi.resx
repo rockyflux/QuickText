@@ -196,6 +196,7 @@
   <data name="Search.Recents"><value>हाल के</value></data>
   <data name="Search.Favorites"><value>पसंदीदा</value></data>
   <data name="Search.KeepOpen"><value>खुला रखें (कई भेजें)</value></data>
+  <data name="Search.Website"><value>वेबसाइट</value></data>
   <data name="Dialog.FillVariables"><value>वेरिएबल भरें</value></data>
   <data name="Settings.AutoSend"><value>चिपकाने के बाद Enter दबाएँ</value></data>
   <data name="Settings.ClickToSend"><value>भेजने के लिए सिंगल-क्लिक</value></data>

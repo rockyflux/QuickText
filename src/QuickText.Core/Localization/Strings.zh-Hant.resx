@@ -196,6 +196,7 @@
   <data name="Search.Recents"><value>最近常用</value></data>
   <data name="Search.Favorites"><value>收藏</value></data>
   <data name="Search.KeepOpen"><value>釘選面板（連發多條）</value></data>
+  <data name="Search.Website"><value>官網</value></data>
   <data name="Dialog.FillVariables"><value>填寫變數</value></data>
   <data name="Settings.AutoSend"><value>貼上後自動按 Enter</value></data>
   <data name="Settings.ClickToSend"><value>單擊即發送</value></data>

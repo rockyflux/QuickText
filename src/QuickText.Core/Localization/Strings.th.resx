@@ -196,6 +196,7 @@
   <data name="Search.Recents"><value>ล่าสุด</value></data>
   <data name="Search.Favorites"><value>รายการโปรด</value></data>
   <data name="Search.KeepOpen"><value>เปิดค้างไว้ (ส่งหลายรายการ)</value></data>
+  <data name="Search.Website"><value>เว็บไซต์</value></data>
   <data name="Dialog.FillVariables"><value>กรอกตัวแปร</value></data>
   <data name="Settings.AutoSend"><value>กด Enter หลังวาง</value></data>
   <data name="Settings.ClickToSend"><value>คลิกเดียวเพื่อส่ง</value></data>

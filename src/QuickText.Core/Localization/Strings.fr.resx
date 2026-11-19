@@ -196,6 +196,7 @@
   <data name="Search.Recents"><value>Récents</value></data>
   <data name="Search.Favorites"><value>Favoris</value></data>
   <data name="Search.KeepOpen"><value>Garder ouvert (envoyer plusieurs)</value></data>
+  <data name="Search.Website"><value>Site web</value></data>
   <data name="Dialog.FillVariables"><value>Renseigner les variables</value></data>
   <data name="Settings.AutoSend"><value>Appuyer sur Enter après le collage</value></data>
   <data name="Settings.ClickToSend"><value>Envoyer d'un seul clic</value></data>

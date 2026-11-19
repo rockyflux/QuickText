@@ -196,6 +196,7 @@
   <data name="Search.Recents"><value>সাম্প্রতিক</value></data>
   <data name="Search.Favorites"><value>পছন্দসমূহ</value></data>
   <data name="Search.KeepOpen"><value>খোলা রাখুন (কয়েকটি পাঠান)</value></data>
+  <data name="Search.Website"><value>ওয়েবসাইট</value></data>
   <data name="Dialog.FillVariables"><value>ভেরিয়েবল পূরণ করুন</value></data>
   <data name="Settings.AutoSend"><value>পেস্টের পর Enter চাপুন</value></data>
   <data name="Settings.ClickToSend"><value>পাঠাতে একবার ক্লিক করুন</value></data>

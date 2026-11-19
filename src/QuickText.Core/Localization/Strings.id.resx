@@ -196,6 +196,7 @@
   <data name="Search.Recents"><value>Terbaru</value></data>
   <data name="Search.Favorites"><value>Favorit</value></data>
   <data name="Search.KeepOpen"><value>Biarkan terbuka (kirim beberapa)</value></data>
+  <data name="Search.Website"><value>Situs resmi</value></data>
   <data name="Dialog.FillVariables"><value>Isi variabel</value></data>
   <data name="Settings.AutoSend"><value>Tekan Enter setelah menempel</value></data>
   <data name="Settings.ClickToSend"><value>Klik sekali untuk kirim</value></data>

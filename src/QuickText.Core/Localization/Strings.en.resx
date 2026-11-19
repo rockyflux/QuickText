@@ -196,6 +196,7 @@
   <data name="Search.Recents"><value>Recent</value></data>
   <data name="Search.Favorites"><value>Favorites</value></data>
   <data name="Search.KeepOpen"><value>Keep open (send several)</value></data>
+  <data name="Search.Website"><value>Website</value></data>
   <data name="Dialog.FillVariables"><value>Fill in variables</value></data>
   <data name="Settings.AutoSend"><value>Press Enter after pasting</value></data>
   <data name="Settings.ClickToSend"><value>Single-click to send</value></data>

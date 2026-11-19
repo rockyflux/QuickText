@@ -287,6 +287,7 @@ index.json 路径：{1}
   <data name="Search.Recents"><value>最近常用</value></data>
   <data name="Search.Favorites"><value>收藏</value></data>
   <data name="Search.KeepOpen"><value>固定面板（连发多条）</value></data>
+  <data name="Search.Website"><value>官网</value></data>
   <data name="Dialog.FillVariables"><value>填写变量</value></data>
   <data name="Settings.AutoSend"><value>粘贴后自动回车</value></data>
   <data name="Settings.ClickToSend"><value>单击即发送</value></data>

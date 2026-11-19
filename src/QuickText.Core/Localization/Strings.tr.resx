@@ -196,6 +196,7 @@
   <data name="Search.Recents"><value>Son kullanılanlar</value></data>
   <data name="Search.Favorites"><value>Sık kullanılanlar</value></data>
   <data name="Search.KeepOpen"><value>Açık tut (birkaç tane gönder)</value></data>
+  <data name="Search.Website"><value>Web sitesi</value></data>
   <data name="Dialog.FillVariables"><value>Değişkenleri doldur</value></data>
   <data name="Settings.AutoSend"><value>Yapıştırdıktan sonra Enter'a bas</value></data>
   <data name="Settings.ClickToSend"><value>Göndermek için tek tıkla</value></data>
