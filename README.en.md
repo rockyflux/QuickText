@@ -12,11 +12,12 @@ Lives in the tray. Store email, signatures, templates, replies, prompts, Skills,
 
 ## Download
 
-Site: [rockyflux.github.io/QuickText](https://rockyflux.github.io/QuickText/) · **[⬇ Get the latest release](https://github.com/rockyflux/QuickText/releases)** — Windows x64, no installer.
+Site: [rockyflux.github.io/QuickText](https://rockyflux.github.io/QuickText/) · **[⬇ Get the latest release](https://github.com/rockyflux/QuickText/releases)** — Windows x64; portable zip and wizard installer both ship.
 
 | File | Needs | Notes |
 | --- | --- | --- |
-| `QuickText-<version>-win-x64.zip` | nothing | **take this if unsure** |
+| `QuickText-<version>-win-x64.zip` | nothing | **take this if unsure** (unzip and run) |
+| `QuickText-<version>-win-x64-setup.exe` | nothing | wizard installer (default per-user, path editable; optional all-users) |
 | `QuickText-<version>-win-x64-needs-dotnet10.zip` | [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0) | much smaller |
 | `QuickText.exe` | same as above | no zip — run or overwrite to update |
 
@@ -39,7 +40,7 @@ Same library also supports **text commands** (abbreviations), `{variable}` templ
 
 ## Build
 
-Run `build.bat` from the repo root (menu: build / test / smoke / publish; or `build.bat 1`…`8` to pick directly). Or:
+Run `build.bat` from the repo root (menu: build / test / smoke / publish / setup; or `build.bat 1`…`9` to pick directly). The setup target needs [Inno Setup 6](https://jrsoftware.org/isinfo.php) installed. Or:
 
 ```bash
 dotnet build QuickText.sln -c Debug

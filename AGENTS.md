@@ -85,10 +85,11 @@ dotnet publish src/QuickText.App -c Release -p:PublishProfile=win-x64-needs-dotn
 ## 6. CI and releases
 
 - Version source is the git tag. Source builds use the newest reachable tag; CI/publish pass `-p:Version=` from the tag. Do not maintain a second version number in the app or docs.
-- Before changing CI, read `.github/workflows/ci.yml`. Expected gates: Core tests with `--minimum-expected-tests` (raise when adding tests, never lower casually), Release app build, `--smoke` marker check; on `v*` tags, both publish profiles, zip + bare `QuickText.exe` + `SHA256SUMS.txt`, and a release body built from `docs/release-notes/<tag>.md` (missing notes = no release).
-- Hosted releases and the in-app updater target **GitHub Releases** (see `UpdateService`). A green local build does not prove the release page has every asset users download.
+- Before changing CI, read `.github/workflows/ci.yml`. Expected gates: Core tests with `--minimum-expected-tests` (raise when adding tests, never lower casually), Release app build, `--smoke` marker check; on `v*` tags, both publish profiles, self-contained zip + optional Inno `*-win-x64-setup.exe` + framework-dependent zip + bare `QuickText.exe` + `SHA256SUMS.txt`, and a release body built from `docs/release-notes/<tag>.md` (missing notes = no release).
+- Installer script: `packaging/innosetup/QuickText.iss` (wraps the same self-contained exe; no `QuickText.portable` marker). Local `build.bat 9` / menu item 7 soft-skips setup if Inno Setup 6 is missing; CI always builds it.
+- Hosted releases and the in-app updater target **GitHub Releases** (see `UpdateService`). Updater still fetches the self-contained **zip**, not the setup exe. A green local build does not prove the release page has every asset users download.
 - Do not add Dependabot. Before a public/shared release, check outdated/vulnerable packages manually (`dotnet list package --outdated`, `dotnet list package --vulnerable --include-transitive`) and review Action major bumps in the workflow pins.
-- Do not add a winget publish step in this repo. Public winget packaging, if used at all, lives outside this tree (historically `rockbenben/winget-manifests`); a second manifest PR duplicates and gets rejected.
+- Do not add a winget publish step in this repo. Public winget packaging, if used at all, lives outside this tree (historically `rockbenben/winget-manifests`); winget stays on the self-contained zip unless that external manifest is changed. A second manifest PR duplicates and gets rejected.
 - Do not push, create a tag, publish a release, or edit published assets without explicit maintainer approval. A local commit is not a release.
 
 ## 7. Working with the tree

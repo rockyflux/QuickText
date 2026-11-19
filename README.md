@@ -12,11 +12,12 @@
 
 ## 下载
 
-官网：[rockyflux.github.io/QuickText](https://rockyflux.github.io/QuickText/) · **[⬇ 下载最新版](https://github.com/rockyflux/QuickText/releases)** — Windows x64，免安装。
+官网：[rockyflux.github.io/QuickText](https://rockyflux.github.io/QuickText/) · **[⬇ 下载最新版](https://github.com/rockyflux/QuickText/releases)** — Windows x64；绿色版与安装版并存。
 
 | 文件 | 前提 | 说明 |
 | --- | --- | --- |
-| `QuickText-<版本>-win-x64.zip` | 无 | **拿不准就下这个** |
+| `QuickText-<版本>-win-x64.zip` | 无 | **拿不准就下这个**（解压即用） |
+| `QuickText-<版本>-win-x64-setup.exe` | 无 | 安装向导（默认可改路径的当前用户安装；可选所有用户） |
 | `QuickText-<版本>-win-x64-needs-dotnet10.zip` | 已装 [.NET 10 桌面运行时](https://dotnet.microsoft.com/download/dotnet/10.0) | 体积更小 |
 | `QuickText.exe` | 同上 | 无 zip，点开即用或覆盖更新 |
 
@@ -39,7 +40,7 @@
 
 ## 构建
 
-根目录运行 `build.bat`（菜单：编译 / 测试 / 冒烟 / 打包；也可 `build.bat 1`…`8` 直接选）。或：
+根目录运行 `build.bat`（菜单：编译 / 测试 / 冒烟 / 打包 / 安装包；也可 `build.bat 1`…`9` 直接选）。安装包需本机已装 [Inno Setup 6](https://jrsoftware.org/isinfo.php)。或：
 
 ```bash
 dotnet build QuickText.sln -c Debug

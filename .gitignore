@@ -10,6 +10,7 @@ TestResults/
 design-preview/
 .qoder*
 artifacts/
+dist/
 .openidea/
 .spec-workflow/
 

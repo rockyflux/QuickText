@@ -21,8 +21,9 @@ echo   [3] 单元测试
 echo   [4] 窗口冒烟 ^(--smoke^)
 echo   [5] 打包绿色版 ^(自包含，免装运行时^)
 echo   [6] 打包精简版 ^(需已装 .NET 10 桌面运行时^)
-echo   [7] 打包全部 + zip 到 dist\
+echo   [7] 打包全部 + zip ^(+ setup 若已装 Inno^) 到 dist\
 echo   [8] 完整检查 ^(测试 + Release + 冒烟^)
+echo   [9] 仅打安装包 ^(需 Inno Setup 6 + 先 [5]^)
 echo   [0] 退出
 echo  ========================================
 echo.
@@ -40,6 +41,7 @@ if "!OPT!"=="5" goto :publish_sc
 if "!OPT!"=="6" goto :publish_fd
 if "!OPT!"=="7" goto :publish_all
 if "!OPT!"=="8" goto :full_gate
+if "!OPT!"=="9" goto :publish_setup
 echo.
 echo  [!] 无效序号: !OPT!
 if not "%~1"=="" exit /b 1
@@ -114,12 +116,37 @@ powershell -NoProfile -Command ^
    Compress-Archive -Path 'src\QuickText.App\bin\Release\publish-needs-dotnet10\QuickText.exe' -DestinationPath '!ZIP_FD!' -Force"
 if errorlevel 1 goto :done
 
+rem Setup is optional locally: CI always builds it; here skip cleanly if ISCC is missing.
+set "SETUP_OUT="
+call :build_setup
+if errorlevel 1 goto :done
+
 echo.
 echo  已写入:
 echo    !ZIP_SC!
 echo    !ZIP_FD!
+if defined SETUP_OUT echo    !SETUP_OUT!
 echo    src\QuickText.App\bin\Release\publish\QuickText.exe
 echo    src\QuickText.App\bin\Release\publish-needs-dotnet10\QuickText.exe
+goto :done
+
+:publish_setup
+echo.
+call :resolve_ver
+if not exist "src\QuickText.App\bin\Release\publish\QuickText.exe" (
+  echo  [!] 缺少自包含 exe，先执行 [5] 打包绿色版
+  call :ret 1
+  goto :done
+)
+call :build_setup
+if errorlevel 1 goto :done
+if not defined SETUP_OUT (
+  echo  [!] 未找到 Inno Setup 6 ^(ISCC.exe^)。安装 https://jrsoftware.org/isinfo.php 后重试。
+  call :ret 1
+  goto :done
+)
+echo.
+echo  已写入: !SETUP_OUT!
 goto :done
 
 :full_gate
@@ -192,6 +219,45 @@ set "VER="
 for /f "delims=" %%V in ('git describe --tags --abbrev=0 2^>nul') do set "VER=%%V"
 if not defined VER set "VER=dev"
 rem strip leading v from tag for a cleaner zip name if present — keep as-is to match CI tag style
+exit /b 0
+
+:ret
+exit /b %~1
+
+:find_iscc
+set "ISCC="
+if exist "%ProgramFiles(x86)%\Inno Setup 6\ISCC.exe" set "ISCC=%ProgramFiles(x86)%\Inno Setup 6\ISCC.exe"
+if not defined ISCC if exist "%LocalAppData%\Programs\Inno Setup 6\ISCC.exe" set "ISCC=%LocalAppData%\Programs\Inno Setup 6\ISCC.exe"
+exit /b 0
+
+:build_setup
+rem Compiles packaging\innosetup\QuickText.iss into dist\QuickText-<tag>-win-x64-setup.exe.
+rem Soft-skip when ISCC is missing (publish_all stays green without Inno); publish_setup treats
+rem an empty SETUP_OUT as failure. Version digits for AppVersion drop a leading v; OutputBase
+rem keeps the tag form so the filename matches CI / GitHub release assets.
+set "SETUP_OUT="
+call :find_iscc
+if not defined ISCC (
+  echo  ==^> 跳过安装包 ^(未安装 Inno Setup 6^)
+  exit /b 0
+)
+if not exist "dist" mkdir dist
+set "VER_NUM=!VER!"
+if /i "!VER_NUM:~0,1!"=="v" set "VER_NUM=!VER_NUM:~1!"
+set "SETUP_BASE=QuickText-!VER!-win-x64-setup"
+set "SETUP_OUT=dist\!SETUP_BASE!.exe"
+del /f /q "!SETUP_OUT!" 2>nul
+echo  ==^> 编译安装包 ^(Inno Setup^) ...
+"!ISCC!" /DMyAppVersion=!VER_NUM! /DMyAppSource="%cd%\src\QuickText.App\bin\Release\publish" /DMyAppOutputDir="%cd%\dist" /DMyAppOutputBase=!SETUP_BASE! "%cd%\packaging\innosetup\QuickText.iss"
+if errorlevel 1 (
+  set "SETUP_OUT="
+  exit /b 1
+)
+if not exist "!SETUP_OUT!" (
+  echo  [!] 未生成 !SETUP_OUT!
+  set "SETUP_OUT="
+  exit /b 1
+)
 exit /b 0
 
 :done

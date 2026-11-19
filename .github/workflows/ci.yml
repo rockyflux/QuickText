@@ -87,13 +87,41 @@ jobs:
           # verified by running the framework-dependent exe with --smoke, so no rebuild is needed.
           dotnet publish src/QuickText.App -c Release -p:PublishProfile=win-x64-needs-dotnet10 -p:Version=$v --nologo
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
-      - name: Package + SHA256
+      - name: Package + installer + SHA256
         shell: pwsh
         run: |
           # Two zips — the variant lives in the ZIP name, so unpacking either always leaves a clean
           # QuickText.exe instead of a name a portable install would keep forever.
           Compress-Archive -Path src/QuickText.App/bin/Release/publish/QuickText.exe -DestinationPath "QuickText-${{ github.ref_name }}-win-x64.zip"
           Compress-Archive -Path src/QuickText.App/bin/Release/publish-needs-dotnet10/QuickText.exe -DestinationPath "QuickText-${{ github.ref_name }}-win-x64-needs-dotnet10.zip"
+
+          # Optional wizard installer (Inno Setup): wraps the SAME self-contained exe as the zip.
+          # Portable zip / bare exe / winget stay unchanged; this is an extra asset only.
+          $v = "${{ github.ref_name }}" -replace '^v', ''
+          $setupBase = "QuickText-${{ github.ref_name }}-win-x64-setup"
+          $isccCandidates = @(
+            "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe",
+            "${env:LocalAppData}\Programs\Inno Setup 6\ISCC.exe"
+          )
+          $iscc = $isccCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $iscc) {
+            Write-Host 'Inno Setup not found — installing 6.7.4 silently…'
+            $installer = Join-Path $env:RUNNER_TEMP 'innosetup-6.7.4.exe'
+            # Pin a GitHub immutable release (jrsoftware.org/download.php/is.exe 404s since
+            # they moved downloads off that path). Stay on Inno 6 so ChineseSimplified.isl /
+            # PrivilegesRequiredOverridesAllowed match the script we ship.
+            $uri = 'https://github.com/jrsoftware/issrc/releases/download/is-6_7_4/innosetup-6.7.4.exe'
+            Invoke-WebRequest -Uri $uri -OutFile $installer
+            Start-Process -FilePath $installer -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/SP-' -Wait
+            $iscc = $isccCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+          }
+          if (-not $iscc) { Write-Error 'ISCC.exe still missing after Inno Setup install'; exit 1 }
+          & $iscc "/DMyAppVersion=$v" "/DMyAppSource=$PWD\src\QuickText.App\bin\Release\publish" `
+            "/DMyAppOutputDir=$PWD" "/DMyAppOutputBase=$setupBase" `
+            "$PWD\packaging\innosetup\QuickText.iss"
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          if (-not (Test-Path "$setupBase.exe")) { Write-Error "missing $setupBase.exe"; exit 1 }
+
           # Every downloadable asset gets a line — the two builds go to two different audiences, and
           # signing only one of them leaves the other group holding a file they cannot check.
           # THIS LINE IS THE ASSET LIST. The attest step below consumes this file rather than
@@ -105,7 +133,7 @@ jobs:
           # defaults to a BOM that breaks line-by-line parsing of the first entry.
           # Write LF explicitly: Set-Content uses CRLF on Windows, and sha256sum -c treats the \r
           # as part of the file name, so every line fails on Linux/macOS/Git Bash.
-          $lines = Get-FileHash *.zip, src/QuickText.App/bin/Release/publish-needs-dotnet10/QuickText.exe -Algorithm SHA256 |
+          $lines = Get-FileHash *.zip, "$setupBase.exe", src/QuickText.App/bin/Release/publish-needs-dotnet10/QuickText.exe -Algorithm SHA256 |
             ForEach-Object { "{0}  {1}" -f $_.Hash.ToLower(), (Split-Path $_.Path -Leaf) }
           [IO.File]::WriteAllText((Join-Path $PWD 'SHA256SUMS.txt'), ($lines -join "`n") + "`n", [Text.Encoding]::ASCII)
       # Signed build provenance, and the closest thing this project has to a code signature: the exe
@@ -138,6 +166,7 @@ jobs:
           **下载哪个**
 
           - `QuickText-${{ github.ref_name }}-win-x64.zip` — 内含 .NET 运行时，解压即用；拿不准、内网机、离线机、U 盘随身带就选它。
+          - `QuickText-${{ github.ref_name }}-win-x64-setup.exe` — 同上自包含构建的安装向导（默认可改路径的当前用户安装；也可选所有用户）。设置里仍可开便携模式。
           - `QuickText-${{ github.ref_name }}-win-x64-needs-dotnet10.zip` — 同一个程序，只是不带运行时；需要电脑上已装 [.NET 10 桌面运行时](https://dotnet.microsoft.com/download/dotnet/10.0)。
           - `QuickText.exe` — 就是上面那个不含运行时的版本，只是没打包：点开即用，也可直接覆盖现有的 QuickText.exe 完成更新。缺运行时时 Windows 会自己提示下载。
 
@@ -164,10 +193,13 @@ jobs:
           # straight over an existing QuickText.exe to update. Only the small build gets that — a
           # bare bundled-runtime exe is what browsers and SmartScreen fight hardest, and a plain,
           # version-less name can only belong to one of the two.
+          # The *-setup.exe is an Inno wizard over the same self-contained exe as the zip; winget
+          # still points at the zip only (see winget notes below).
           # Spelled out rather than globbed: the names match what the Package step just produced,
           # one line per asset, so nothing looks missing and nothing can be uploaded twice.
           files: |
             QuickText-${{ github.ref_name }}-win-x64.zip
+            QuickText-${{ github.ref_name }}-win-x64-setup.exe
             QuickText-${{ github.ref_name }}-win-x64-needs-dotnet10.zip
             src/QuickText.App/bin/Release/publish-needs-dotnet10/QuickText.exe
             SHA256SUMS.txt
@@ -218,11 +250,12 @@ jobs:
       # 第二个会被当重复拒掉，看起来就像「winget 坏了」。要改清单，改 apps.json 里那一项。
       # 原来的 wingetcreate update ... --submit 那段已经删掉了，原因就是这个。
       #
-      # 清单只挂自包含 zip。winget 按架构 / 安装器类型 / 范围 / 语言挑安装包，
+      # 清单只挂自包含 zip（不挂 *-setup.exe）。winget 按架构 / 安装器类型 / 范围 / 语言挑安装包，
       # 「带不带 .NET 运行时」不在这些维度里；一份清单里塞两份构建，用户选不到第二份。
-      # 三个资产里也只有它合适：裸 QuickText.exe 文件名没有版本号，winget 要求每个版本
-      # 的安装包 URL 唯一。选自包含而不是依赖本机运行时，是因为 winget 的承诺就是
-      # 「一条命令就能跑」；缺运行时表现成「装上了却打不开」，比下载大一点更难查。
+      # 裸 QuickText.exe 文件名没有版本号，winget 要求每个版本的安装包 URL 唯一；setup
+      # 若以后要进 winget，须在 rockbenben/winget-manifests 的 apps.json 改，不要在本仓重复开 PR。
+      # 选自包含而不是依赖本机运行时，是因为 winget 的承诺就是「一条命令就能跑」；缺运行时
+      # 表现成「装上了却打不开」，比下载大一点更难查。
       # 以后若要改成小包（可逆，用户下次 winget upgrade 就会跟上）：把清单指到
       # -needs-dotnet10 的 zip，并加上
       #   Dependencies: { PackageDependencies: [ { PackageIdentifier: Microsoft.DotNet.DesktopRuntime.10 } ] }
