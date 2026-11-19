@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>QuickText · Windows 托盘速贴 · 常用文本几键贴到光标处</title>
-<meta name="description" content="QuickText 是免费开源的 Windows 托盘速贴工具：常驻托盘，邮箱、签名、模板、回复存一次，在任意输入框里搜拼音或打缩写，贴到光标处。单文件绿色版，默认不联网。">
+<meta name="description" content="QuickText 是免费开源的 Windows 托盘速贴工具：常驻托盘，邮箱、签名、模板、回复、提示词与 Skills 存一次，在任意输入框里搜拼音或打缩写，贴到光标处——也适合 AI 编程对话与 Skills 编辑。单文件绿色版，默认不联网。">
 <link rel="canonical" href="https://rockyflux.github.io/QuickText/">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="QuickText">
 <meta property="og:title" content="QuickText · 常用文本，几键贴到光标处">
-<meta property="og:description" content="Windows 托盘速贴：搜拼音或打缩写，把存好的文本贴到任意输入框。免费开源，单文件绿色版。">
+<meta property="og:description" content="Windows 托盘速贴：搜拼音或打缩写，把存好的文本贴到任意输入框。提示词、Skills、AI 对话也能几键贴入。免费开源，单文件绿色版。">
 <meta property="og:url" content="https://rockyflux.github.io/QuickText/">
 <meta property="og:image" content="https://rockyflux.github.io/QuickText/assets/og.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -32,7 +32,7 @@
   "url": "https://rockyflux.github.io/QuickText/",
   "image": "https://rockyflux.github.io/QuickText/assets/og.png",
   "license": "https://opensource.org/licenses/MIT",
-  "description": "Windows 托盘速贴：常用文本与图片，几键贴到光标处。单文件绿色版，默认不联网。"
+  "description": "Windows 托盘速贴：常用文本、提示词与 Skills，几键贴到光标处。单文件绿色版，默认不联网。"
 }
 </script>
 </head>
@@ -84,7 +84,7 @@
   <div class="wrap hero-copy">
     <a class="pill" href="https://github.com/rockyflux/QuickText/releases/tag/v1.1.3"><span class="pill-dot"></span>v1.1.3 已发布<svg><use href="#i-arrow"/></svg></a>
     <h1>常用文本，<br class="br-sm">几键贴到光标处。</h1>
-    <p class="lede">常驻托盘。邮箱、签名、模板、回复存一次，<br class="br-lg">在任意输入框里搜拼音或打缩写，贴到光标处。</p>
+    <p class="lede">常驻托盘。邮箱、签名、模板、回复、提示词存一次，<br class="br-lg">在任意输入框里搜拼音或打缩写，贴到光标处。</p>
     <div class="hero-actions">
       <a class="btn btn-lg btn-primary" href="https://github.com/rockyflux/QuickText/releases/latest" data-os="win"><svg><use href="#i-windows"/></svg>下载 Windows 版</a>
       <a class="btn btn-lg btn-ghost" href="https://github.com/rockyflux/QuickText/releases/latest">全部版本</a>
@@ -127,6 +127,10 @@
       <span>搜拼音 / 名称 → 回车粘贴</span>
       <button class="btn btn-sm btn-ghost" type="button" id="try">重播演示<svg><use href="#i-arrow"/></svg></button>
     </div>
+
+    <figure class="promo">
+      <img src="assets/promo.png" width="1672" height="941" alt="QuickText：高效的文本与提示词管理工具——常用文本、提示词、图片、Skills 统一管理" loading="lazy" decoding="async">
+    </figure>
   </div>
 </section>
 
@@ -134,7 +138,7 @@
   <div class="wrap">
     <div class="eyebrow">为什么做它</div>
     <h2>找常用话最难的不是写，<br>是翻找。</h2>
-    <p class="sub">邮箱、地址、客服话术、提示词……散落在记事本、聊天记录和旧邮件里。等你翻完，思路已经断了。</p>
+    <p class="sub">邮箱、地址、客服话术、提示词、Skills……散落在记事本和旧文件里。AI 编程时，同一段提示词要反复贴进对话框；改 Skills 也离不开翻找复制——等你翻完，思路已经断了。</p>
     <div class="versus">
       <div class="vs-card vs-old">
         <div class="vs-label">以前</div>
@@ -175,9 +179,9 @@
       <article class="duo-card">
         <div class="duo-keys"><kbd>缩写</kbd><kbd>触发</kbd></div>
         <h3>文本指令</h3>
-        <p>给条目设一个缩写，在任意输入框打出触发序列，直接展开 —— 不用打开面板。</p>
+        <p>给条目设一个缩写，在任意输入框打出触发序列，直接展开 —— 不用打开面板。写 AI 提示词、编辑 Skills 时同样可用。</p>
         <ul class="ticks">
-          <li>适合签名、地址、固定回复</li>
+          <li>适合签名、固定回复，以及常用提示词</li>
           <li>支持 <code>{变量}</code> 模板占位符</li>
           <li>与面板搜索共用同一本地库</li>
         </ul>
@@ -209,7 +213,7 @@
       <article class="feat-card">
         <span class="tag">扩展</span>
         <h3>Skills 与 AI</h3>
-        <p>导入 Skills；管理器里用 AI 生成起草条目（自备 Key，可选联网）。</p>
+        <p>AI 对话框里几键贴入提示词；编辑 Skills / 提示词文件时也能缩写触发。另可导入 Skills，或用 AI 生成起草条目（自备 Key）。</p>
       </article>
       <article class="feat-card">
         <span class="tag">数据</span>
@@ -296,7 +300,7 @@
   <div class="wrap foot-in">
     <div class="foot-brand">
       <a class="brand" href="#top"><svg class="brand-icon" aria-hidden="true"><use href="#appicon"/></svg><span>QuickText</span></a>
-      <p>Windows 托盘速贴：常用文本 / 图片，几键贴到光标处。MIT 开源。</p>
+      <p>Windows 托盘速贴：常用文本、提示词与 Skills，几键贴到光标处。MIT 开源。</p>
     </div>
     <div class="foot-cols">
       <div>

@@ -10,6 +10,8 @@
 - 数据是本地 **JSON**，可放同步盘；明文存储，机密请用密码管理器
 - 深色 / 浅色 / 跟随系统；**18 种界面语言**；设置即时生效
 
+![QuickText 高效文本与提示词管理工具](docs/images/QuickText高效文本管理工具.png)
+
 ## 下载
 
 官网：[rockyflux.github.io/QuickText](https://rockyflux.github.io/QuickText/) · **[⬇ 下载最新版](https://github.com/rockyflux/QuickText/releases)** — Windows x64；绿色版与安装版并存。

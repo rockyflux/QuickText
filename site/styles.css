@@ -175,6 +175,10 @@ h1{font-size:clamp(44px,8vw,88px);line-height:1.04;letter-spacing:-.045em;font-w
 .stage-hint span{display:inline-flex;align-items:center;gap:5px}
 .stage-hint kbd{font-size:12px}
 
+/* product promo banner */
+.promo{margin:48px auto 0;max-width:1080px;border-radius:22px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow-lg);background:var(--shot)}
+.promo img{width:100%;height:auto;display:block}
+
 /* narrow stage: portrait composition */
 @container (max-width:700px){
   .stage{width:480px;height:640px}

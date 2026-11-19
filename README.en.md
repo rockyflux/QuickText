@@ -10,6 +10,8 @@ Lives in the tray. Store email, signatures, templates, replies, prompts, Skills,
 - Data is local **JSON** (sync-drive friendly; plain text — use a password manager for secrets)
 - Dark / light / follow Windows; **18 UI languages**; settings apply instantly
 
+![QuickText — efficient text and prompt manager](docs/images/QuickText高效文本管理工具.png)
+
 ## Download
 
 Site: [rockyflux.github.io/QuickText](https://rockyflux.github.io/QuickText/) · **[⬇ Get the latest release](https://github.com/rockyflux/QuickText/releases)** — Windows x64; portable zip and wizard installer both ship.
